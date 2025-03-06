@@ -4,8 +4,16 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authRoutes = require('./routes/auth');
-const mealRoutes = require('./routes/Meal');
-
+const mealRoutes = require('./routes/mealRoute');
+require("./models/AdminTunCatering");
+require("./models/Commande");
+require("./models/Meal");
+require("./models/Menu");
+require("./models/ResponsableTunDirCatering");
+require("./models/Stock");
+require("./models/personnelnavigant");
+require("./models/vol");
+require("./models/User");
 const app = express();
 const PORT = 5000;
 

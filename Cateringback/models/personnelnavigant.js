@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const userSchema=require('./User').schema;
+const mongoose = require("mongoose");
+const User = require("./User"); 
 const personnelnavigantSchema = new mongoose.Schema(
   {
-    ...userSchema.obj,
+    ...User.schema.obj,
     Matricule: {
       type: String,
       required: true,
