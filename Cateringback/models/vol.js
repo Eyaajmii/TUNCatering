@@ -25,5 +25,9 @@ const volSchema = new mongoose.Schema({
         type:Boolean,
         defaut:false
     },
+    personnels:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"personnelnavigant"
+    }]
 });
 module.exports = mongoose.model("vol", volSchema);

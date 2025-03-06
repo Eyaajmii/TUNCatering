@@ -14,6 +14,10 @@ const menuSchema=new mongoose.Schema({
         type:String,
         enum:["Standard","Végétarien","Sans gluten"],
         required:true
-    }
+    },
+    Plats:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Meal"
+    }]
 });
 module.exports = mongoose.model("Menu", menuSchema);

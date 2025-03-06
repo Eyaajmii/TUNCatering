@@ -19,6 +19,10 @@ const mealSchema = new mongoose.Schema({
         enum:["Entrée","Plat Principal","Dessert"],
         required:true
     },
+    AdminTn:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdminTunCatering',
+    }
 });
 
 module.exports = mongoose.model('Meal', mealSchema);

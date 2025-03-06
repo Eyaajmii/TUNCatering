@@ -15,9 +15,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api', mealRoutes);
 
 // Connexion à MongoDB
-mongoose.connect('mongodb://localhost:27017/Tuncatering')
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB', err));
+mongoose
+  .connect("mongodb://localhost:27017/Tuncatering")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 
 
