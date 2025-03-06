@@ -1,17 +1,34 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      required: false,
+      match: /.+\@.+\..+/,
     },
     password: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-});
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    nom: { type: String, required: false },
+    prenom: { type: String, required: false },
+    telephone: {
+      type: String,
+      required: false,
+      match: /^[0-9]{8}$/,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 // Hacher le mot de passe avant de sauvegarder l'utilisateur
 userSchema.pre('save', async function (next) {
