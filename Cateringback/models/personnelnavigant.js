@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const userSchema=require("./User");
-const personnelNavigantSchema = new mongoose.Schema({
+const mongoose = require('mongoose');
+const userSchema=require('./User').schema;
+const personnelnavigantSchema = new mongoose.Schema({
   ...userSchema.obj,
   Matricule: {
     type: String,
@@ -10,8 +10,12 @@ const personnelNavigantSchema = new mongoose.Schema({
   },
   TypePersonnel: {
     type: String,
-    enum: ["Technique", "Commercial", "Stagiaire"],
+    enum: ["Technique", "Commercial", "Stagiaire","Chef de cabine"],
     default: "Commercial",
   },
-});
-module.exports = mongoose.model("personnelnavigant", personnelNavigantSchema);
+},
+{
+    timestamps: true,
+}
+);
+module.exports = mongoose.model("personnelnavigant", personnelnavigantSchema);
