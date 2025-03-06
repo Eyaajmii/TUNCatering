@@ -1,17 +1,19 @@
 const mongoose = require("mongoose");
-const userSchema=require("./User");
+const User = require("./User"); // Importer le modèle
+
 const personnelNavigantSchema = new mongoose.Schema({
-  ...userSchema.obj,
+  ...User.schema.obj, // Extraire le schéma à partir du modèle
   Matricule: {
     type: String,
     required: true,
-    match: /^\d{5}$/,
-    unique: true,
+    match: /^\d{5}$/, 
+    unique: true
   },
   TypePersonnel: {
     type: String,
     enum: ["Technique", "Commercial", "Stagiaire"],
-    default: "Commercial",
-  },
+    default: "Commercial"
+  }
 });
-module.exports = mongoose.model("personnelnavigant", personnelNavigantSchema);
+
+module.exports = mongoose.model("PersonnelNavigant", personnelNavigantSchema);

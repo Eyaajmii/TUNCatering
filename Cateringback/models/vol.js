@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const volSchema = new mongoose.Schema({
-    numVol:number,
-    volName:String,
-    volDesc:String,
+    numVol: { type: Number, required: true },
+    volName: { type: String, required: true },
+    volDesc: { type: String, required: false }
 });
-module.exports = mongoose.model("vol", volSchema);
+
+module.exports = mongoose.model("Vol", volSchema);
