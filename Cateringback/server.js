@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authRoutes = require('./routes/auth');
 const mealRoutes = require('./routes/mealRoute');
+const commandeRoute=require('./routes/commandeRoute');
+const menuRoute=require('./routes/menuRoute');
 require("./models/AdminTunCatering");
 require("./models/Commande");
 require("./models/Meal");
@@ -19,9 +21,14 @@ const PORT = 5000;
 
 // Middleware pour parser les données JSON
 app.use(bodyParser.json());
-app.use('/api/auth', authRoutes);
-app.use('/api', mealRoutes);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
+app.use('/api/auth', authRoutes);
+app.use('/api/meal', mealRoutes);
+app.use("/api/commande", commandeRoute);
+app.use("/api/menu", menuRoute);
 // Connexion à MongoDB
 mongoose
   .connect("mongodb://localhost:27017/Tuncatering")

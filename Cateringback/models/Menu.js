@@ -1,23 +1,37 @@
 const mongoose=require('mongoose');
 
-const menuSchema=new mongoose.Schema({
-    nom:{
-        type:String,
-        required:true
+const menuSchema = new mongoose.Schema({
+  nom: {
+    type: String,
+    required: true,
+  },
+  Rotation: {
+    type: String,
+    enum: ["Matin", "Midi", "Soir"],
+    required: true,
+  },
+  typeMenu: {
+    type: String,
+    enum: ["Standard", "Végétarien", "Sans gluten"],
+    required: true,
+  },
+  PlatsPrincipaux: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Meal",
     },
-    Rotation:{
-        type:String,
-        enum:["Matin","Midi","Soir"],
-        required:true
+  ],
+  PlatsEntree: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Meal",
     },
-    typeMenu:{
-        type:String,
-        enum:["Standard","Végétarien","Sans gluten"],
-        required:true
+  ],
+  PlatsDessert: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Meal",
     },
-    Plats:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Meal"
-    }]
+  ],
 });
 module.exports = mongoose.model("Menu", menuSchema);

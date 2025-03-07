@@ -4,6 +4,7 @@ const commandeSchema = new mongoose.Schema({
   NombreCommande: {
     type: Number,
     required: true,
+    default: 1,
   },
   Statut: {
     type: String,
@@ -18,10 +19,20 @@ const commandeSchema = new mongoose.Schema({
     default: "En attente",
   },
   MatriculePn: {
+    //si le pn passe commande
     type: mongoose.Schema.Types.ObjectId,
     ref: "personnelnavigant",
-    required: true,
+    required: function () {
+      return !this.MatriculeResTun;
+    },
   }, //a partir de pn on prend le numvol et nomvol
+  MatriculeResTun: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ResponsableTunDirCatering",
+    required: function () {
+      return !this.MatriculePn;
+    },
+  },
   nomMenu: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Menu",

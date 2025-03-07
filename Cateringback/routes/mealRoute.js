@@ -1,32 +1,47 @@
 // routes/meal.js
 const express = require('express');
-const Meal = require('../models/Meal');
+const mealservice=require("../services/mealService");
 const router = express.Router();
-
-
-// Récupérer tous les repas
-router.get('/meals', async (req, res) => {
-    try {
-        const meals = await Meal.find();
+router.get("/",async(req,res)=>{
+    try{
+        const meals = await mealservice.getAllMeals();
         res.status(200).json(meals);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    }catch(err){
+        res.status(500).json({message:err.message});
     }
 });
-
-// routes/meal.js
-router.post('/meals', async (req, res) => {
-    const meal = new Meal({
-        nom: req.body.nom,
-        rotation: req.body.rotation,
-        prix: req.body.prix,
-    });
-
-    try {
-        const newMeal = await meal.save();
-        res.status(201).json(newMeal);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+router.post("/add",async(req,res)=>{
+    try{
+        const {nom,description,typePlat}=req.body;
+        const nouveaumeal = await mealservice.createMeal(nom,description,typePlat);
+        res.status(201).json(nouveaumeal);
+    }catch(error){
+        res.status(500).json({message:error.message});
     }
 });
+router.get("/:id",async(req,res)=>{
+    try{
+        const meal=await mealservice.getMealById(req.params.id);
+        res.status(200).json(meal);
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+});
+router.put("/updateMeal/:id",async(req,res)=>{
+    try{
+        const mealdata={...req.body}
+        const updatedMeal = await mealservice.updateMeal(req.params.id,mealdata);
+        res.status(200).json(updatedMeal);
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+});
+router.delete("/:id",async(req,res)=>{
+    try{
+        await mealservice.cancelMeal(req.params.id);
+        res.status(200).json({message:"meal deleted"});
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+})
 module.exports = router;
