@@ -26,7 +26,10 @@ const mealSchema = new mongoose.Schema({
     AdminTn:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'AdminTunCatering',
+    },
+    image:{
+        type:String,
+        required:true
     }
 });
-
 module.exports = mongoose.model('Meal', mealSchema);

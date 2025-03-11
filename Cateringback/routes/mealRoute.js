@@ -12,8 +12,16 @@ router.get("/",async(req,res)=>{
 });
 router.post("/add",async(req,res)=>{
     try{
-        const {nom,description,typePlat}=req.body;
-        const nouveaumeal = await mealservice.createMeal(nom,description,typePlat);
+        const { nom, description, typePlat, prix, disponibilite,adminTn,image} = req.body;
+        const nouveaumeal = await mealservice.createMeal(
+          nom,
+          description,
+          typePlat,
+          prix,
+          disponibilite,
+          adminTn,
+          image
+        );
         res.status(201).json(nouveaumeal);
     }catch(error){
         res.status(500).json({message:error.message});
