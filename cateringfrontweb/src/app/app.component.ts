@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
+import { AjoutPlatComponent } from "./components/dashboardAdminTunCatering/ajout-plat/ajout-plat.component";
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, AjoutPlatComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

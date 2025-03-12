@@ -1,0 +1,26 @@
+// meal-form.component.html
+<div class="flex justify-center items-center h-screen bg-gray-100">
+  <form [formGroup]="mealForm" (ngSubmit)="onSubmit()" class="bg-white p-6 rounded-2xl shadow-xl w-96 space-y-4">
+    <h2 class="text-xl font-bold text-center text-gray-700">Ajouter un Repas</h2>
+    
+    <input formControlName="nom" type="text" placeholder="Nom du plat" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+    <textarea formControlName="description" placeholder="Description" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400"></textarea>
+    <input formControlName="prix" type="number" placeholder="Prix (€)" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+    
+    <select formControlName="typePlat" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+      <option value="">Sélectionner le type</option>
+      <option value="Entrée">Entrée</option>
+      <option value="Plat Principal">Plat Principal</option>
+      <option value="Dessert">Dessert</option>
+    </select>
+    
+    <label class="flex items-center space-x-2">
+      <input type="checkbox" formControlName="disponibilite" class="form-checkbox text-blue-500">
+      <span>Disponible</span>
+    </label>
+    
+    <input formControlName="image" type="text" placeholder="URL de l'image" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400">
+    
+    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Ajouter</button>
+  </form>
+</div>
