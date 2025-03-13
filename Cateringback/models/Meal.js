@@ -19,7 +19,7 @@ const mealSchema = new mongoose.Schema({
         enum:["Entrée","Plat Principal","Dessert"],
         required:true
     },
-    Desponibilite:{
+    Disponibilite:{
         type:Boolean,
         required:true
     },
@@ -29,7 +29,7 @@ const mealSchema = new mongoose.Schema({
     },
     image:{
         type:String,
-        required:true
+        required:false
     }
 });
 module.exports = mongoose.model('Meal', mealSchema);

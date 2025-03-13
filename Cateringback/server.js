@@ -7,15 +7,17 @@ const mealRoutes = require('./routes/mealRoute');
 const commandeRoute=require('./routes/commandeRoute');
 const menuRoute=require('./routes/menuRoute');
 const methodOverride = require("method-override");
-
+const cors=require('cors');
 const app = express();
 const PORT = 5000;
 
 // Middleware pour parser les données JSON
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use('/uploads',express.static('uploads'));
 app.use('/image',express.static(path.join(__dirname,'image')));
 app.use('/api/auth', authRoutes);
 app.use('/api/meal', mealRoutes);
