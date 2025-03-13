@@ -1,39 +1,69 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PlatServiceService } from '../../../services/plat-service.service';
 
 @Component({
   selector: 'app-ajout-plat',
+  standalone:true,
   imports: [ReactiveFormsModule],
   templateUrl: './ajout-plat.component.html',
   styleUrl: './ajout-plat.component.css'
 })
 export class AjoutPlatComponent {
   mealForm: FormGroup;
-  submitted = false;
-
-  constructor(private fb: FormBuilder) {
+  selectedFile:File |null=null;
+  isSubmit=false;
+  constructor(private fb: FormBuilder,private platService:PlatServiceService) {
     this.mealForm = this.fb.group({
-      nom: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(10)]],
-      prix: ['', [Validators.required, Validators.min(1)]],
+      nom: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      prix: ['', [Validators.required]],
       typePlat: ['', Validators.required],
-      disponibilite: [false],
-      image: ['', [Validators.required, Validators.pattern('(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif))')]]
+      Disponibilite: [false],
+      //image: ['', [Validators.required, Validators.pattern('(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif))')]]
     });
   }
-
+  
   get formControls() {
     return this.mealForm.controls;
   }
-
+  onFileSelected(ev:Event):void{
+    const img=(ev.target as HTMLInputElement).files?.[0]||null;
+    this.selectedFile=img;
+  }
   onSubmit(): void {
-    this.submitted = true;
-    if (this.mealForm.valid) {
-      console.log('Form Data:', this.mealForm.value);
-      alert('Repas ajouté avec succès !');
-      this.mealForm.reset();
-      this.submitted = false;
+    if (this.mealForm.valid && !this.isSubmit) {
+      this.isSubmit=true;
+      const data=new FormData();
+      data.append('nom',this.mealForm.value.nom);
+      data.append('description',this.mealForm.value.description);
+      data.append('typePlat',this.mealForm.value.typePlat);
+      data.append('prix',this.mealForm.value.prix);
+      data.append('Disponibilite',this.mealForm.value.Disponibilite.toString());
+      if(this.selectedFile){
+        data.append('image',this.selectedFile);
+      }
+      this.platService.creerPlat(data).subscribe({
+        next: (res) => {
+          console.log('Plat ajouté:', res);
+          alert("Plat ajouté")
+          this.mealForm.reset();
+          this.selectedFile=null;
+        },
+        error: (error) => {
+          console.error("Erreur lors de l'ajout du plat:", error);
+          alert("Veuillez reessayer")
+        },
+        complete: () => {
+          this.isSubmit = false; // Toujours remettre à false après la requête
+        }
+      });
+ 
+    }else{
+      alert('Veuillez remplir tous les champs !');
     }
   }
 
 }
+
+
