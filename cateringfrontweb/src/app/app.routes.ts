@@ -1,3 +1,6 @@
 import { Routes } from '@angular/router';
-
-export const routes: Routes = [];
+import { AjoutPlatComponent } from './components/dashboardAdminTunCatering/ajout-plat/ajout-plat.component';
+export const routes: Routes = [
+    { path: 'ajoutplat', component:AjoutPlatComponent },
+    {path:'',redirectTo:'ajoutplat',pathMatch:'full'}
+];
