@@ -6,16 +6,23 @@ router.post("/add", async (req, res) => {
   try {
     const {
       nom,
-      Rotation,
-      typeMenu,
       PlatsPrincipaux,
       PlatsEntree,
       PlatsDessert,
     } = req.body;
+     if (
+       PlatsPrincipaux.length !== 1 ||
+       PlatsEntree.length !== 1 ||
+       PlatsDessert.length !== 1
+     ) {
+       return res.status(400).json({
+         message:
+           "Chaque type de plat (entrée, principal, dessert) doit contenir exactement un plat.",
+       });
+     }
+
     const nouveauMenu = await menuController.createMenu(
       nom,
-      Rotation,
-      typeMenu,
       PlatsPrincipaux,
       PlatsEntree,
       PlatsDessert
