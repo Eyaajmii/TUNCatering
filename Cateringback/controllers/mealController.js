@@ -6,12 +6,13 @@ class mealController {
       if(!req.file){
         return res.status(400).json({ message: "pas d'image."});
       }
-      const {nom, description, typePlat, prix, Disponibilite }=req.body;
+      const {nom, description, typePlat, prix, Disponibilite,Categorie }=req.body;
       if(
         !nom ||
         !description ||
         !typePlat ||
         !prix ||
+        !Categorie||
         !Disponibilite==undefined
       ){
         return res(400).json({message:"Les champs sont obligés."})
@@ -22,6 +23,7 @@ class mealController {
         typePlat,
         prix,
         Disponibilite,
+        Categorie,
         //adminTn,
         image:req.file.filename,
       });
