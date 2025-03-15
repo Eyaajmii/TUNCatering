@@ -19,6 +19,7 @@ export class AjoutPlatComponent {
       description: ['', [Validators.required]],
       prix: ['', [Validators.required]],
       typePlat: ['', Validators.required],
+      Categorie:['',Validators.required],
       Disponibilite: [false],
       //image: ['', [Validators.required, Validators.pattern('(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif))')]]
     });
@@ -39,6 +40,7 @@ export class AjoutPlatComponent {
       data.append('description',this.mealForm.value.description);
       data.append('typePlat',this.mealForm.value.typePlat);
       data.append('prix',this.mealForm.value.prix);
+      data.append('Categorie',this.mealForm.value.Categorie);
       data.append('Disponibilite',this.mealForm.value.Disponibilite.toString());
       if(this.selectedFile){
         data.append('image',this.selectedFile);
@@ -55,7 +57,7 @@ export class AjoutPlatComponent {
           alert("Veuillez reessayer")
         },
         complete: () => {
-          this.isSubmit = false; // Toujours remettre à false après la requête
+          this.isSubmit = false; 
         }
       });
  

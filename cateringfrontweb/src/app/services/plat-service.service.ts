@@ -10,6 +10,7 @@ export interface Plat{
   typePlat:string;
   prix:number;
   Disponibilite:boolean;
+  Categorie:string
   //adminTn:string
 }
 
@@ -24,7 +25,7 @@ export class PlatServiceService {
   }
   //donner tous les plats
   getallPlats():Observable<Plat[]>{
-    return this.http.get<Plat[]>(`${URL}`);
+    return this.http.get<Plat[]>(`${URL}/`);
   }
   //donner un plat specifique
   getPlatById(id:string):Observable<Plat>{
