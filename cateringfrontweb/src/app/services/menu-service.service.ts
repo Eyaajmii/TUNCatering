@@ -13,15 +13,16 @@ export interface Plat{
   typePlat:string;
   prix:number;
   Disponibilite:boolean;
-  Categorie:string
+  Categorie:string;
+  quantite:number;
   //adminTn:string
 }
 export interface Menu{
   _id?: string;
   nom:string;
-  PlatsPrincipaux:Plat;
-  PlatsEntree:Plat;
-  PlatsDessert:Plat;
+  PlatsPrincipaux:Plat[];
+  PlatsEntree:Plat[];
+  PlatsDessert:Plat[];
 }
 @Injectable({
   providedIn: 'root'

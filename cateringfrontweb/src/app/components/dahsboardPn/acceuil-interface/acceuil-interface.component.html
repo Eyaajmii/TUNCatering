@@ -4,14 +4,15 @@
     <div *ngFor="let menu of menus" class="menu-card">
       <h3>{{ menu.nom }}</h3>
       
-      <p><strong>Entrée:</strong> {{ menu.PlatsEntree.nom }}</p>
-      <p>{{ menu.PlatsEntree.description }}</p>
-      
-      <p><strong>Plat Principal:</strong> {{ menu.PlatsPrincipaux.nom }}</p>
-      <p>{{ menu.PlatsPrincipaux.description }}</p>
-      
-      <p><strong>Dessert:</strong> {{ menu.PlatsDessert.nom }}</p>
-      <p>{{ menu.PlatsDessert.description }}</p>
+      <p><strong>Entrée:</strong> {{ menu.PlatsEntree[0].nom }}</p>
+<p>{{ menu.PlatsEntree[0].description }}</p>
+
+<p><strong>Plat Principal:</strong> {{ menu.PlatsPrincipaux[0].nom }}</p>
+<p>{{ menu.PlatsPrincipaux[0].description }}</p>
+
+<p><strong>Dessert:</strong> {{ menu.PlatsDessert[0].nom }}</p>
+<p>{{ menu.PlatsDessert[0].description }}</p>
+
     </div>
   </div>
   

@@ -21,6 +21,7 @@ export class AjoutPlatComponent {
       typePlat: ['', Validators.required],
       Categorie:['',Validators.required],
       Disponibilite: [false],
+      quantite:['',Validators.required]
       //image: ['', [Validators.required, Validators.pattern('(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif))')]]
     });
   }
@@ -41,6 +42,7 @@ export class AjoutPlatComponent {
       data.append('typePlat',this.mealForm.value.typePlat);
       data.append('prix',this.mealForm.value.prix);
       data.append('Categorie',this.mealForm.value.Categorie);
+      data.append('quantite',this.mealForm.value.quantite);
       data.append('Disponibilite',this.mealForm.value.Disponibilite.toString());
       if(this.selectedFile){
         data.append('image',this.selectedFile);

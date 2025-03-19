@@ -10,7 +10,8 @@ export interface Plat{
   typePlat:string;
   prix:number;
   Disponibilite:boolean;
-  Categorie:string
+  Categorie:string;
+  quantite:number;
   //adminTn:string
 }
 
