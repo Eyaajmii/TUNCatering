@@ -10,24 +10,21 @@ const menuSchema = new mongoose.Schema({
     enum: ["Matin", "Midi", "Soir"],
     required: true,
   },*/
-  PlatsPrincipaux: [
+  PlatsPrincipaux: 
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Meal",
     },
-  ],
-  PlatsEntree: [
+  PlatsEntree: 
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Meal",
     },
-  ],
-  PlatsDessert: [
+  PlatsDessert: 
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Meal",
     },
-  ],
   AdminTn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "AdminTunCatering",

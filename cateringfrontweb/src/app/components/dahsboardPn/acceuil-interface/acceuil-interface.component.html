@@ -1,0 +1,21 @@
+<div class="menu-container">
+  <h2>Liste des Menus</h2>
+  <div *ngIf="menus.length > 0; else noMenus">
+    <div *ngFor="let menu of menus" class="menu-card">
+      <h3>{{ menu.nom }}</h3>
+      
+      <p><strong>Entrée:</strong> {{ menu.PlatsEntree.nom }}</p>
+      <p>{{ menu.PlatsEntree.description }}</p>
+      
+      <p><strong>Plat Principal:</strong> {{ menu.PlatsPrincipaux.nom }}</p>
+      <p>{{ menu.PlatsPrincipaux.description }}</p>
+      
+      <p><strong>Dessert:</strong> {{ menu.PlatsDessert.nom }}</p>
+      <p>{{ menu.PlatsDessert.description }}</p>
+    </div>
+  </div>
+  
+  <ng-template #noMenus>
+    <p>Aucun menu disponible pour le moment.</p>
+  </ng-template>
+</div>

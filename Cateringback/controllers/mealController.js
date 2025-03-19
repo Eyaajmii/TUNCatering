@@ -1,23 +1,24 @@
 const plat=require("../models/Meal");
 
 class mealController {
-  static async createMeal(req,res) {
+  static async createMeal(req, res) {
     try {
-      if(!req.file){
-        return res.status(400).json({ message: "pas d'image."});
+      if (!req.file) {
+        return res.status(400).json({ message: "pas d'image." });
       }
-      const {nom, description, typePlat, prix, Disponibilite,Categorie }=req.body;
-      if(
+      const { nom, description, typePlat, prix, Disponibilite, Categorie } =
+        req.body;
+      if (
         !nom ||
         !description ||
         !typePlat ||
         !prix ||
-        !Categorie||
-        !Disponibilite==undefined
-      ){
-        return res(400).json({message:"Les champs sont obligés."})
+        !Categorie ||
+        !Disponibilite == undefined
+      ) {
+        return res(400).json({ message: "Les champs sont obligés." });
       }
-      const newmeal= await plat.create({
+      const newmeal = await plat.create({
         nom,
         description,
         typePlat,
@@ -25,15 +26,15 @@ class mealController {
         Disponibilite,
         Categorie,
         //adminTn,
-        image:req.file.filename,
+        image: req.file.filename,
       });
       res.status(200).json(newmeal);
     } catch (error) {
       console.log(error);
-      res.status(500).json({message:error.message});
+      res.status(500).json({ message: error.message });
     }
   }
-  
+
   static async getAllMeals() {
     try {
       return await plat.find();
@@ -43,7 +44,9 @@ class mealController {
   }
   static async getMealByType(typePlat) {
     try {
-      return await plat.find({ typePlat, Disponibilite: true });
+      const mealsbytype = await plat.find({ typePlat, Disponibilite: true });
+      console.log("Plats trouves :", mealsbytype);
+      return mealsbytype;
     } catch (error) {
       console.log(error);
     }

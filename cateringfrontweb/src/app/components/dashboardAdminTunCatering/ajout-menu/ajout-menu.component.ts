@@ -11,7 +11,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './ajout-menu.component.css'
 })
 export class AjoutMenuComponent implements OnInit {
-  plats:any[]=[];
+  //plats:any[]=[];
+  PlatsPrincipaux:any[]=[];
+  PlatsEntree:any[]=[];
+  PlatsDessert:any[]=[];
   selectedMenu={
     nom:'',
     PlatsPrincipaux:'',
@@ -20,11 +23,12 @@ export class AjoutMenuComponent implements OnInit {
   };
   constructor(private menuService:MenuServiceService){}
   ngOnInit(): void {
-    this.menuService.TousPlats().subscribe(
-      (data) => {
-        this.plats = data;
-      }
-    );
+    this.selectedPlats();
+  }
+  selectedPlats(){
+    this.menuService.TousPrincipaux().subscribe(data=>this.PlatsPrincipaux=data);
+    this.menuService.TousEntree().subscribe(data=>this.PlatsEntree=data);
+    this.menuService.TousDessert().subscribe(data=>this.PlatsDessert=data);
   }
   onSubmit():void{
     const menudata={
@@ -35,8 +39,8 @@ export class AjoutMenuComponent implements OnInit {
     };
     this.menuService.creerMenu(menudata).subscribe({
       next:(res)=>{
-        console.log(res);
-        alert("Menu créé !");
+        alert("Menu crée !");
+        console.log("Menu crée",res);
       },
       error:(err)=>{
         console.log(err);

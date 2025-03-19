@@ -12,7 +12,7 @@
     [(ngModel)]="selectedMenu.PlatsPrincipaux" 
     name="PlatPrincipaux" 
     required>
-    <option *ngFor="let meal of plats" [value]="meal._id">{{ meal.nom }}</option>
+    <option *ngFor="let meal of PlatsPrincipaux" [value]="meal._id">{{ meal.nom }}</option>
   </select>
 
   <label>Plat Entree</label>
@@ -21,7 +21,7 @@
     [(ngModel)]="selectedMenu.PlatsEntree" 
     name="PlatsEntree" 
     required>
-    <option *ngFor="let meal of plats" [value]="meal._id">{{ meal.nom }}</option>
+    <option *ngFor="let meal of PlatsEntree" [value]="meal._id">{{ meal.nom }}</option>
   </select>
 
   <label>Plat Dessert</label>
@@ -30,7 +30,7 @@
     [(ngModel)]="selectedMenu.PlatsDessert" 
     name="PlatsDessert" 
     required>
-    <option *ngFor="let meal of plats" [value]="meal._id">{{ meal.nom }}</option>
+    <option *ngFor="let meal of PlatsDessert" [value]="meal._id">{{ meal.nom }}</option>
   </select>
 
   <button type="submit">Créer Menu</button>

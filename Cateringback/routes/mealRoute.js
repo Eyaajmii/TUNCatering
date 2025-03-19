@@ -31,10 +31,20 @@ router.get("/",async(req,res)=>{
 });*/
 
 router.post("/add", upload.single("image"), mealController.createMeal);
+//detail d'un plat
 router.get("/:id",async(req,res)=>{
     try{
         const meal = await mealController.getMealById(req.params.id);
         res.status(200).json(meal);
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+});
+//prendre un plat par son type
+router.get("/type/:typePlat",async(req,res)=>{
+    try{
+        const mealType=await mealController.getMealByType(req.params.typePlat);
+        res.status(200).json(mealType);
     }catch(err){
         res.status(500).json({message:err.message});
     }
