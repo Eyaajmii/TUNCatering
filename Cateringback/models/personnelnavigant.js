@@ -14,12 +14,6 @@ const personnelnavigantSchema = new mongoose.Schema(
       enum: ["Technique", "Commercial", "Stagiaire", "Chef de cabine"],
       default: "Commercial",
     },
-    vols: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "vol",
-      },
-    ],
   },
   {
     timestamps: true,

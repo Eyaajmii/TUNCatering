@@ -6,7 +6,7 @@ class mealController {
       if (!req.file) {
         return res.status(400).json({ message: "pas d'image." });
       }
-      const { nom, description, typePlat, prix, Disponibilite, Categorie } =
+      const { nom, description, typePlat, prix, Disponibilite, Categorie ,quantite} =
         req.body;
       if (
         !nom ||
@@ -14,6 +14,7 @@ class mealController {
         !typePlat ||
         !prix ||
         !Categorie ||
+        !quantite ||
         !Disponibilite == undefined
       ) {
         return res(400).json({ message: "Les champs sont obligés." });
@@ -25,6 +26,7 @@ class mealController {
         prix,
         Disponibilite,
         Categorie,
+        quantite,
         //adminTn,
         image: req.file.filename,
       });
@@ -72,5 +74,6 @@ class mealController {
       console.log(err);
     }
   }
+  static async miseajourmenuCommande
 }
 module.exports = mealController;

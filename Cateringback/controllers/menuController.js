@@ -2,7 +2,7 @@ const Menu = require("../models/Menu");
 const Meal = require("../models/Meal"); 
 
 class menuController {
-  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert) {
+  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Disponible) {
     try {
       // Vérifier qu'il y a un seul plat pour chaque type
       if (
@@ -16,12 +16,12 @@ class menuController {
       }
 
       // les plates dans bd
-      const platsPrincipaux = await Meal.find({
-        _id: { $in: PlatsPrincipaux },
-      });
+      const platsPrincipaux = await Meal.find({_id: { $in: PlatsPrincipaux },});
       const platsEntrees = await Meal.find({ _id: { $in: PlatsEntree } });
       const platsDesserts = await Meal.find({ _id: { $in: PlatsDessert } });
-
+      if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0){
+        throw new Error("Quantité insuffisante pour les plats choisis");
+      }
       // verification mm categorie
       const categories = [
         platsPrincipaux[0]?.Categorie,
@@ -39,6 +39,7 @@ class menuController {
         PlatsPrincipaux,
         PlatsEntree,
         PlatsDessert,
+        Disponible:true
       });
 
       await nouveauMenu.save(); 
@@ -95,6 +96,33 @@ class menuController {
       return Menu.findByIdAndDelete(id);
     } catch (error) {
       console.error(error);
+    }
+  }
+  //mise a jour d'un menu apres commande (quantite plats --)
+  static async miseajourmenuCommande(id){
+    try{
+      const menu=await Menu.findById(id).populate("PlatsEntree").populate("PlatsPrincipaux").populate("PlatsDessert");
+      if(!menu){
+        console.log("Menu pas trouvé");
+      }
+      let menuDispo=true;
+      //concatination tous les plats dans un seul ensemble
+      const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert];
+      for(let p of plats){
+        if(p.quantite>0){
+          p.quantite-=1;
+          await p.save();
+        }
+        if(p.quantite===0){
+          p.Disponibilite= false;
+          await p.save();
+          menuDispo=false;
+        }
+      }
+      menu.Disponible=menuDispo;
+      await menu.save();
+    }catch(err){
+      console.error(err);
     }
   }
 }

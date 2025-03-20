@@ -25,9 +25,10 @@ const volSchema = new mongoose.Schema({
         type:Boolean,
         defaut:false
     },
-    personnels:[{
+    Commande:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"personnelnavigant"
+        ref:"Commande",
+        required:true
     }]
 });
 module.exports = mongoose.model("vol", volSchema);

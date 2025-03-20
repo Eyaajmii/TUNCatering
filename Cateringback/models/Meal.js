@@ -36,5 +36,9 @@ const mealSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  quantite:{
+    type:Number,
+    required:true
+  }
 });
 module.exports = mongoose.model('Meal', mealSchema);

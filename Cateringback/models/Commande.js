@@ -6,6 +6,10 @@ const commandeSchema = new mongoose.Schema({
     required: true,
     default: 1,
   },
+  dateCommnade:{
+    type:Date,
+    default:Date.now
+  },
   Statut: {
     type: String,
     enum: [
@@ -22,29 +26,25 @@ const commandeSchema = new mongoose.Schema({
     //si le pn passe commande
     type: mongoose.Schema.Types.ObjectId,
     ref: "personnelnavigant",
-    required: function () {
-      return !this.MatriculeResTun;
-    },
-  }, //a partir de pn on prend le numvol et nomvol
+    default:null
+  }, //si dir catering passe commande
   MatriculeResTun: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ResponsableTunDirCatering",
-    required: function () {
-      return !this.MatriculePn;
-    },
+    default:null
   },
-  nomMenu: {
+  vol: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Menu",
-    required: true,
+    ref: "vol",
+    required:true,    
   },
-  dateVolDep: {
-    type: Date,
-    required: true,
+  menu:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Menu",
   },
-  numVol: {
-    type: Number,
-    required: true,
-  },
+  plats:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Meal",
+  }],
 });
 module.exports = mongoose.model("Commande", commandeSchema);
