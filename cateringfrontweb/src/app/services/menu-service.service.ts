@@ -23,6 +23,7 @@ export interface Menu{
   PlatsPrincipaux:Plat[];
   PlatsEntree:Plat[];
   PlatsDessert:Plat[];
+  Disponible:boolean
 }
 @Injectable({
   providedIn: 'root'

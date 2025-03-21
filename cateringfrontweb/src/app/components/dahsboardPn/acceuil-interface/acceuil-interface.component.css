@@ -1,14 +1,85 @@
-.menu-container {
-    max-width: 800px;
-    margin: 0 auto;
+/* Style global */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+/* Titres */
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Section des menus */
+.menu-card {
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+}
+
+.menu-card h3 {
+  font-size: 1.5rem;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.menu-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Section des plats */
+.plat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  text-align: center;
+}
+
+.plat-card:hover {
+  transform: scale(1.05);
+}
+
+.plat-card h3 {
+  font-size: 1.5rem;
+  color: #27ae60;
+}
+
+.plat-card p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Image des plats */
+.plat-image {
+  width: 100%;
+  max-width: 250px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menu-card,
+  .plat-card {
     text-align: center;
-  }
-  
-  .menu-card {
-    border: 1px solid #ddd;
     padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
   }
-  
+}

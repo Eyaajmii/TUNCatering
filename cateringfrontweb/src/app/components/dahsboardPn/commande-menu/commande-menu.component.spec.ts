@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CommadeComponent } from './commade.component';
+import { CommandeMenuComponent } from './commande-menu.component';
 
-describe('CommadeComponent', () => {
-  let component: CommadeComponent;
-  let fixture: ComponentFixture<CommadeComponent>;
+describe('CommandeMenuComponent', () => {
+  let component: CommandeMenuComponent;
+  let fixture: ComponentFixture<CommandeMenuComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CommadeComponent]
+      imports: [CommandeMenuComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CommadeComponent);
+    fixture = TestBed.createComponent(CommandeMenuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

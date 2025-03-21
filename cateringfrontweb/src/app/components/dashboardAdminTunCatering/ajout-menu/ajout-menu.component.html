@@ -32,6 +32,9 @@
     required>
     <option *ngFor="let meal of PlatsDessert" [value]="meal._id">{{ meal.nom }}</option>
   </select>
+  <div > 
+    Disponible :<input id="Disponible"  type="checkbox">
+  </div>
 
   <button type="submit">Créer Menu</button>
 </form>

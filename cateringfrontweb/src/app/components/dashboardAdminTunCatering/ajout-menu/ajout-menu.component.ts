@@ -20,6 +20,7 @@ export class AjoutMenuComponent implements OnInit {
     PlatsPrincipaux:'',
     PlatsEntree:'',
     PlatsDessert:'',
+    Disponible:false
   };
   constructor(private menuService:MenuServiceService){}
   ngOnInit(): void {
@@ -36,6 +37,7 @@ export class AjoutMenuComponent implements OnInit {
       PlatsPrincipaux:[this.selectedMenu.PlatsPrincipaux],
       PlatsEntree:[this.selectedMenu.PlatsEntree],
       PlatsDessert:[this.selectedMenu.PlatsDessert],
+      Disponible:[this.selectedMenu.Disponible]
     };
     this.menuService.creerMenu(menudata).subscribe({
       next:(res)=>{
@@ -44,7 +46,7 @@ export class AjoutMenuComponent implements OnInit {
       },
       error:(err)=>{
         console.log(err);
-        alert('Differents category!!!!');
+        alert('Erreur'+err);
       }
   });
   }

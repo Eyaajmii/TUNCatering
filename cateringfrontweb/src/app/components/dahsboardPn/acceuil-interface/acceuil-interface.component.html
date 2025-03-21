@@ -1,22 +1,36 @@
-<div class="menu-container">
+<div class="container">
   <h2>Liste des Menus</h2>
   <div *ngIf="menus.length > 0; else noMenus">
     <div *ngFor="let menu of menus" class="menu-card">
       <h3>{{ menu.nom }}</h3>
-      
+
       <p><strong>Entrée:</strong> {{ menu.PlatsEntree[0].nom }}</p>
-<p>{{ menu.PlatsEntree[0].description }}</p>
+      <p>{{ menu.PlatsEntree[0].description }}</p>
 
-<p><strong>Plat Principal:</strong> {{ menu.PlatsPrincipaux[0].nom }}</p>
-<p>{{ menu.PlatsPrincipaux[0].description }}</p>
+      <p><strong>Plat Principal:</strong> {{ menu.PlatsPrincipaux[0].nom }}</p>
+      <p>{{ menu.PlatsPrincipaux[0].description }}</p>
 
-<p><strong>Dessert:</strong> {{ menu.PlatsDessert[0].nom }}</p>
-<p>{{ menu.PlatsDessert[0].description }}</p>
-
+      <p><strong>Dessert:</strong> {{ menu.PlatsDessert[0].nom }}</p>
+      <p>{{ menu.PlatsDessert[0].description }}</p>
+      <button (click)="commander(menu.nom)">Commander</button>
     </div>
+
   </div>
-  
+
   <ng-template #noMenus>
     <p>Aucun menu disponible pour le moment.</p>
+  </ng-template>
+
+  <h2>Liste des Plats</h2>
+  <div *ngIf="plats.length > 0; else noPlats">
+    <div *ngFor="let plat of plats" class="plat-card">
+      <h3>{{ plat.nom }}</h3>
+      <p>{{ plat.description }}</p>
+      <img *ngIf="plat.image" [src]="'http://localhost:5000/uploads/' + plat.image" alt="{{ plat.nom }}" class="plat-image">
+    </div>
+  </div>
+
+  <ng-template #noPlats>
+    <p>Aucun plat disponible pour le moment.</p>
   </ng-template>
 </div>
