@@ -1,5 +1,7 @@
 const express=require("express");
 const router=express.Router();
+const multer = require('multer');
+const upload = multer(); // Middleware pour parser multipart/form-data
 const CommandeController=require("../controllers/commandeController");
 
 router.get("/",async(req,res)=>{
@@ -19,12 +21,13 @@ router.get("/",async(req,res)=>{
         res.status(500).send(error.message);
     }
 });*/
-router.post("/addCommandeMenu", async(req,res)=>{
+router.post("/addCommandeMenu",upload.none(), async(req,res)=>{
     try{
-        const { volId, menuId, MatriculeResTun, MatriculePn } = req.body;
+        const numVol=parseInt(req.body.numVol)
+        const { nom, MatriculeResTun, MatriculePn } = req.body;
         const newcommande = await CommandeController.RequestCommandeMenu(
-          volId,
-          menuId,
+          numVol,
+          nom,
           MatriculePn,
           MatriculeResTun
         );
@@ -33,6 +36,23 @@ router.post("/addCommandeMenu", async(req,res)=>{
         res.status(500).send(error.message);
     }
 });
+router.post("/addCommandePlat",upload.none(),async(req,res)=>{
+    try{
+        const numVol=parseInt(req.body.numVol)
+        const { nomEntree,nomPlatPrincipal,nomDessert, MatriculeResTun, MatriculePn } = req.body;
+        const newcommande = await CommandeController.RequestCommandeMeal(
+            numVol,
+            nomEntree,
+            nomPlatPrincipal,
+            nomDessert,
+            MatriculePn,
+            MatriculeResTun
+        );
+        res.status(200).json(newcommande);
+    }catch(err){
+        res.status(500).send(err.message);
+    }
+})
 router.get("/total",async(req,res)=>{
     try{
         const total = await CommandeController.getTotalCommandes();

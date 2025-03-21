@@ -114,7 +114,7 @@ class menuController {
           await p.save();
         }
         if(p.quantite===0){
-          p.Disponibilite= false;
+          p.Disponibilite = false;
           await p.save();
           menuDispo=false;
         }

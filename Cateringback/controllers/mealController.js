@@ -74,6 +74,25 @@ class mealController {
       console.log(err);
     }
   }
-  static async miseajourmenuCommande
+  static async miseajourquantite(Entree,PlatPrincipal,Dessert)
+  {
+    try{
+      const plats=[Entree,PlatPrincipal,Dessert];
+      for(let p of plats){
+        if(!p){
+          continue;
+        }
+        if(p.quantite>0){
+          p.quantite-=1;
+        }
+        if(p.quantite===0){
+          p.Disponibilite = false;
+        }
+        await p.save();
+      }
+    }catch(err){
+      console.log(err);
+    }
+  }
 }
 module.exports = mealController;
