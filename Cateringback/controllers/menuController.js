@@ -99,9 +99,9 @@ class menuController {
     }
   }
   //mise a jour d'un menu apres commande (quantite plats --)
-  static async miseajourmenuCommande(id){
+  static async miseajourmenuCommande(nom){
     try{
-      const menu=await Menu.findById(id).populate("PlatsEntree").populate("PlatsPrincipaux").populate("PlatsDessert");
+      const menu=await Menu.findOne({nom}).populate("PlatsEntree").populate("PlatsPrincipaux").populate("PlatsDessert");
       if(!menu){
         console.log("Menu pas trouvé");
       }

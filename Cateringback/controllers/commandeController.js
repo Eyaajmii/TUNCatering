@@ -82,13 +82,14 @@ class CommandeController {
 
       const date = new Date();
       const limitdate = new Date(vol.dateVolDep);
-      if (["Tunis", "Monastir","Djerba"].includes(vol.Destination)) {
-        limitdate.setHours(limitdate.getHours() - 3);
-      } else if (["Enfidha", "Sfax","Tozeur","Tabarka"].includes(vol.Destination)) {
-        limitdate.setHours(limitdate.getHours() - 12);
-      }
       if (date > limitdate) {
-        console.log("Commande not allowed after the flight departure time");
+        throw new Error("Commande not allowed after the flight departure time");
+      }
+      const deadline = new Date(limitdate);
+      if (["Tunis", "Monastir", "Djerba"].includes(vol.Depart)) {
+        deadline.setHours(deadline.getHours() - 3);
+      } else if (["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)) {
+        deadline.setHours(deadline.getHours() - 12);
       }
       const newCmd = await commande.create({
         vol: volId,
@@ -113,7 +114,7 @@ class CommandeController {
       }
       const vol = await flight.findOne({ numVol: numVol });
       if (!vol) {
-        console.log("vol not found");
+        throw new Error("vol not found");
       }
       const volId=vol._id;
       const dureeVol = parseInt(vol.DureeVol);
@@ -125,13 +126,13 @@ class CommandeController {
         throw new Error("Only 1 meal is allowed per PN for flights ≤ 6h");
       }
       if(cmdExist>0){
-        console.log("PN already has a meal on this flight");
+        throw new Error("PN already has a meal on this flight");
       }
       const Entree= await plat.findOne({nom:nomEntree,typePlat:"Entrée"});
       const PlatPrincipal= await plat.findOne({nom:nomPlatPrincipal,typePlat:"Plat Principal"});
       const Dessert= await plat.findOne({nom:nomDessert,typePlat:"Dessert"});
       if(!Entree||!PlatPrincipal||!Dessert){
-        console.log("Plat not found ");
+        throw new Error("Plat not found ");
       }
       if(!Entree.Disponibilite||!PlatPrincipal.Disponibilite||!Dessert.Disponibilite){
         throw new Error("Plat indisponible");
@@ -147,13 +148,14 @@ class CommandeController {
       }
       const date = new Date();
       const limitdate = new Date(vol.dateVolDep);
+      const deadline = new Date(limitdate);
       if (["Tunis", "Monastir","Djerba"].includes(vol.Destination)) {
-        limitdate.setHours(limitdate.getHours() - 3);
+        deadline.setHours(deadline.getHours() - 3);
       } else if (["Enfidha", "Sfax","Tozeur","Tabarka"].includes(vol.Destination)) {
-        limitdate.setHours(limitdate.getHours() - 12);
+        deadline.setHours(deadline.getHours() - 12);
       }
       if (date > limitdate) {
-        console.log("Commande not allowed after the flight departure time");
+        throw new Error("Commande not allowed after the flight departure time");
         //commande.Statut="Annulé";
       }
       const newCmd = await commande.create({
@@ -169,7 +171,7 @@ class CommandeController {
       console.log("Commande bien affecte");
       return newCmd;
     }catch(err){
-      console.log(err.message);
+      throw new Error(err.message);
     }
   }
   //admin modifie statut
