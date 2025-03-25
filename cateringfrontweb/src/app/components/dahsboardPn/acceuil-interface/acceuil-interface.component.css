@@ -39,47 +39,158 @@ h2 {
   font-size: 1rem;
   color: #555;
 }
-
-/* Section des plats */
-.plat-card {
-  background: white;
-  border-radius: 12px;
+/* Style global */
+.container {
+  max-width: 1200px;
+  margin: auto;
   padding: 20px;
-  margin: 15px 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background: #f4f4f4;
+}
+
+/* Titres */
+h2 {
   text-align: center;
+  font-size: 2.2rem;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
-.plat-card:hover {
-  transform: scale(1.05);
+/* Conteneur principal */
+.plats-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 25px;
 }
 
-.plat-card h3 {
+/* Cadre pour chaque catégorie */
+.plat-category {
+  flex: 1;
+  min-width: 30%;
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.plat-category:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Titres des catégories */
+.plat-category h3 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Couleurs pour chaque type de plat */
+.entree h3 {
+  background: linear-gradient(to right, #ffcc5c, #ffa726);
+}
+
+.principal h3 {
+  background: linear-gradient(to right, #ff6f61, #e53935);
+}
+
+.dessert h3 {
+  background: linear-gradient(to right, #6b5b95, #9575cd);
+}
+
+/* Style des plats individuels */
+.plat-item {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+  position: relative;
+}
+
+.plat-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Nom des plats */
+.plat-item h4 {
   font-size: 1.5rem;
-  color: #27ae60;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
 
-.plat-card p {
+/* Description */
+.plat-item p {
   font-size: 1rem;
   color: #666;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* Image des plats */
 .plat-image {
   width: 100%;
-  max-width: 250px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  max-width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   margin-top: 10px;
+  transition: transform 0.3s;
+}
+
+.plat-image:hover {
+  transform: scale(1.05);
+}
+
+/* Icône de panier */
+.fa-basket-shopping {
+  font-size: 1.8rem;
+  color: #ff6f61;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.2s;
+}
+
+.fa-basket-shopping:hover {
+  transform: scale(1.2);
+  color: #e53935;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .menu-card,
-  .plat-card {
-    text-align: center;
-    padding: 15px;
+  .plats-container {
+    flex-direction: column;
   }
+
+  .plat-category {
+    min-width: 100%;
+  }
+}
+.plat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.plat-item img {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

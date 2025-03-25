@@ -12,7 +12,7 @@
 
       <p><strong>Dessert:</strong> {{ menu.PlatsDessert[0].nom }}</p>
       <p>{{ menu.PlatsDessert[0].description }}</p>
-      <button (click)="commander(menu.nom)">Commander</button>
+      <button (click)="commanderMenu(menu.nom)">Commander</button>
     </div>
 
   </div>
@@ -22,13 +22,41 @@
   </ng-template>
 
   <h2>Liste des Plats</h2>
-  <div *ngIf="plats.length > 0; else noPlats">
-    <div *ngFor="let plat of plats" class="plat-card">
-      <h3>{{ plat.nom }}</h3>
-      <p>{{ plat.description }}</p>
-      <img *ngIf="plat.image" [src]="'http://localhost:5000/uploads/' + plat.image" alt="{{ plat.nom }}" class="plat-image">
+  <div class="plats-container">
+    <!-- Entrées -->
+    <div class="plat-category entree">
+      <h3><i class="fas fa-utensils icon"></i> Entrées</h3>
+      <div *ngFor="let entree of PlatsEntree" class="plat-item">
+        <h4>{{ entree.nom }}</h4>
+        <p>{{ entree.description }}</p>
+        <img *ngIf="entree.image" [src]="'http://localhost:5000/uploads/' + entree.image" alt="{{ entree.nom }}" class="plat-image">
+        <button (click)="SelectedMeal(entree,'Entrée')" [disabled]="EntreeSelectionne&&EntreeSelectionne!==entree" ><i class="fa-solid fa-basket-shopping"></i></button>
+      </div>
+    </div>
+  
+    <!-- Plats Principaux -->
+    <div class="plat-category principal">
+      <h3><i class="fas fa-drumstick-bite icon"></i> Plats Principaux</h3>
+      <div *ngFor="let principal of PlatsPrincipaux" class="plat-item">
+        <h4>{{ principal.nom }}</h4>
+        <p>{{ principal.description }}</p>
+        <img *ngIf="principal.image" [src]="'http://localhost:5000/uploads/' + principal.image" alt="{{ principal.nom }}" class="plat-image">
+        <button (click)="SelectedMeal(principal,'Plat Principal')" [disabled]="PrincipauxSelectionne&&PrincipauxSelectionne!==principal" ><i class="fa-solid fa-basket-shopping"></i></button>
+      </div>
+    </div>
+  
+    <!-- Desserts -->
+    <div class="plat-category dessert">
+      <h3><i class="fas fa-ice-cream icon"></i> Desserts</h3>
+      <div *ngFor="let dessert of PlatsDessert" class="plat-item">
+        <h4>{{ dessert.nom }}</h4>
+        <p>{{ dessert.description }}</p>
+        <img *ngIf="dessert.image" [src]="'http://localhost:5000/uploads/' + dessert.image" alt="{{ dessert.nom }}" class="plat-image">
+        <button (click)="SelectedMeal(dessert,'Dessert')" [disabled]="DessertSelectionne&&DessertSelectionne!==dessert" ><i class="fa-solid fa-basket-shopping"></i></button>
+      </div>
     </div>
   </div>
+  
 
   <ng-template #noPlats>
     <p>Aucun plat disponible pour le moment.</p>

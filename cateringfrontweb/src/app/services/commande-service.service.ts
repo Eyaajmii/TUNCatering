@@ -12,4 +12,7 @@ export class CommandeServiceService {
   CommanderMenu(formData:FormData):Observable<any>{
     return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData);
   }
+  CommanderPlats(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData);
+  }
 }
