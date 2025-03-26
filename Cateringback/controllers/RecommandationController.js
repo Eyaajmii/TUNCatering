@@ -3,6 +3,7 @@ const Meal = require("../models/Meal");
 const carnet = require("../models/Carnetsante");
 const commande=require("../models/Commande");
 class RecommandationController {
+  //return menu of the day
   static async getMenuJour() {
     try {
       const date = new Date().toISOString().split("T")[0]; //Le caractère "T" est utilisé comme délimiteur.(Javascript.info)
@@ -18,6 +19,7 @@ class RecommandationController {
       console.log(err);
     }
   }
+  //get recommandation from health record and historique of orders
   static async HistoriqueEtCarnet(MatriculePn) {
     try {
         if(!MatriculePn){

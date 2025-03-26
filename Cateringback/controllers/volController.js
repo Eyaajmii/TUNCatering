@@ -9,7 +9,7 @@ class volController{
             if (existingvol) {
               console.log("Ce vol est déjà utilisé.");
             }
-            const newVol = new fligth({
+            const newVol = await fligth.create({
               numVol,
               volName,
               Destination,
@@ -19,7 +19,6 @@ class volController{
               Commande: Commande ?? [],
               Depart,
             });
-            await newVol.save();
             console.log("vol créé");
             return newVol;
         }catch(err){

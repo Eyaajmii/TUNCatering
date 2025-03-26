@@ -1,18 +1,8 @@
 const pn=require("../models/personnelnavigant");
 const CarnetSante=require("../models/Carnetsante")
 class PnController {
-  static async addPn(
-    email,
-    password,
-    username,
-    nom,
-    prenom,
-    telephone,
-    Matricule,
-    TypePersonnel
-  ) {
+  static async addPn(email,password,username,nom,prenom,telephone,Matricule,TypePersonnel) {
     try {
-      // Vérification des champs obligatoires
       if (!Matricule || !password || !username) {
         console.log("Matricule, username et password sont obligatoires.");
         
@@ -25,7 +15,7 @@ class PnController {
       }
 
       // Création d'un nouvel utilisateur PN
-      const newPn = new pn({
+      const newPn = await pn.create({
         email,
         password,
         username,
@@ -35,7 +25,6 @@ class PnController {
         Matricule,
         TypePersonnel,
       });
-      await newPn.save();
       console.log("Personnel navigant ajouté avec succès.");
       return newPn;
     } catch (error) {
@@ -44,14 +33,13 @@ class PnController {
   }
   static async addCarnet(MatriculePn,Allergies,Maladie,Medicaments,Commentaires){
     try{
-      const newCarnet = new CarnetSante({
+      const newCarnet = await CarnetSante.create({
         MatriculePn,
         Allergies,
         Maladie,
         Medicaments,
         Commentaires,
       });
-      await newCarnet.save();
       console.log("Carnet de santé ajouté avec succès.");
       return newCarnet;
     }catch(err){

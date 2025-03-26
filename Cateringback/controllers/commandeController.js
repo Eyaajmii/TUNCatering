@@ -8,6 +8,7 @@ const flight=require("../models/vol");
 
 
 class CommandeController {
+  //return all orders
   static async getAllCommands() {
     try {
       if (commande.MatriculePn) {
@@ -24,6 +25,7 @@ class CommandeController {
       throw new Error("error retreiveing commands:" + error);
     }
   }
+  //return total of orders
   static async getTotatCommand() {
     try {
       return await commande.countDocuments();
@@ -31,6 +33,7 @@ class CommandeController {
       throw new Error("error retreiveing commands:" + error);
     }
   }
+  //return order by id
   static async getCommandByID(id) {
     try {
       const cmd = await commande
@@ -44,7 +47,7 @@ class CommandeController {
       throw new Error("error retreiveing commands:" + error);
     }
   }
-  //CommanderMenu
+  //OrderMenu
   static async RequestCommandeMenu(numVol,nom,MatriculePn,MatriculeResTun) {
     try {
       if (typeof numVol !== "number") {
@@ -63,23 +66,11 @@ class CommandeController {
       if (dureeVol <= 6 && cmdExist >= 1) {
         throw new Error("Only 1 meal is allowed per PN for flights ≤ 6h");
       }
-      /* Vérifier si le PN a déjà commandé ce menu 
-      const menuExistPn = await commande.findOne({
-        vol: volId,
-        MatriculePn,
-        menu: menuId,
-      });
-      if (menuExistPn) {
-        throw new Error(
-          "This menu has already been ordered by this PN for this flight."
-        );
-      }*/
       const menu = await Menu.findOne({nom:nom});
       if (!menu.Disponible) {
         throw new Error("Menu not available");
       }
       const menuId=menu._id;
-
       const date = new Date();
       const limitdate = new Date(vol.dateVolDep);
       if (date > limitdate) {
@@ -106,7 +97,7 @@ class CommandeController {
       throw new Error("error creating command:" + err);
     }
   }
-  //composition des plats pour commander
+  //Order a 3 meals
   static async RequestCommandeMeal(numVol,nomEntree,nomPlatPrincipal,nomDessert,MatriculePn,MatriculeResTun){
     try{
       if (typeof numVol !== "number") {
@@ -156,7 +147,6 @@ class CommandeController {
       }
       if (date > limitdate) {
         throw new Error("Commande not allowed after the flight departure time");
-        //commande.Statut="Annulé";
       }
       const newCmd = await commande.create({
         vol: volId,
@@ -174,7 +164,7 @@ class CommandeController {
       throw new Error(err.message);
     }
   }
-  //admin modifie statut
+  //Admin modify state of order
   static async updateCommandeStatus(id, status) {
     try {
       const Updatecommande = await commande.findByIdAndUpdate(id, {
@@ -188,6 +178,7 @@ class CommandeController {
       throw new Error("error updating commande status:" + error);
     }
   }
+  //Cancel an order
   static async cancelcommandeRequest(id) {
     try {
       const Cancelcommande = await commande.findById(id);

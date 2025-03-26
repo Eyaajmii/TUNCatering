@@ -1,6 +1,7 @@
 const plat=require("../models/Meal");
 
 class mealController {
+  //create meal
   static async createMeal(req, res) {
     try {
       if (!req.file) {
@@ -36,7 +37,7 @@ class mealController {
       res.status(500).json({ message: error.message });
     }
   }
-
+  //return all meals
   static async getAllMeals() {
     try {
       return await plat.find({Disponibilite:true});
@@ -44,6 +45,7 @@ class mealController {
       console.log(error);
     }
   }
+  //return meal by type
   static async getMealByType(typePlat) {
     try {
       const mealsbytype = await plat.find({ typePlat, Disponibilite: true });
@@ -53,6 +55,7 @@ class mealController {
       console.log(error);
     }
   }
+  //return meal by id
   static async getMealById(id) {
     try {
       return await plat.findById(id);
@@ -60,6 +63,7 @@ class mealController {
       console.log(error);
     }
   }
+  //Admin cancel a meal
   static async cancelMeal(id) {
     try {
       return await plat.findByIdAndDelete(id);
@@ -67,6 +71,7 @@ class mealController {
       console.log(error);
     }
   }
+  //Admin update meal
   static async updateMeal(id, data) {
     try {
       return await plat.findByIdAndUpdate(id, data, { new: true });
@@ -74,6 +79,7 @@ class mealController {
       console.log(err);
     }
   }
+  //Admin set quantity of meal
   static async miseajourquantite(Entree,PlatPrincipal,Dessert)
   {
     try{

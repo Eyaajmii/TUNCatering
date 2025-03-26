@@ -11,27 +11,8 @@ router.get("/",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
-//add meal
-/*router.post("/add",async(req,res)=>{
-    try{
-        const { nom, description, typePlat, prix, disponibilite,image} = req.body;
-        const nouveaumeal = await mealController.createMeal(
-          nom,
-          description,
-          typePlat,
-          prix,
-          disponibilite,
-          //adminTn,
-          image
-        );
-        res.status(201).json(nouveaumeal);
-    }catch(error){
-        res.status(500).json({message:error.message});
-    }
-});*/
-
 router.post("/add", upload.single("image"), mealController.createMeal);
-//detail d'un plat
+
 router.get("/:id",async(req,res)=>{
     try{
         const meal = await mealController.getMealById(req.params.id);
@@ -40,7 +21,7 @@ router.get("/:id",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
-//prendre un plat par son type
+
 router.get("/type/:typePlat",async(req,res)=>{
     try{
         const mealType=await mealController.getMealByType(req.params.typePlat);

@@ -2,6 +2,7 @@ const Menu = require("../models/Menu");
 const Meal = require("../models/Meal"); 
 
 class menuController {
+  //create a menu
   static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Disponible) {
     try {
       // Vérifier qu'il y a un seul plat pour chaque type
@@ -33,24 +34,21 @@ class menuController {
         throw new Error("Les plats doivent appartenir à la même catégorie.");
       }
 
-      // Créer le nouveau menu
-      const nouveauMenu = new Menu({
+      const nouveauMenu = await Menu.create({
         nom,
         PlatsPrincipaux,
         PlatsEntree,
         PlatsDessert,
         Disponible:true,
         DateAjout:Date.now(),
-      });
-
-      await nouveauMenu.save(); 
+      }); 
       return nouveauMenu;
     } catch (err) {
       console.error(err);
       throw err; 
     }
   }
-
+  //return detail menu by id
   static async getMenuDetail(id) {
     try {
       return Menu.findById(id)
@@ -61,7 +59,7 @@ class menuController {
       console.error(err);
     }
   }
-
+  //Admin update menu
   static async updateMenu(id, data) {
     try {
       return Menu.findByIdAndUpdate(id, data, { new: true });
@@ -69,7 +67,7 @@ class menuController {
       console.error(err);
     }
   }
-
+  //return all menus
   static async getAllMenu() {
     try {
       return Menu.find()
@@ -80,7 +78,7 @@ class menuController {
       console.error(err);
     }
   }
-
+  //return menu by type
   static async getMenuBytype(typeMenu) {
     try {
       return Menu.find({ typeMenu })
@@ -91,7 +89,7 @@ class menuController {
       console.error(err);
     }
   }
-
+  //Admin cancel menu
   static async cancelMenu(id) {
     try {
       return Menu.findByIdAndDelete(id);
@@ -107,7 +105,7 @@ class menuController {
         console.log("Menu pas trouvé");
       }
       let menuDispo=true;
-      //concatination tous les plats dans un seul ensemble
+      //concatination tous les plats dans un seul ensemble//
       const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert];
       for(let p of plats){
         if(p.quantite>0){
