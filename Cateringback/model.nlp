@@ -1,0 +1,1002 @@
+{
+  "settings": {
+    "languages": [
+      "fr"
+    ],
+    "forceNER": true,
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "fr"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "fr": {
+        "settings": {
+          "locale": "fr",
+          "trainByDomain": false,
+          "tag": "domain-manager-fr",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "bonjour": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "salut": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "ca,comment,va": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "bonsoir": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "aujourd,command,hui,je,mon,pour,rep,voudr": {
+            "intent": "Commande.Meal",
+            "domain": "default"
+          },
+          "command,je,mon,rep,voudr": {
+            "intent": "Commande.Meal",
+            "domain": "default"
+          },
+          "command,je,le,plat,suiv,veux": {
+            "intent": "Commande.Meal",
+            "domain": "default"
+          },
+          "disponibl,le,montrez-moi,plat": {
+            "intent": "Meal",
+            "domain": "default"
+          },
+          "disponibl,le,plat,quel,sont": {
+            "intent": "Meal",
+            "domain": "default"
+          },
+          "as,de,recommand,tu": {
+            "intent": "Recommandation",
+            "domain": "default"
+          },
+          "autr,avez-vous,de,option": {
+            "intent": "Recommandation",
+            "domain": "default"
+          },
+          "de,dej,disponibl,il,menus,t,ya": {
+            "intent": "Menu",
+            "domain": "default"
+          },
+          "ce,command,je,menu,voudr": {
+            "intent": "Commande.Menu",
+            "domain": "default"
+          },
+          "aim,ce,j,menu": {
+            "intent": "Commande.Menu",
+            "domain": "default"
+          },
+          "e,je,merc,satisf,suis": {
+            "intent": "greeting",
+            "domain": "default"
+          },
+          "command,meal": {
+            "intent": "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "greeting": "default",
+          "Commande.Meal": "default",
+          "Meal": "default",
+          "Recommandation": "default",
+          "Menu": "default",
+          "Commande.Menu": "default",
+          "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "Bonjour",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "Salut",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "Comment ça va?",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "Bonsoir",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "je voudrais commander mon repas pour aujourd'hui ",
+            "intent": "Commande.Meal"
+          },
+          {
+            "domain": "default",
+            "utterance": "je voudrais commander mon repas",
+            "intent": "Commande.Meal"
+          },
+          {
+            "domain": "default",
+            "utterance": "Je veux commander les plats suivants : ",
+            "intent": "Commande.Meal"
+          },
+          {
+            "domain": "default",
+            "utterance": "Montrez-moi les plats disponibles",
+            "intent": "Meal"
+          },
+          {
+            "domain": "default",
+            "utterance": "Quels sont les plats disponibles?",
+            "intent": "Meal"
+          },
+          {
+            "domain": "default",
+            "utterance": "as tu des récommandations ?",
+            "intent": "Recommandation"
+          },
+          {
+            "domain": "default",
+            "utterance": "Avez-vous des autres options?",
+            "intent": "Recommandation"
+          },
+          {
+            "domain": "default",
+            "utterance": "Il ya t'il déja des menus disponibles?",
+            "intent": "Menu"
+          },
+          {
+            "domain": "default",
+            "utterance": "je voudrais commander ce menu",
+            "intent": "Commande.Menu"
+          },
+          {
+            "domain": "default",
+            "utterance": "j'aime ce menu'",
+            "intent": "Commande.Menu"
+          },
+          {
+            "domain": "default",
+            "utterance": "je suis satisfait(e) merci !",
+            "intent": "greeting"
+          },
+          {
+            "domain": "default",
+            "utterance": "Commande.Meal",
+            "intent": "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "fr",
+              "tag": "nlu-fr",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "bonjour": 1,
+              "salut": 1,
+              "comment": 1,
+              "ca": 1,
+              "va": 1,
+              "bonsoir": 1,
+              "je": 1,
+              "voudr": 1,
+              "command": 1,
+              "mon": 1,
+              "rep": 1,
+              "pour": 1,
+              "aujourd": 1,
+              "hui": 1,
+              "veux": 1,
+              "le": 1,
+              "plat": 1,
+              "suiv": 1,
+              "montrez-moi": 1,
+              "disponibl": 1,
+              "quel": 1,
+              "sont": 1,
+              "as": 1,
+              "tu": 1,
+              "de": 1,
+              "recommand": 1,
+              "avez-vous": 1,
+              "autr": 1,
+              "option": 1,
+              "il": 1,
+              "ya": 1,
+              "t": 1,
+              "dej": 1,
+              "menus": 1,
+              "ce": 1,
+              "menu": 1,
+              "j": 1,
+              "aim": 1,
+              "suis": 1,
+              "satisf": 1,
+              "e": 1,
+              "merc": 1,
+              "meal": 1
+            },
+            "intents": {
+              "greeting": 1,
+              "Commande.Meal": 1,
+              "Meal": 1,
+              "Recommandation": 1,
+              "Menu": 1,
+              "Commande.Menu": 1,
+              "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas": 1
+            },
+            "intentFeatures": {
+              "greeting": {
+                "bonjour": 1,
+                "salut": 1,
+                "comment": 1,
+                "ca": 1,
+                "va": 1,
+                "bonsoir": 1,
+                "je": 1,
+                "suis": 1,
+                "satisf": 1,
+                "e": 1,
+                "merc": 1
+              },
+              "Commande.Meal": {
+                "je": 1,
+                "voudr": 1,
+                "command": 1,
+                "mon": 1,
+                "rep": 1,
+                "pour": 1,
+                "aujourd": 1,
+                "hui": 1,
+                "veux": 1,
+                "le": 1,
+                "plat": 1,
+                "suiv": 1
+              },
+              "Meal": {
+                "montrez-moi": 1,
+                "le": 1,
+                "plat": 1,
+                "disponibl": 1,
+                "quel": 1,
+                "sont": 1
+              },
+              "Recommandation": {
+                "as": 1,
+                "tu": 1,
+                "de": 1,
+                "recommand": 1,
+                "avez-vous": 1,
+                "autr": 1,
+                "option": 1
+              },
+              "Menu": {
+                "il": 1,
+                "ya": 1,
+                "t": 1,
+                "dej": 1,
+                "de": 1,
+                "menus": 1,
+                "disponibl": 1
+              },
+              "Commande.Menu": {
+                "je": 1,
+                "voudr": 1,
+                "command": 1,
+                "ce": 1,
+                "menu": 1,
+                "j": 1,
+                "aim": 1
+              },
+              "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas": {
+                "command": 1,
+                "meal": 1
+              }
+            },
+            "featuresToIntent": {
+              "bonjour": [
+                "greeting"
+              ],
+              "salut": [
+                "greeting"
+              ],
+              "comment": [
+                "greeting"
+              ],
+              "ca": [
+                "greeting"
+              ],
+              "va": [
+                "greeting"
+              ],
+              "bonsoir": [
+                "greeting"
+              ],
+              "je": [
+                "greeting",
+                "Commande.Meal",
+                "Commande.Menu"
+              ],
+              "suis": [
+                "greeting"
+              ],
+              "satisf": [
+                "greeting"
+              ],
+              "e": [
+                "greeting"
+              ],
+              "merc": [
+                "greeting"
+              ],
+              "voudr": [
+                "Commande.Meal",
+                "Commande.Menu"
+              ],
+              "command": [
+                "Commande.Meal",
+                "Commande.Menu",
+                "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas"
+              ],
+              "mon": [
+                "Commande.Meal"
+              ],
+              "rep": [
+                "Commande.Meal"
+              ],
+              "pour": [
+                "Commande.Meal"
+              ],
+              "aujourd": [
+                "Commande.Meal"
+              ],
+              "hui": [
+                "Commande.Meal"
+              ],
+              "veux": [
+                "Commande.Meal"
+              ],
+              "le": [
+                "Commande.Meal",
+                "Meal"
+              ],
+              "plat": [
+                "Commande.Meal",
+                "Meal"
+              ],
+              "suiv": [
+                "Commande.Meal"
+              ],
+              "montrez-moi": [
+                "Meal"
+              ],
+              "disponibl": [
+                "Meal",
+                "Menu"
+              ],
+              "quel": [
+                "Meal"
+              ],
+              "sont": [
+                "Meal"
+              ],
+              "as": [
+                "Recommandation"
+              ],
+              "tu": [
+                "Recommandation"
+              ],
+              "de": [
+                "Recommandation",
+                "Menu"
+              ],
+              "recommand": [
+                "Recommandation"
+              ],
+              "avez-vous": [
+                "Recommandation"
+              ],
+              "autr": [
+                "Recommandation"
+              ],
+              "option": [
+                "Recommandation"
+              ],
+              "il": [
+                "Menu"
+              ],
+              "ya": [
+                "Menu"
+              ],
+              "t": [
+                "Menu"
+              ],
+              "dej": [
+                "Menu"
+              ],
+              "menus": [
+                "Menu"
+              ],
+              "ce": [
+                "Commande.Menu"
+              ],
+              "menu": [
+                "Commande.Menu"
+              ],
+              "j": [
+                "Commande.Menu"
+              ],
+              "aim": [
+                "Commande.Menu"
+              ],
+              "meal": [
+                "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "fr",
+                "tag": "nlu-fr",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "bonjour",
+                "salut",
+                "comment",
+                "ca",
+                "va",
+                "bonsoir",
+                "je",
+                "voudr",
+                "command",
+                "mon",
+                "rep",
+                "pour",
+                "aujourd",
+                "hui",
+                "veux",
+                "le",
+                "plat",
+                "suiv",
+                "montrez-moi",
+                "disponibl",
+                "quel",
+                "sont",
+                "as",
+                "tu",
+                "de",
+                "recommand",
+                "avez-vous",
+                "autr",
+                "option",
+                "il",
+                "ya",
+                "t",
+                "dej",
+                "menus",
+                "ce",
+                "menu",
+                "j",
+                "aim",
+                "suis",
+                "satisf",
+                "e",
+                "merc",
+                "meal"
+              ],
+              "intents": [
+                "greeting",
+                "Commande.Meal",
+                "Meal",
+                "Recommandation",
+                "Menu",
+                "Commande.Menu",
+                "Trés bien , pour commande votre repas, veuillez donner le numero de vol et ton choix de repas"
+              ],
+              "perceptrons": [
+                [
+                  6.823235511779785,
+                  6.906805515289307,
+                  2.41436505317688,
+                  2.41436505317688,
+                  2.41436505317688,
+                  6.820849418640137,
+                  -0.13868261873722076,
+                  -1.4276760816574097,
+                  -4.427349090576172,
+                  -1.0698726177215576,
+                  -1.0698726177215576,
+                  -0.41466113924980164,
+                  -0.41466113924980164,
+                  -0.41466113924980164,
+                  -0.46092966198921204,
+                  -2.057096004486084,
+                  -2.057096004486084,
+                  -0.46092966198921204,
+                  -1.012770175933838,
+                  -1.9587500095367432,
+                  -0.527187168598175,
+                  -0.527187168598175,
+                  -1.3362667560577393,
+                  -1.3362667560577393,
+                  -3.090911865234375,
+                  -1.3362667560577393,
+                  -1.3338143825531006,
+                  -1.3338143825531006,
+                  -1.3338143825531006,
+                  -0.4133686125278473,
+                  -0.4133686125278473,
+                  -0.4133686125278473,
+                  -0.4133686125278473,
+                  -0.4133686125278473,
+                  -1.9461336135864258,
+                  -1.9461336135864258,
+                  -1.5941236019134521,
+                  -1.5941236019134521,
+                  1.833735466003418,
+                  1.833735466003418,
+                  1.833735466003418,
+                  1.833735466003418,
+                  -2.4549291133880615,
+                  7.10099121338406
+                ],
+                [
+                  -0.05750187858939171,
+                  -0.055219314992427826,
+                  -0.03872821107506752,
+                  -0.03872821107506752,
+                  -0.03872821107506752,
+                  -0.05108213424682617,
+                  3.289565324783325,
+                  0.9523170590400696,
+                  2.2365458011627197,
+                  3.955580949783325,
+                  3.955580949783325,
+                  0.14594712853431702,
+                  0.14594712853431702,
+                  0.14594712853431702,
+                  3.084555149078369,
+                  1.4793736934661865,
+                  1.4793736934661865,
+                  3.084555149078369,
+                  -0.979965329170227,
+                  -1.6484848260879517,
+                  -0.6073192358016968,
+                  -0.6073192358016968,
+                  -0.11906623095273972,
+                  -0.11906623095273972,
+                  -0.3087441325187683,
+                  -0.11906623095273972,
+                  -0.10795759409666061,
+                  -0.10795759409666061,
+                  -0.10795759409666061,
+                  -0.023047953844070435,
+                  -0.023047953844070435,
+                  -0.023047953844070435,
+                  -0.023047953844070435,
+                  -0.023047953844070435,
+                  -3.033172130584717,
+                  -3.033172130584717,
+                  -0.012487595900893211,
+                  -0.012487595900893211,
+                  -0.7383700013160706,
+                  -0.7383700013160706,
+                  -0.7383700013160706,
+                  -0.7383700013160706,
+                  -1.7974941730499268,
+                  -0.3675169414557674
+                ],
+                [
+                  -0.3181561827659607,
+                  -0.31470969319343567,
+                  -0.14855360984802246,
+                  -0.14855360984802246,
+                  -0.14855360984802246,
+                  -0.3098579943180084,
+                  -1.8243154287338257,
+                  -0.10106395184993744,
+                  -1.8388375043869019,
+                  -0.028761474415659904,
+                  -0.028761474415659904,
+                  -0.01064136903733015,
+                  -0.01064136903733015,
+                  -0.01064136903733015,
+                  -1.6151286363601685,
+                  3.256535530090332,
+                  3.256535530090332,
+                  -1.6151286363601685,
+                  3.207597255706787,
+                  4.144457817077637,
+                  1.6789079904556274,
+                  1.6789079904556274,
+                  -0.11393001675605774,
+                  -0.11393001675605774,
+                  -0.9988758563995361,
+                  -0.11393001675605774,
+                  -0.10056637972593307,
+                  -0.10056637972593307,
+                  -0.10056637972593307,
+                  -0.7140252590179443,
+                  -0.7140252590179443,
+                  -0.7140252590179443,
+                  -0.7140252590179443,
+                  -0.7140252590179443,
+                  -0.19485312700271606,
+                  -0.19485312700271606,
+                  -0.11700988560914993,
+                  -0.11700988560914993,
+                  -0.07372831553220749,
+                  -0.07372831553220749,
+                  -0.07372831553220749,
+                  -0.07372831553220749,
+                  -0.08116992563009262,
+                  0.32800665934951057
+                ],
+                [
+                  -0.6622068881988525,
+                  -0.6546493768692017,
+                  -0.3072521686553955,
+                  -0.3072521686553955,
+                  -0.3072521686553955,
+                  -0.6440399289131165,
+                  -0.42986297607421875,
+                  -0.18918603658676147,
+                  -0.5668060183525085,
+                  -0.062239427119493484,
+                  -0.062239427119493484,
+                  -0.027841415256261826,
+                  -0.027841415256261826,
+                  -0.027841415256261826,
+                  -0.019721874967217445,
+                  -0.14350450038909912,
+                  -0.14350450038909912,
+                  -0.019721874967217445,
+                  -0.05881303548812866,
+                  -1.113641381263733,
+                  -0.03484778478741646,
+                  -0.03484778478741646,
+                  2.940530776977539,
+                  2.940530776977539,
+                  4.797971725463867,
+                  2.940530776977539,
+                  2.9399750232696533,
+                  2.9399750232696533,
+                  2.9399750232696533,
+                  -0.9689346551895142,
+                  -0.9689346551895142,
+                  -0.9689346551895142,
+                  -0.9689346551895142,
+                  -0.9689346551895142,
+                  -0.3586523234844208,
+                  -0.3586523234844208,
+                  -0.22853396832942963,
+                  -0.22853396832942963,
+                  -0.19076333940029144,
+                  -0.19076333940029144,
+                  -0.19076333940029144,
+                  -0.19076333940029144,
+                  -0.3346777558326721,
+                  0.665539249719096
+                ],
+                [
+                  -0.10563060641288757,
+                  -0.10157835483551025,
+                  -0.07286936789751053,
+                  -0.07286936789751053,
+                  -0.07286936789751053,
+                  -0.09447421133518219,
+                  -0.17993204295635223,
+                  -0.08535115420818329,
+                  -0.18819275498390198,
+                  -0.02529524639248848,
+                  -0.02529524639248848,
+                  -0.01224691141396761,
+                  -0.01224691141396761,
+                  -0.01224691141396761,
+                  -0.007798304781317711,
+                  -0.6955609321594238,
+                  -0.6955609321594238,
+                  -0.007798304781317711,
+                  -0.35172849893569946,
+                  1.5914857387542725,
+                  -0.26357901096343994,
+                  -0.26357901096343994,
+                  -0.4662397801876068,
+                  -0.4662397801876068,
+                  1.2882634401321411,
+                  -0.4662397801876068,
+                  -0.4643835425376892,
+                  -0.4643835425376892,
+                  -0.4643835425376892,
+                  2.30535888671875,
+                  2.30535888671875,
+                  2.30535888671875,
+                  2.30535888671875,
+                  2.30535888671875,
+                  -0.12940385937690735,
+                  -0.12940385937690735,
+                  -0.06680435687303543,
+                  -0.06680435687303543,
+                  -0.06276892125606537,
+                  -0.06276892125606537,
+                  -0.06276892125606537,
+                  -0.06276892125606537,
+                  -0.07120214402675629,
+                  -0.12227058079968696
+                ],
+                [
+                  -0.3452591896057129,
+                  -0.33504152297973633,
+                  -0.19763045012950897,
+                  -0.19763045012950897,
+                  -0.19763045012950897,
+                  -0.3241700530052185,
+                  0.9971933960914612,
+                  1.762070655822754,
+                  0.5996288061141968,
+                  -1.7189325094223022,
+                  -1.7189325094223022,
+                  -0.4062711000442505,
+                  -0.4062711000442505,
+                  -0.4062711000442505,
+                  -0.392645925283432,
+                  -0.4912600815296173,
+                  -0.4912600815296173,
+                  -0.392645925283432,
+                  -0.03790183365345001,
+                  -0.14228995144367218,
+                  -0.02624543011188507,
+                  -0.02624543011188507,
+                  -0.09619493037462234,
+                  -0.09619493037462234,
+                  -0.2688811123371124,
+                  -0.09619493037462234,
+                  -0.08788910508155823,
+                  -0.08788910508155823,
+                  -0.08788910508155823,
+                  -0.04535675421357155,
+                  -0.04535675421357155,
+                  -0.04535675421357155,
+                  -0.04535675421357155,
+                  -0.04535675421357155,
+                  5.288905143737793,
+                  5.288905143737793,
+                  1.797656774520874,
+                  1.797656774520874,
+                  -0.3267502188682556,
+                  -0.3267502188682556,
+                  -0.3267502188682556,
+                  -0.3267502188682556,
+                  -0.7707231640815735,
+                  0.194885991286533
+                ],
+                [
+                  -0.8345876336097717,
+                  -0.8207232356071472,
+                  -0.32830575108528137,
+                  -0.32830575108528137,
+                  -0.32830575108528137,
+                  -0.8033403158187866,
+                  -2.599792957305908,
+                  -1.7376208305358887,
+                  5.216236591339111,
+                  -0.8916095495223999,
+                  -0.8916095495223999,
+                  -0.225718155503273,
+                  -0.225718155503273,
+                  -0.225718155503273,
+                  -0.858018159866333,
+                  -0.9002503752708435,
+                  -0.9002503752708435,
+                  -0.858018159866333,
+                  -0.020028557628393173,
+                  -0.12243155390024185,
+                  -0.007032874971628189,
+                  -0.007032874971628189,
+                  -0.17530570924282074,
+                  -0.17530570924282074,
+                  -0.43161892890930176,
+                  -0.17530570924282074,
+                  -0.17418840527534485,
+                  -0.17418840527534485,
+                  -0.17418840527534485,
+                  -0.08019986748695374,
+                  -0.08019986748695374,
+                  -0.08019986748695374,
+                  -0.08019986748695374,
+                  -0.08019986748695374,
+                  -0.8782860040664673,
+                  -0.8782860040664673,
+                  -0.02835715003311634,
+                  -0.02835715003311634,
+                  0,
+                  0,
+                  0,
+                  0,
+                  7.795657157897949,
+                  0.9452042157457737
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "fr",
+        "Bonjour"
+      ],
+      [
+        "fr",
+        "Salut"
+      ],
+      [
+        "fr",
+        "Comment ça va?"
+      ],
+      [
+        "fr",
+        "Bonsoir"
+      ],
+      [
+        "fr",
+        "je voudrais commander mon repas pour aujourd'hui "
+      ],
+      [
+        "fr",
+        "je voudrais commander mon repas"
+      ],
+      [
+        "fr",
+        "Je veux commander les plats suivants : "
+      ],
+      [
+        "fr",
+        "Montrez-moi les plats disponibles"
+      ],
+      [
+        "fr",
+        "Quels sont les plats disponibles?"
+      ],
+      [
+        "fr",
+        "as tu des récommandations ?"
+      ],
+      [
+        "fr",
+        "Avez-vous des autres options?"
+      ],
+      [
+        "fr",
+        "Il ya t'il déja des menus disponibles?"
+      ],
+      [
+        "fr",
+        "je voudrais commander ce menu"
+      ],
+      [
+        "fr",
+        "j'aime ce menu'"
+      ],
+      [
+        "fr",
+        "je suis satisfait(e) merci !"
+      ],
+      [
+        "fr",
+        "Commande.Meal"
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {}
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {
+      "fr": {
+        "greeting": [
+          {
+            "answer": "Bonjour,bonne journée!"
+          },
+          {
+            "answer": "Super bien ! Comment puis-je vous aider?"
+          },
+          {
+            "answer": "Bonsoir, comment puis-je vous aider ?"
+          },
+          {
+            "answer": "Bonjour,  comment puis-je vous aider ?"
+          },
+          {
+            "answer": "Salut,Prêt a commander?"
+          }
+        ],
+        "Commande.Meal": [
+          {
+            "answer": "Trés bien , Tu veux des récommandations ?"
+          },
+          {
+            "answer": "Commande bien passée. A la prochaine !"
+          }
+        ],
+        "Meal": [
+          {
+            "answer": "Bien sur!Voici les plats dipsonibles : "
+          }
+        ],
+        "Recommandation": [
+          {
+            "answer": "Bien sur ! d'aprés votre historique des commandes : "
+          },
+          {
+            "answer": "Bien sur ! d'aprés votre carnet du santé : "
+          },
+          {
+            "answer": "Bien sur ! je veux recommande d'essayer notre menu du jour :  "
+          }
+        ],
+        "Menu": [
+          {
+            "answer": "Bien sur ! Voici les menus disponibles : "
+          }
+        ]
+      }
+    }
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}

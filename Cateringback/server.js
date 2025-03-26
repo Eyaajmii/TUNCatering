@@ -28,7 +28,7 @@ app.use("/api/commande", commandeRoute);
 app.use("/api/menu", menuRoute);
 app.use("/api/vol",volRoute);
 app.use("/api/pn",pnRouter);
-app.use("api/chat", chatRoute);
+app.use("/api/chat", chatRoute);
 // Connexion à MongoDB
 mongoose
   .connect("mongodb://localhost:27017/Tuncatering")

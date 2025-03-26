@@ -3,10 +3,10 @@
 const {NlpManager}=require('node-nlp');
 const manager = new NlpManager({ languages: ['fr'],forceNER:true });
 //===========Questions========
-manager.addDocument("fr", "Bonjour", greeting);
-manager.addDocument("fr", "Salut", greeting);
-manager.addDocument("fr", "Comment ça va?", greeting);
-manager.addDocument("fr","Bonsoir",greeting)
+manager.addDocument("fr", "Bonjour", "greeting");
+manager.addDocument("fr", "Salut", "greeting");
+manager.addDocument("fr", "Comment ça va?", "greeting");
+manager.addDocument("fr", "Bonsoir", "greeting");
 //Commander un repas
 manager.addDocument("fr", "je voudrais commander mon repas pour aujourd'hui ","Commande.Meal");
 manager.addDocument("fr", "je voudrais commander mon repas","Commande.Meal");
@@ -50,4 +50,4 @@ manager.addAnswer("fr", "Menu","Bien sur ! Voici les menus disponibles : ");
   console.log(response);
 })();
 
-
+module.exports={manager};
