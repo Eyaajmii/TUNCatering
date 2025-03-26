@@ -20,8 +20,7 @@ const mealSchema = new mongoose.Schema({
     required: true,
   },
   Categorie: {
-    type: String,
-    enum: ["Standard", "Végétarien", "Sans gluten"],
+    type: String, //exemple:["Standard", "Végétarien", "Sans gluten"]
     required: true,
   },
   Disponibilite: {
@@ -36,9 +35,9 @@ const mealSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-  quantite:{
-    type:Number,
-    required:true
-  }
+  quantite: {
+    type: Number,
+    required: true,
+  },
 });
 module.exports = mongoose.model('Meal', mealSchema);

@@ -39,7 +39,8 @@ class menuController {
         PlatsPrincipaux,
         PlatsEntree,
         PlatsDessert,
-        Disponible:true
+        Disponible:true,
+        DateAjout:Date.now(),
       });
 
       await nouveauMenu.save(); 

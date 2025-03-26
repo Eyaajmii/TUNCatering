@@ -8,6 +8,7 @@ const commandeRoute=require('./routes/commandeRoute');
 const menuRoute=require('./routes/menuRoute');
 const volRoute=require('./routes/volRoute');
 const pnRouter=require("./routes/pnRouter");
+const chatRoute=require("./routes/ChatbotNLPRoute");
 const methodOverride = require("method-override");
 const cors=require('cors');
 const app = express();
@@ -27,6 +28,7 @@ app.use("/api/commande", commandeRoute);
 app.use("/api/menu", menuRoute);
 app.use("/api/vol",volRoute);
 app.use("/api/pn",pnRouter);
+app.use("api/chat", chatRoute);
 // Connexion à MongoDB
 mongoose
   .connect("mongodb://localhost:27017/Tuncatering")

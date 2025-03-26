@@ -39,7 +39,7 @@ class mealController {
 
   static async getAllMeals() {
     try {
-      return await plat.find();
+      return await plat.find({Disponibilite:true});
     } catch (error) {
       console.log(error);
     }

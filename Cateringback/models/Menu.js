@@ -36,6 +36,10 @@ const menuSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "AdminTunCatering",
   },
+  DateAjout:{
+    type:Date,
+    default:Date.now
+  }
   
 });
 menuSchema.path("PlatsPrincipaux").validate(function(value){
