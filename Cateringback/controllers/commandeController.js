@@ -98,7 +98,7 @@ class CommandeController {
     }
   }
   //Order a 3 meals
-  static async RequestCommandeMeal(numVol,nomEntree,nomPlatPrincipal,nomDessert,MatriculePn,MatriculeResTun){
+  static async RequestCommandeMeal(numVol,nomEntree,nomPlatPrincipal,nomDessert,nomBoissons,nomPetitDejuner,MatriculePn,MatriculeResTun){
     try{
       if (typeof numVol !== "number") {
         throw new Error("numVol doit être un nombre");
@@ -122,16 +122,20 @@ class CommandeController {
       const Entree= await plat.findOne({nom:nomEntree,typePlat:"Entrée"});
       const PlatPrincipal= await plat.findOne({nom:nomPlatPrincipal,typePlat:"Plat Principal"});
       const Dessert= await plat.findOne({nom:nomDessert,typePlat:"Dessert"});
+      const Boissons= await plat.findOne({nom:nomBoissons,typePlat:"Boissons"});
+      const PetitDejuner= await plat.findOne({nom:nomPetitDejuner,typePlat:"Petit déjuner"});
       if(!Entree||!PlatPrincipal||!Dessert){
         throw new Error("Plat not found ");
       }
-      if(!Entree.Disponibilite||!PlatPrincipal.Disponibilite||!Dessert.Disponibilite){
+      if(!Entree.Disponibilite||!PlatPrincipal.Disponibilite||!Dessert.Disponibilite||Boissons.Disponibilite||PetitDejuner.Disponibilite){
         throw new Error("Plat indisponible");
       }
       const categorie = Entree.Categorie;
       if (
         PlatPrincipal.Categorie !== categorie ||
-        Dessert.Categorie !== categorie
+        Dessert.Categorie !== categorie ||
+        Boissons.Categorie !== categorie ||
+        PetitDejuner.Categorie !== categorie
       ) {
         throw new Error(
           "Tous les plats doivent appartenir à la même catégorie."
@@ -150,14 +154,14 @@ class CommandeController {
       }
       const newCmd = await commande.create({
         vol: volId,
-        plats: [Entree._id,PlatPrincipal._id,Dessert._id],
+        plats: [Entree._id,PlatPrincipal._id,Dessert._id,Boissons._id,PetitDejuner._id],
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         MatriculePn: MatriculePn || undefined,
         MatriculeResTun: MatriculeResTun || undefined,
       });
-      await platcontroller.miseajourquantite(Entree,PlatPrincipal,Dessert);
+      await platcontroller.miseajourquantite(Entree,PlatPrincipal,Dessert,Boissons,PetitDejuner);
       console.log("Commande bien affecte");
       return newCmd;
     }catch(err){

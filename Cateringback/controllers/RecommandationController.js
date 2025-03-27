@@ -10,7 +10,9 @@ class RecommandationController {
       const menu = await Menu.findOne({ DateAjout: date })
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description");
+        .populate("PlatsDessert", "nom description")
+        .populate("Boissons", "nom description")
+        .populate("PetitDejuner", "nom description");
       if (!menu) {
         console.log("Aucun menu trouvé");
       }

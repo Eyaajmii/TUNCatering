@@ -80,10 +80,10 @@ class mealController {
     }
   }
   //Admin set quantity of meal
-  static async miseajourquantite(Entree,PlatPrincipal,Dessert)
+  static async miseajourquantite(Entree,PlatPrincipal,Dessert,Boissons,PetitDejuner)
   {
     try{
-      const plats=[Entree,PlatPrincipal,Dessert];
+      const plats=[Entree,PlatPrincipal,Dessert,Boissons,PetitDejuner];
       for(let p of plats){
         if(!p){
           continue;

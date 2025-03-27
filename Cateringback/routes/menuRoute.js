@@ -4,11 +4,13 @@ const menuController = require("../controllers/menuController");
 
 router.post("/add", async (req, res) => {
   try {
-    const { nom, PlatsPrincipaux, PlatsEntree, PlatsDessert, Disponible } =req.body;
+    const { nom, PlatsPrincipaux, PlatsEntree, PlatsDessert, Boissons,PetitDejuner,Disponible } =req.body;
      if (
        PlatsPrincipaux.length !== 1 ||
        PlatsEntree.length !== 1 ||
-       PlatsDessert.length !== 1
+       PlatsDessert.length !== 1 ||
+       Boissons.length !== 1 ||
+       PetitDejuner.length !== 1 
      ) {
        return res.status(400).json({
          message:
@@ -21,6 +23,8 @@ router.post("/add", async (req, res) => {
       PlatsPrincipaux,
       PlatsEntree,
       PlatsDessert,
+      Boissons,
+      PetitDejuner,
       Disponible
     );
     res.status(200).json(nouveauMenu);

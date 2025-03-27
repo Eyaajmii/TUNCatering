@@ -16,7 +16,7 @@ const mealSchema = new mongoose.Schema({
   },
   typePlat: {
     type: String,
-    enum: ["Entrée", "Plat Principal", "Dessert"],
+    enum: ["Entrée", "Plat Principal", "Dessert","Boissons","Petit déjuner"],
     required: true,
   },
   Categorie: {

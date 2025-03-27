@@ -30,12 +30,14 @@ router.post("/addCommandeMenu",upload.none(), async(req,res)=>{
 router.post("/addCommandePlat",upload.none(),async(req,res)=>{
     try{
         const numVol=parseInt(req.body.numVol)
-        const { nomEntree,nomPlatPrincipal,nomDessert, MatriculeResTun, MatriculePn } = req.body;
+        const { nomEntree,nomPlatPrincipal,nomDessert,nomBoissons,nomPetitDejuner,MatriculeResTun, MatriculePn } = req.body;
         const newcommande = await CommandeController.RequestCommandeMeal(
             numVol,
             nomEntree,
             nomPlatPrincipal,
             nomDessert,
+            nomBoissons,
+            nomPetitDejuner,
             MatriculePn,
             MatriculeResTun
         );

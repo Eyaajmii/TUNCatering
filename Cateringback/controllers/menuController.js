@@ -3,13 +3,15 @@ const Meal = require("../models/Meal");
 
 class menuController {
   //create a menu
-  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Disponible) {
+  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Boissons,PetitDejuner,Disponible) {
     try {
       // Vérifier qu'il y a un seul plat pour chaque type
       if (
         PlatsPrincipaux.length !== 1 ||
         PlatsEntree.length !== 1 ||
-        PlatsDessert.length !== 1
+        PlatsDessert.length !== 1||
+        Boissons.length!==1||
+        PetitDejuner!==1
       ) {
         throw new Error(
           "Vous devez choisir un seul plat pour chaque type de plat"
@@ -20,7 +22,9 @@ class menuController {
       const platsPrincipaux = await Meal.find({_id: { $in: PlatsPrincipaux },});
       const platsEntrees = await Meal.find({ _id: { $in: PlatsEntree } });
       const platsDesserts = await Meal.find({ _id: { $in: PlatsDessert } });
-      if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0){
+      const Boissons=await Meal.find({_id: {$in:Boissons}});
+      const PetitDejuner = await Meal.find({ _id: { $in: PetitDejuner } });
+      if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0||Boissons[0]?.quantite<=0||PetitDejuner[0]?.quantite<=0){
         throw new Error("Quantité insuffisante pour les plats choisis");
       }
       // verification mm categorie
@@ -28,6 +32,8 @@ class menuController {
         platsPrincipaux[0]?.Categorie,
         platsEntrees[0]?.Categorie,
         platsDesserts[0]?.Categorie,
+        Boissons[0]?.Categorie,
+        PetitDejuner[0]?.Categorie
       ];
 
       if (new Set(categories).size !== 1) {
@@ -39,6 +45,8 @@ class menuController {
         PlatsPrincipaux,
         PlatsEntree,
         PlatsDessert,
+        Boissons,
+        PetitDejuner,
         Disponible:true,
         DateAjout:Date.now(),
       }); 
@@ -54,7 +62,9 @@ class menuController {
       return Menu.findById(id)
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description");
+        .populate("PlatsDessert", "nom description")
+        .populate("Boissons","nom description")
+        .populate("PetitDejuner","nom description");
     } catch (err) {
       console.error(err);
     }
@@ -73,7 +83,9 @@ class menuController {
       return Menu.find()
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description");
+        .populate("PlatsDessert", "nom description")
+        .populate("Boissons", "nom description")
+        .populate("PetitDejuner", "nom description");
     } catch (err) {
       console.error(err);
     }
@@ -84,7 +96,9 @@ class menuController {
       return Menu.find({ typeMenu })
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description");
+        .populate("PlatsDessert", "nom description")
+        .populate("Boissons", "nom description")
+        .populate("PetitDejuner", "nom description");
     } catch (err) {
       console.error(err);
     }
@@ -100,13 +114,18 @@ class menuController {
   //mise a jour d'un menu apres commande (quantite plats --)
   static async miseajourmenuCommande(nom){
     try{
-      const menu=await Menu.findOne({nom}).populate("PlatsEntree").populate("PlatsPrincipaux").populate("PlatsDessert");
+      const menu = await Menu.findOne({ nom })
+        .populate("PlatsEntree")
+        .populate("PlatsPrincipaux")
+        .populate("PlatsDessert")
+        .populate("Boissons", "nom description")
+        .populate("PetitDejuner", "nom description");
       if(!menu){
         console.log("Menu pas trouvé");
       }
       let menuDispo=true;
       //concatination tous les plats dans un seul ensemble//
-      const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert];
+      const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert,...menu.Boissons,...menu.PetitDejuner];
       for(let p of plats){
         if(p.quantite>0){
           p.quantite-=1;

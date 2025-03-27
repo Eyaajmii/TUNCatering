@@ -32,6 +32,16 @@ const menuSchema = new mongoose.Schema({
       ref: "Meal",
     },
   ],
+  Boissons:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Meal"
+    }
+  ],
+  PetitDejuner:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Meal"
+  }],
   AdminTn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "AdminTunCatering",
