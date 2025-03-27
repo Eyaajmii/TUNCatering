@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PlatServiceService } from '../../../services/plat-service.service';
+import { NavbarComponent } from "../navbar/navbar.component";
+import { NavbarItemsComponent } from "../navbar-items/navbar-items.component";
 
 @Component({
   selector: 'app-ajout-plat',
   standalone:true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NavbarComponent, NavbarItemsComponent],
   templateUrl: './ajout-plat.component.html',
   styleUrl: './ajout-plat.component.css'
 })
 export class AjoutPlatComponent {
+  NavOpen:boolean=true;
   mealForm: FormGroup;
   selectedFile:File |null=null;
   isSubmit=false;

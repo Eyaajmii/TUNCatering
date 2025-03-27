@@ -1,5 +1,12 @@
+<div class="Layout">
+  <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
+<div class="layout-left">
+  <app-navbar-items [status]="NavOpen"></app-navbar-items>
+</div>
+</div>
+<p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Ajouter un plat</p>
 <div class="form-container">
-  <h2>Ajouter un plat</h2>
+  <h5> Ajouter un plat</h5>
   <form [formGroup]="mealForm" (ngSubmit)="onSubmit()">
     <div class="form-group"> 
       <label for="nom">Nom du plat :</label>
@@ -21,11 +28,7 @@
     </div>
     <div class="form-group">
       <label for="Categorie">Categorie du plat:</label>
-      <select id="Categorie" formControlName="Categorie">
-        <option value="Standard">Standard</option>
-        <option value="Végétarien">Végétarien</option>
-        <option value="Sans gluten">Sans gluten</option>
-      </select>
+      <input type="text" id="Categorie" formControlName="Categorie">
     </div>
     <div class="form-group"> 
       <label for="prix">Prix (DT) :</label>

@@ -4,11 +4,17 @@ import { AjoutMenuComponent } from './components/dashboardAdminTunCatering/ajout
 import { AcceuilInterfaceComponent } from './components/dahsboardPn/acceuil-interface/acceuil-interface.component';
 import { CommandeMenuComponent } from './components/dahsboardPn/commande-menu/commande-menu.component';
 import { PanierPlatsComponent } from './components/dahsboardPn/panier-plats/panier-plats.component';
+import { DashboardComponent } from './components/dashboardAdminTunCatering/dashboard/dashboard.component';
+import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/navbar-items/navbar-items.component';
+import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
     {path:'AcceuilPersonnel',title:'Acceuil',component:AcceuilInterfaceComponent},
     {path:'commandeMenu',title:'Commander',component:CommandeMenuComponent},
     {path:'PanierPlats',title:'Panier Plats',component:PanierPlatsComponent},
-    {path:'',redirectTo:'ajoutplat',pathMatch:'full'}
+    {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent},
+    {path:"navbaritem",title:'navbaritem',component:NavbarItemsComponent},
+    {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
+    {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];

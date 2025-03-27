@@ -1,0 +1,60 @@
+<div class="sidebar" [ngClass]="status ? 'darSideBar' : 'genisSideBar'">
+    <div class="user-info">
+        <div class="name-role" >
+            <div>Name of admin</div>
+            <div>User type</div>
+        </div>    
+    </div>
+    <div class="section-title">Navigation</div>
+    <div class="menu-item"><i class="fa-solid fa-house" style="color: #ffffff;"></i> Dashboard</div>
+    <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Commandes</span></div>
+    <div class="submenu">
+      <div class="menu-item">Consulter les plats</div><!--+ il voir les details-->
+        <div class="menu-item">Consulter les commandes</div>
+    </div>
+    <div class="menu-item open"><i class="fa-solid fa-utensils"></i><span>Plats</span></div>
+    <div class="submenu">
+      <div class="menu-item">Consulter les plats</div><!--+ il voir les details-->
+        <div class="menu-item" routerLink="/ajoutplat">Ajouter un plat</div>
+        <div class="menu-item">Modifier un plat</div>
+        <div class="menu-item">Supprimer un plat</div>
+    </div>
+    <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Menus</span></div>
+    <div class="submenu">
+      <div class="menu-item">Consulter les menus</div>
+        <div class="menu-item" routerLink="/ajoutmenu">Ajouter un menu</div>
+        <div class="menu-item">Modifier un menu</div>
+        <div class="menu-item">Supprimer un menu</div>
+    </div>
+</div>
+<!--<p>dashboard works!</p>
+<div class="sidebar">
+    <div class="logo">FLAT ABLE</div>
+  
+    <div class="user-info">
+      <img src="user.jpg" alt="User" />
+      <div class="name-role">
+        <div>John Doe</div>
+        <div>UX Designer</div>
+      </div>
+    </div>
+  
+    <div class="section-title">Navigation</div>
+    <div class="menu-item"><i class="icon-home"></i> Dashboard</div>
+    <div class="menu-item open"><i class="icon-layout"></i> Page Layouts</div>
+    <div class="submenu">
+      <div class="menu-item">Vertical</div>
+      <div class="menu-item">Horizontal</div>
+    </div>
+  
+    <div class="section-title">UI Element</div>
+    <div class="menu-item"><i class="icon-cube"></i> Basic</div>
+  
+    <div class="section-title">Forms & Table</div>
+    <div class="menu-item active"><i class="icon-docs"></i> Forms</div>
+    <div class="menu-item"><i class="icon-grid"></i> Bootstrap</div>
+  
+    <div class="section-title">Chart & Maps</div>
+    <div class="menu-item"><i class="icon-pie-chart"></i> Charts</div>
+  </div>
+  -->

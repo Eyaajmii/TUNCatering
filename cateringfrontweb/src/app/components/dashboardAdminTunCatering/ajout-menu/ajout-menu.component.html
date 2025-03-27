@@ -1,20 +1,28 @@
+<div class="Layout">
+  <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
+<div class="layout-left">
+  <app-navbar-items [status]="NavOpen"></app-navbar-items>
+</div>
+</div>
+<p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Menus/Ajouter un menu</p>
+<div class="form-container">
+  <h5>Ajouter un menu</h5>
 <form (submit)="onSubmit()">
+  <div clas="form-group"> 
   <label>Nom du menu :</label>
-  <input 
-    type="text" 
-    id="nom" 
-    [(ngModel)]="selectedMenu.nom" 
-    name="nom" 
-    required>
-
-<label>Plat principal</label>  <select 
+  <input  type="text" id="nom" [(ngModel)]="selectedMenu.nom" name="nom" required>
+  </div>
+  <div clas="form-group"> 
+    <label>Plat principal :</label>  
+    <select 
     id="PlatPrincipaux" 
     [(ngModel)]="selectedMenu.PlatsPrincipaux" 
     name="PlatPrincipaux" 
     required>
     <option *ngFor="let meal of PlatsPrincipaux" [value]="meal._id">{{ meal.nom }}</option>
-  </select>
-
+    </select>
+  </div>
+  <div clas="form-group"> 
   <label>Plat Entree</label>
   <select 
     id="PlatsEntree" 
@@ -23,7 +31,8 @@
     required>
     <option *ngFor="let meal of PlatsEntree" [value]="meal._id">{{ meal.nom }}</option>
   </select>
-
+  </div>
+  <div clas="form-group"> 
   <label>Plat Dessert</label>
   <select 
     id="PlatsDessert" 
@@ -32,9 +41,11 @@
     required>
     <option *ngFor="let meal of PlatsDessert" [value]="meal._id">{{ meal.nom }}</option>
   </select>
-  <div > 
+  </div>
+  <div clas="form-group">  
     Disponible :<input id="Disponible"  type="checkbox">
   </div>
 
   <button type="submit">Créer Menu</button>
 </form>
+</div>

@@ -2,16 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { MenuServiceService } from '../../../services/menu-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarItemsComponent } from '../navbar-items/navbar-items.component';
+
 
 @Component({
   selector: 'app-ajout-menu',
   standalone:true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule, NavbarComponent, NavbarItemsComponent],
   templateUrl: './ajout-menu.component.html',
   styleUrl: './ajout-menu.component.css'
 })
 export class AjoutMenuComponent implements OnInit {
   //plats:any[]=[];
+  NavOpen:boolean=true;
   PlatsPrincipaux:any[]=[];
   PlatsEntree:any[]=[];
   PlatsDessert:any[]=[];

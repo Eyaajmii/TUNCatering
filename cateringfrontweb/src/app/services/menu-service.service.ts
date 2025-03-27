@@ -31,9 +31,6 @@ export interface Menu{
 export class MenuServiceService {
 
   constructor(private http:HttpClient) { }
-  /*TousPlats():Observable<Plat[]>{
-    return this.http.get<Plat[]>(`${platURL}/`);
-  }*/
  TousPrincipaux():Observable<Plat[]>{
   return this.http.get<Plat[]>(`${platURL}/type/Plat Principal`);
  }
