@@ -13,7 +13,7 @@
   <input  type="text" id="nom" [(ngModel)]="selectedMenu.nom" name="nom" required>
   </div>
   <div clas="form-group"> 
-    <label>Plat principal :</label>  
+    <label>Plat principal : </label>  
     <select 
     id="PlatPrincipaux" 
     [(ngModel)]="selectedMenu.PlatsPrincipaux" 
@@ -23,7 +23,7 @@
     </select>
   </div>
   <div clas="form-group"> 
-  <label>Plat Entree</label>
+  <label>Plat Entree : </label>
   <select 
     id="PlatsEntree" 
     [(ngModel)]="selectedMenu.PlatsEntree" 
@@ -33,7 +33,7 @@
   </select>
   </div>
   <div clas="form-group"> 
-  <label>Plat Dessert</label>
+  <label>Plat Dessert : </label>
   <select 
     id="PlatsDessert" 
     [(ngModel)]="selectedMenu.PlatsDessert" 
@@ -42,10 +42,23 @@
     <option *ngFor="let meal of PlatsDessert" [value]="meal._id">{{ meal.nom }}</option>
   </select>
   </div>
+  <div class="form-group">
+    <label>Boissons : </label>
+    <select id="Boissons" [(ngModel)]="selectedMenu.Boissons" name="Boissons" required>
+      <option *ngFor="let meal of Boissons" [value]="meal._id">{{meal.nom}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Petit Déjuner : </label>
+    <select id="PetitDejuner" [(ngModel)]="selectedMenu.PetitDejuner" name="PetitDejuner" required>
+      <option *ngFor="let meal of PetitDejuner" [value]="meal._id">{{meal.nom}}</option>
+    </select>
+  </div>
   <div clas="form-group">  
-    Disponible :<input id="Disponible"  type="checkbox">
+    <label>Disponible : </label>
+    <input id="Disponible"  type="checkbox">
   </div>
 
-  <button type="submit">Créer Menu</button>
+  <button type="submit" class="btn-submit">Créer Menu</button>
 </form>
 </div>

@@ -11,6 +11,7 @@ import { Router} from '@angular/router';
   styleUrl: './acceuil-interface.component.css'
 })
 export class AcceuilInterfaceComponent implements OnInit{
+  activetab:string='entree';
   menus:Menu[]=[];
   plats:Plat[]=[];
   PlatsEntree:Plat[]=[];

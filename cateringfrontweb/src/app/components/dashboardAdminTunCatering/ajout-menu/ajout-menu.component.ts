@@ -19,11 +19,15 @@ export class AjoutMenuComponent implements OnInit {
   PlatsPrincipaux:any[]=[];
   PlatsEntree:any[]=[];
   PlatsDessert:any[]=[];
+  Boissons:any[]=[];
+  PetitDejuner:any[]=[];
   selectedMenu={
     nom:'',
     PlatsPrincipaux:'',
     PlatsEntree:'',
     PlatsDessert:'',
+    Boissons:'',
+    PetitDejuner:'',
     Disponible:false
   };
   constructor(private menuService:MenuServiceService){}
@@ -34,6 +38,8 @@ export class AjoutMenuComponent implements OnInit {
     this.menuService.TousPrincipaux().subscribe(data=>this.PlatsPrincipaux=data);
     this.menuService.TousEntree().subscribe(data=>this.PlatsEntree=data);
     this.menuService.TousDessert().subscribe(data=>this.PlatsDessert=data);
+    this.menuService.TousBoissons().subscribe(data=>this.Boissons=data);
+    this.menuService.TousPetitDejuner().subscribe(data=>this.PetitDejuner=data);
   }
   onSubmit():void{
     const menudata={
@@ -41,6 +47,8 @@ export class AjoutMenuComponent implements OnInit {
       PlatsPrincipaux:[this.selectedMenu.PlatsPrincipaux],
       PlatsEntree:[this.selectedMenu.PlatsEntree],
       PlatsDessert:[this.selectedMenu.PlatsDessert],
+      Boissons:[this.selectedMenu.Boissons],
+      PetitDejuner:[this.selectedMenu.PetitDejuner],
       Disponible:[this.selectedMenu.Disponible]
     };
     this.menuService.creerMenu(menudata).subscribe({
