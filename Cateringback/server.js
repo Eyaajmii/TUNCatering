@@ -14,7 +14,7 @@ const cors=require('cors');
 const app = express();
 const PORT = 5000;
 
-// Middleware pour parser les données JSON
+// Middleware 
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
