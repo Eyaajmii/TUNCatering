@@ -6,5 +6,6 @@ const adminTunCateringSchema = new mongoose.Schema({
 });
 module.exports = mongoose.model(
   "AdminTunCatering",
+  
   adminTunCateringSchema
 );
