@@ -3,11 +3,16 @@ const mongoose = require("mongoose");
 const volSchema = new mongoose.Schema({
     numVol:{
         type:Number,
-        required:true
+        required:true,
+        unique:true
     },
     volName:{
         type:String,
         required:true
+    },
+    Depart:{
+        type:String,
+        required:true,
     },
     Destination:{
         type:String,
@@ -25,9 +30,9 @@ const volSchema = new mongoose.Schema({
         type:Boolean,
         defaut:false
     },
-    personnels:[{
+    Commande:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"personnelnavigant"
+        ref:"Commande",
     }]
 });
 module.exports = mongoose.model("vol", volSchema);

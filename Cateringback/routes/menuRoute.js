@@ -1,24 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const menuService = require("../services/menuService");
+const menuController = require("../controllers/menuController");
 
 router.post("/add", async (req, res) => {
   try {
-    const {
+    const { nom, PlatsPrincipaux, PlatsEntree, PlatsDessert, Boissons,PetitDejuner,Disponible } =req.body;
+     if (
+       PlatsPrincipaux.length !== 1 ||
+       PlatsEntree.length !== 1 ||
+       PlatsDessert.length !== 1 ||
+       Boissons.length !== 1 ||
+       PetitDejuner.length !== 1 
+     ) {
+       return res.status(400).json({
+         message:
+           "Chaque type de plat (entrée, principal, dessert) doit contenir exactement un plat.",
+       });
+     }
+
+    const nouveauMenu = await menuController.createMenu(
       nom,
-      Rotation,
-      typeMenu,
       PlatsPrincipaux,
       PlatsEntree,
       PlatsDessert,
-    } = req.body;
-    const nouveauMenu = await menuService.createMenu(
-      nom,
-      Rotation,
-      typeMenu,
-      PlatsPrincipaux,
-      PlatsEntree,
-      PlatsDessert
+      Boissons,
+      PetitDejuner,
+      Disponible
     );
     res.status(200).json(nouveauMenu);
   } catch (error) {
@@ -30,7 +37,7 @@ router.post("/add", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const menus = await menuService.getAllMenu();
+    const menus = await menuController.getAllMenu();
     res.status(200).json(menus);
   } catch (error) {
     res
@@ -41,7 +48,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const menu = await menuService.getMenuDetail(req.params.id);
+    const menu = await menuController.getMenuDetail(req.params.id);
     if (!menu) {
       return res.status(404).json({ message: "Menu non trouvé" });
     }
@@ -55,7 +62,7 @@ router.get("/:id", async (req, res) => {
 
 router.put("/updateMenu/:id", async (req, res) => {
   try {
-    const menuupdate = await menuService.updateMenu(req.params.id, req.body);
+    const menuupdate = await menuController.updateMenu(req.params.id, req.body);
     if (!menuupdate) {
       return res.status(404).json({ message: "Menu non trouvé" });
     }
@@ -69,7 +76,7 @@ router.put("/updateMenu/:id", async (req, res) => {
 
 router.get("/type/:typeMenu", async (req, res) => {
   try {
-    const menus = await menuService.getMenuBytype(req.params.typeMenu);
+    const menus = await menuController.getMenuBytype(req.params.typeMenu);
     res.status(200).json(menus);
   } catch (error) {
     res
@@ -82,7 +89,7 @@ router.get("/type/:typeMenu", async (req, res) => {
 });
 router.delete("/:id",async(req,res)=>{
     try{
-        await menuService.cancelMenu(req.params.id);
+        await menuController.cancelMenu(req.params.id);
         res.status(200).json({message:"Menu supprimé avec succès"})
     }catch(error){
         res.status(500).json({message:"Erreur lors de la suppression du menu",error});

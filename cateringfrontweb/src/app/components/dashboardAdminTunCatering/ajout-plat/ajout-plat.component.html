@@ -1,0 +1,51 @@
+<div class="Layout">
+  <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
+<div class="layout-left">
+  <app-navbar-items [status]="NavOpen"></app-navbar-items>
+</div>
+</div>
+<p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Ajouter un plat</p>
+<div class="form-container">
+  <h5> Ajouter un plat</h5>
+  <form [formGroup]="mealForm" (ngSubmit)="onSubmit()">
+    <div class="form-group"> 
+      <label for="nom">Nom du plat :</label>
+      <input id="nom" formControlName="nom" type="text" placeholder="Pizza">
+    </div>
+
+    <div class="form-group"> 
+      <label for="description">Description :</label>
+      <textarea id="description" formControlName="description" placeholder="Décrire votre plat"></textarea>
+    </div>
+
+    <div class="form-group"> 
+      <label for="typePlat">Type de plat :</label>
+      <select id="typePlat" formControlName="typePlat">
+        <option value="Entrée">Entrée</option>
+        <option value="Plat Principal">Plat principal</option>
+        <option value="Dessert">Dessert</option>
+        <option value="Boissons">Boissons</option>
+        <option value="Petit déjuner">Petit déjuner</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="Categorie">Categorie du plat:</label>
+      <input type="text" id="Categorie" formControlName="Categorie">
+    </div>
+    <div class="form-group"> 
+      <label for="prix">Prix (DT) :</label>
+      <input id="prix" formControlName="prix" type="number">
+    </div>
+    <div class="form-group">
+      <label for="quantite">Quantite :</label>
+      <input id="quantite" formControlName="quantite" type="number">
+    </div>
+    <div class="form-group"> 
+      <label>Disponible :</label><input id="disponibilite" formControlName="Disponibilite" type="checkbox">
+    </div>
+    <div class="form-group"> 
+    <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="file_input_help" id="image" type="file" (change)="onFileSelected($event)" >
+    </div>
+    <button type="submit" class="btn-submit">Ajouter</button>
+  </form>
+</div>
