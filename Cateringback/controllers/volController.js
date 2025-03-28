@@ -21,8 +21,8 @@ class volController{
             });
             console.log("vol créé");
             return newVol;
-        }catch(err){
-            console.log(err);
+        }catch(error){
+            console.log(error);
         }
     }
 }
