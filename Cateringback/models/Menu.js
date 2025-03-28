@@ -14,6 +14,10 @@ const menuSchema = new mongoose.Schema({
     type:Boolean,
     default:true
   },
+  prixtotal:{
+    type:Number,
+    default:0
+  },
   PlatsPrincipaux: [
     {
       type: mongoose.Schema.Types.ObjectId,
