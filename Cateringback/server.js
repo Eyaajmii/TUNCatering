@@ -16,13 +16,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 5000;
 
-// Create HTTP server
-const server = http.createServer(app);
-
-// Setup WebSocket and get broadcast functions
-const { broadcastNewOrder, broadcastOrderStatusUpdate } = setupWebSocket(server);
-
-// Middleware
+// Middleware pour parser les données JSON
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
