@@ -98,6 +98,7 @@ class CommandeController {
     }
   }
   //Order a 3 meals
+  /*Later =>Pn can order 1 meal to 3 to 4 his choice !!!!*/
   static async RequestCommandeMeal(numVol,nomEntree,nomPlatPrincipal,nomDessert,nomBoissons,nomPetitDejuner,MatriculePn,MatriculeResTun){
     try{
       if (typeof numVol !== "number") {
@@ -127,7 +128,7 @@ class CommandeController {
       if(!Entree||!PlatPrincipal||!Dessert){
         throw new Error("Plat not found ");
       }
-      if(!Entree.Disponibilite||!PlatPrincipal.Disponibilite||!Dessert.Disponibilite||Boissons.Disponibilite||PetitDejuner.Disponibilite){
+      if(!Entree.Disponibilite||!PlatPrincipal.Disponibilite||!Dessert.Disponibilite||!Boissons.Disponibilite||!PetitDejuner.Disponibilite){
         throw new Error("Plat indisponible");
       }
       const categorie = Entree.Categorie;
