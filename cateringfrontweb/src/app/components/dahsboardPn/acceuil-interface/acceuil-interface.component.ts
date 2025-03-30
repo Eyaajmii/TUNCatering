@@ -11,6 +11,10 @@ import { Router} from '@angular/router';
   styleUrl: './acceuil-interface.component.css'
 })
 export class AcceuilInterfaceComponent implements OnInit{
+  //chatbot
+  isPopupOpen: boolean = false;
+  isPanelOpen: boolean = false;
+  //Pageacceuil
   activetab:string='entree';
   menus:Menu[]=[];
   plats:Plat[]=[];
@@ -61,6 +65,49 @@ export class AcceuilInterfaceComponent implements OnInit{
         }
       });
     }
+  }
+  //chatbot
+  // Ouvrir le chatbox
+  openChatbox() {
+    console.log('Opening Chatbox...');
+    this.isPopupOpen = true;
+    this.isPanelOpen = false;  // Assurez-vous que le panel est fermé lorsque le popup est ouvert
+    console.log('isPopupOpen:', this.isPopupOpen);
+    console.log('isPanelOpen:', this.isPanelOpen);
+  }
+
+  // Fermer le chatbox
+  closeChatbox() {
+    console.log('Closing Chatbox...');
+    this.isPopupOpen = false;
+    console.log('isPopupOpen:', this.isPopupOpen);
+  }
+
+  // Maximiser le chatbox pour passer au panel
+  maximizeChat() {
+    console.log('Maximizing Chat...');
+    this.isPopupOpen = false;
+    this.isPanelOpen = true;
+    console.log('isPopupOpen:', this.isPopupOpen);
+    console.log('isPanelOpen:', this.isPanelOpen);
+  }
+
+  // Minimiser le chatbox et revenir au popup
+  minimizeChat() {
+    console.log('Minimizing Chat...');
+    this.isPanelOpen = false;
+    this.isPopupOpen = true;
+    console.log('isPopupOpen:', this.isPopupOpen);
+    console.log('isPanelOpen:', this.isPanelOpen);
+  }
+
+  // Fermer le panel
+  closePanel() {
+    console.log('Closing Panel...');
+    this.isPanelOpen = false;
+    this.isPopupOpen = true;  // Rouvre le popup si le panel est fermé
+    console.log('isPopupOpen:', this.isPopupOpen);
+    console.log('isPanelOpen:', this.isPanelOpen);
   }
   
 }
