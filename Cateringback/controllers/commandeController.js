@@ -48,7 +48,7 @@ class CommandeController {
     }
   }
   //OrderMenu
-  static async RequestCommandeMenu(numVol,nom,MatriculePn,MatriculeResTun) {
+  static async RequestCommandeMenu(numVol,nom,MatriculePn=null,MatriculeResTun=null,nombrecmd=null) {
     try {
       if (typeof numVol !== "number") {
         throw new Error("numVol doit être un nombre");
@@ -59,18 +59,11 @@ class CommandeController {
       }
       const volId=vol._id;
       const dureeVol = parseInt(vol.DureeVol);
-      const cmdExist = await commande.countDocuments({vol: volId,MatriculePn,});
-      if (dureeVol > 6 && cmdExist >= 2) {
-        throw new Error("Only 2 meals are allowed per PN for flights > 6h");
-      }
-      if (dureeVol <= 6 && cmdExist >= 1) {
-        throw new Error("Only 1 meal is allowed per PN for flights ≤ 6h");
-      }
-      const menu = await Menu.findOne({nom:nom});
+      const menu = await Menu.findOne({ nom: nom });
       if (!menu.Disponible) {
         throw new Error("Menu not available");
       }
-      const menuId=menu._id;
+      const menuId = menu._id;
       const date = new Date();
       const limitdate = new Date(vol.dateVolDep);
       if (date > limitdate) {
@@ -79,8 +72,19 @@ class CommandeController {
       const deadline = new Date(limitdate);
       if (["Tunis", "Monastir", "Djerba"].includes(vol.Depart)) {
         deadline.setHours(deadline.getHours() - 3);
-      } else if (["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)) {
+      } else if (
+        ["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)
+      ) {
         deadline.setHours(deadline.getHours() - 12);
+      }
+      //Pour pn
+      if(MatriculePn){
+      const cmdExist = await commande.countDocuments({vol: volId,MatriculePn,});
+      if (dureeVol > 6 && cmdExist >= 2) {
+        throw new Error("Only 2 meals are allowed per PN for flights > 6h");
+      }
+      if (dureeVol <= 6 && cmdExist >= 1) {
+        throw new Error("Only 1 meal is allowed per PN for flights ≤ 6h");
       }
       const newCmd = await commande.create({
         vol: volId,
@@ -88,11 +92,35 @@ class CommandeController {
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
-        MatriculePn: MatriculePn || undefined,
-        MatriculeResTun: MatriculeResTun || undefined,
+        MatriculePn: MatriculePn ,
       });
       await menucontroller.miseajourmenuCommande(nom);
       return newCmd;
+    }
+    //pour le responsable tunisair
+    if(MatriculeResTun){
+      const cmdExist = await commande.countDocuments({vol: volId,MatriculeResTun,});
+      if (dureeVol <= 6 && cmdExist) {
+        throw new Error("Max 1 menu autorisé pour ResTun sur vols ≤ 6h");
+      }
+
+      if (!menu.Disponible) {
+        throw new Error(
+          `Menu non disponible, seules ${menu.nombreDisponible} commandes peuvent être passées`
+        );
+      }
+      const newCmd = await commande.create({
+        vol: volId,
+        menu: menuId,
+        dateCommnade: date,
+        Statut: "En attente",
+        NombreCommande: nombrecmd,
+        MatriculeResTun: MatriculeResTun,
+      });
+      await menucontroller.miseajourmenuCommande(nom);
+      return newCmd;
+    }
+      throw new Error("Aucun matricule valide fourni");
     } catch (err) {
       throw new Error("error creating command:" + err);
     }
