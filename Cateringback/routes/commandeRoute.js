@@ -1,90 +1,139 @@
-const express=require("express");
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 const multer = require('multer');
-const upload = multer(); // Middleware pour parser multipart/form-data
-const CommandeController=require("../controllers/commandeController");
+const upload = multer();
+const CommandeController = require("../controllers/commandeController");
 
-router.get("/",async(req,res)=>{
-    try{
-        const commandes = await CommandeController.getAllCommands();
-        res.status(200).json(commandes);
-    }catch(err){
-        res.status(500).send(err.message);
+module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
+  // Route pour obtenir toutes les commandes
+  router.get("/", async (req, res) => {
+    try {
+      const commandes = await CommandeController.getAllCommands();
+      res.status(200).json(commandes);
+    } catch (err) {
+      res.status(500).send(err.message);
     }
-});
-router.post("/addCommandeMenu",upload.none(), async(req,res)=>{
-    try{
-        const numVol=parseInt(req.body.numVol)
-        const { nom, MatriculeResTun, MatriculePn } = req.body;
-        const newcommande = await CommandeController.RequestCommandeMenu(
-          numVol,
-          nom,
-          MatriculePn,
-          MatriculeResTun
-        );
-        res.status(200).json(newcommande);
-    }catch(error){
+  });
+
+  router.post("/addCommandeMenu", upload.none(), async (req, res) => {
+    try {
+      const numVol = parseInt(req.body.numVol);
+      const { nom, MatriculeResTun, MatriculePn } = req.body;
+      const newcommande = await CommandeController.RequestCommandeMenu(
+        numVol,
+        nom,
+        MatriculePn,
+        MatriculeResTun
+      );
+      
+      // Broadcast new order to all connected admin clients
+      broadcastNewOrder({
+        ...newcommande._doc,
+        type: 'menu',
+        items: [{ nom, quantite: 1 }]
+      });
+      
+      res.status(200).json(newcommande);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+
+  router.post("/addCommandePlat", upload.none(), async (req, res) => {
+    try {
+      const numVol = parseInt(req.body.numVol);
+      const { nomEntree, nomPlatPrincipal, nomDessert, nomBoissons, nomPetitDejuner, MatriculeResTun, MatriculePn } = req.body;
+      const newcommande = await CommandeController.RequestCommandeMeal(
+        numVol,
+        nomEntree,
+        nomPlatPrincipal,
+        nomDessert,
+        nomBoissons,
+        nomPetitDejuner,
+        MatriculePn,
+        MatriculeResTun
+      );
+      
+      // Broadcast new order to all connected admin clients
+      broadcastNewOrder({
+        ...newcommande._doc,
+        type: 'plat',
+        items: [
+          { nom: nomEntree, quantite: 1 },
+          { nom: nomPlatPrincipal, quantite: 1 },
+          { nom: nomDessert, quantite: 1 },
+          { nom: nomBoissons, quantite: 1 },
+          { nom: nomPetitDejuner, quantite: 1 }
+        ].filter(item => item.nom)
+      });
+      
+      res.status(200).json(newcommande);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  router.get("/total", async (req, res) => {
+    try {
+      const total = await CommandeController.getTotalCommandes();
+      res.status(200).json(total);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  router.get("/:id", async (req, res) => {
+    try {
+      const commande = await CommandeController.getCommandByID(req.params.id);
+      res.status(200).json(commande);
+    } catch (error) {
+      if (error.message === "commande not found") {
+        res.status(404).send(error.message);
+      } else {
         res.status(500).send(error.message);
+      }
     }
-});
-router.post("/addCommandePlat",upload.none(),async(req,res)=>{
-    try{
-        const numVol=parseInt(req.body.numVol)
-        const { nomEntree,nomPlatPrincipal,nomDessert,nomBoissons,nomPetitDejuner,MatriculeResTun, MatriculePn } = req.body;
-        const newcommande = await CommandeController.RequestCommandeMeal(
-            numVol,
-            nomEntree,
-            nomPlatPrincipal,
-            nomDessert,
-            nomBoissons,
-            nomPetitDejuner,
-            MatriculePn,
-            MatriculeResTun
-        );
-        res.status(200).json(newcommande);
-    }catch(err){
-        res.status(500).send(err.message);
-    }
-})
-router.get("/total",async(req,res)=>{
-    try{
-        const total = await CommandeController.getTotalCommandes();
-        res.status(200).json(total);
-    }catch(err){
-        res.status(500).send(err.message);
-    }
-});
-router.get("/:id",async(req,res)=>{
-    try{
-        const commande = await CommandeController.getCommandByID(req.params.id);
-        res.status(200).json(commande);
-    }catch(error){
-        if(error.message="commande not found"){
-            res.status(404).send(error.message);
-        }else{
-            res.status(500).send(error.message);
-        }
-    }
-});
-router.put('/updateStatut/:id',async(req,res)=>{
-    try{
-        const{status}=req.body;
-        const updateCommande = await CommandeController.updateCommandeStatus(
-          req.params.id,
-          status
-        );
-        res.status(200).json(updateCommande);
-    }catch(err){
-        res.status(500).send(err.message);
-    }
-});
-router.delete("/:id",async(req,res)=>{
-    try{
-        await CommandeController.deleteCommande(req.params.id);
-        res.status(200);
-    }catch(err){
-        res.status(500).send(err.message);
-    }
-});
-module.exports=router;
+  });
 
+  router.put('/updateStatut/:id', async (req, res) => {
+    try {
+      const { Statut } = req.body; // Notez la majuscule ici pour correspondre à votre requête
+      
+      if (!Statut) {
+        return res.status(400).send("Le champ 'Statut' est requis");
+      }
+  
+      const updateCommande = await CommandeController.updateCommandeStatus(
+        req.params.id,
+        Statut.toLowerCase() // Convertir en minuscule si nécessaire
+      );
+      
+      // Broadcast
+      broadcastOrderStatusUpdate({
+        _id: req.params.id,
+        statut: Statut,
+        updatedAt: new Date()
+      });
+      
+      res.status(200).json(updateCommande);
+    } catch (err) {
+      if (err.message === "Commande not found") {
+        res.status(404).send(err.message);
+      } else {
+        console.error("Erreur de mise à jour:", err);
+        res.status(500).send(err.message);
+      }
+    }
+  });
+
+  router.delete("/:id", async (req, res) => {
+    try {
+      await CommandeController.deleteCommande(req.params.id);
+      res.status(200).send("Commande deleted successfully");
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
+
+  return router;
+};

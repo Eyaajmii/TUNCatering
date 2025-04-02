@@ -2,7 +2,7 @@ const express = require('express');
 const mealController=require("../controllers/mealController");
 const upload=require("../middlware/upload");
 const router = express.Router();
-
+const Meal = require('../models/Meal');
 router.get("/",async(req,res)=>{
     try{
         const meals = await mealController.getAllMeals();
@@ -21,7 +21,25 @@ router.get("/:id",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
+// Route pour récupérer les détails de plusieurs plats
+// Dans votre fichier de routes (mealRoutes.js)
+router.post('/details', async (req, res) => {  
+    try {  
+        const { ids } = req.body;  
+        
+        if (!ids || !Array.isArray(ids)) {  
+            return res.status(400).json({ message: 'Un tableau d\'IDs est requis' });  
+        }  
 
+        const plats = await Meal.find({ _id: { $in: ids } })  
+            .select('_id nom typePlat prix description');  
+
+        res.status(200).json(plats);  
+    } catch (err) {  
+        console.error('Error:', err);  
+        res.status(500).json({ message: 'Erreur serveur' });  
+    }  
+});
 router.get("/type/:typePlat",async(req,res)=>{
     try{
         const mealType=await mealController.getMealByType(req.params.typePlat);

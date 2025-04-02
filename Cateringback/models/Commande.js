@@ -1,4 +1,14 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
+
+// Liste des statuts valides (version normalisée)
+const validStatuses = [
+  "en attente",
+  "en cours de préparation", 
+  "traité",
+  "annulé",
+  "en retard",
+  "livré"
+];
 
 const commandeSchema = new mongoose.Schema({
   NombreCommande: {
@@ -6,45 +16,50 @@ const commandeSchema = new mongoose.Schema({
     required: true,
     default: 1,
   },
-  dateCommnade:{
-    type:Date,
-    default:Date.now
+  dateCommnade: {
+    type: Date,
+    default: Date.now
   },
   Statut: {
     type: String,
-    enum: [
-      "En attente",
-      "En cours de préparation",
-      "Traité",
-      "Annulé",
-      "En retard",
-      "Livré",
-    ],
-    default: "En attente",
+    validate: {
+      validator: function(v) {
+        // Validation insensible à la casse
+        return validStatuses.includes(v.toLowerCase());
+      },
+      message: props => `${props.value} n'est pas un statut valide!`
+    },
+    default: "en attente",
+    set: v => v.toLowerCase() // Normalisation en minuscules
   },
   MatriculePn: {
-    //si le pn passe commande
     type: mongoose.Schema.Types.ObjectId,
     ref: "personnelnavigant",
-    default:null
-  }, //si dir catering passe commande
+    default: null
+  },
   MatriculeResTun: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ResponsableTunDirCatering",
-    default:null
+    default: null
   },
   vol: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vol",
-    required:true,    
+    required: true    
   },
-  menu:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Menu",
+  menu: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Menu",
   },
-  plats:[{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Meal",
+  plats: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Meal",
   }],
 });
+
+// Méthode pour obtenir les statuts valides (peut être utilisée dans le frontend)
+commandeSchema.statics.getValidStatuses = function() {
+  return validStatuses;
+};
+
 module.exports = mongoose.model("Commande", commandeSchema);
