@@ -1,0 +1,98 @@
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.connection-status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.connection-status.connected {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.connection-status.disconnected {
+  background-color: #f44336;
+  color: white;
+}
+
+.alert {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.alert-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.loading-indicator {
+  padding: 15px;
+  text-align: center;
+  font-style: italic;
+}
+
+.filters {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.commandes-list {
+  display: grid;
+  gap: 20px;
+}
+
+.commande-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.plats-list {
+  margin: 15px 0;
+}
+
+.plats-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.plats-list li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.plat-nom {
+  font-weight: bold;
+}
+
+.plat-type {
+  color: #666;
+  font-style: italic;
+}
+
+.plat-prix {
+  color: #2196F3;
+}
+
+/* Status classes */
+.status-en-attente { color: #FF9800; }
+.status-en-cours-de-préparation { color: #2196F3; }
+.status-traité { color: #4CAF50; }
+.status-annulé { color: #F44336; }
+.status-en-retard { color: #9C27B0; }
+.status-livré { color: #009688; }

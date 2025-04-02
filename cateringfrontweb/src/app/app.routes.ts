@@ -7,6 +7,7 @@ import { PanierPlatsComponent } from './components/dahsboardPn/panier-plats/pani
 import { DashboardComponent } from './components/dashboardAdminTunCatering/dashboard/dashboard.component';
 import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/navbar-items/navbar-items.component';
 import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
+import { CommandesTempsReelComponent } from './components/dashboardAdminTunCatering/commandes-temps-reel/commandes-temps-reel.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
@@ -16,5 +17,7 @@ export const routes: Routes = [
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent},
     {path:"navbaritem",title:'navbaritem',component:NavbarItemsComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
+    {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
+    {path:"AdminCatering",title:'consulter commande',component:CommandesTempsReelComponent},
     {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];
