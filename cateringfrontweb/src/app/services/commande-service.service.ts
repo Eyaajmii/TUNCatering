@@ -197,7 +197,9 @@ private createEmptyPlat(platId: string): Plat {
         })  
       );  
   }  
-
+  getMouvements(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/commandes/mouvements`);
+  }
   getStatusUpdates(): Observable<any> {  
     return this.statusUpdates$.asObservable();  
   }  
