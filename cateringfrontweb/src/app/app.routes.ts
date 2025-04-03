@@ -9,6 +9,7 @@ import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/nav
 import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
 import { CommandesTempsReelComponent } from './components/dashboardAdminTunCatering/commandes-temps-reel/commandes-temps-reel.component';
 import { CommandesComponent } from './components/dashboardAdminTunCatering/commande-mouvements/commande-mouvements.component';
+import { AllOrdersComponent } from './components/dashboardAdminTunCatering/all-orders/all-orders.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
@@ -19,7 +20,8 @@ export const routes: Routes = [
     {path:"navbaritem",title:'navbaritem',component:NavbarItemsComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
-    {path:"AdminCatering",title:'consulter commande',component:CommandesTempsReelComponent},
-    {path:"Direction du catering tunisair",title:'consulter commande',component:CommandesComponent},
+    {path:"TousCommandes",title:"Tous Commandes",component:AllOrdersComponent},
+    //{path:"AdminCatering",title:'consulter commande',component:CommandesTempsReelComponent},
+    //{path:"Direction du catering tunisair",title:'consulter commande',component:CommandesComponent},
     {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];

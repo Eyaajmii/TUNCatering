@@ -21,13 +21,12 @@ interface Commande {
 }
 
 @Component({
-  selector: 'app-commandes-temps-reel',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './commandes-temps-reel.component.html',
-  styleUrls: ['./commandes-temps-reel.component.css']
+  selector: 'app-all-orders',
+  imports: [CommonModule,FormsModule],
+  templateUrl: './all-orders.component.html',
+  styleUrl: './all-orders.component.css'
 })
-export class CommandesTempsReelComponent implements OnInit, OnDestroy {
+export class AllOrdersComponent  implements OnInit, OnDestroy {
   commandes: Commande[] = [];
   filtres = { statut: 'tous' };
   connectionStatus: boolean = false;

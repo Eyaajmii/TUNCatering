@@ -42,13 +42,12 @@ export class CommandeServiceService {
     }  
   }  
 
-  CommanderMenu(data: any): Observable<any> {  
-    return this.http.post<any>(`${commandeURL}/menu`, data); // Update with your endpoint  
-  }  
-
-  CommanderPlats(data: any): Observable<any> {  
-    return this.http.post<any>(`${commandeURL}/plats`, data); // Update with your endpoint  
-  }  
+  CommanderMenu(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData);
+  }
+  CommanderPlats(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData);
+  } 
 
   private initializeWebSocket(): void {  
     try {  
