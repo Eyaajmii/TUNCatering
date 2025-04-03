@@ -18,7 +18,7 @@ class mealController {
         !quantite ||
         !Disponibilite == undefined
       ) {
-        return res(400).json({ message: "Les champs sont obligés." });
+        return res.status(400).json({ message: "Les champs sont obligés." });
       }
       const newmeal = await plat.create({
         nom,

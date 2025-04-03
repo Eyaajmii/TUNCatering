@@ -21,8 +21,7 @@ router.get("/:id",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
-// Route pour récupérer les détails de plusieurs plats
-// Dans votre fichier de routes (mealRoutes.js)
+
 router.post('/details', async (req, res) => {  
     try {  
         const { ids } = req.body;  
