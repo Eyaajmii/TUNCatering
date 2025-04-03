@@ -14,6 +14,7 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
+// Dans votre contrôleur
 
   router.post("/addCommandeMenu", upload.none(), async (req, res) => {
     try {
