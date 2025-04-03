@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
@@ -11,7 +12,11 @@
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.1",
     "node-nlp": "^5.0.0-alpha.5",
+<<<<<<< HEAD
     "socket.io": "^4.8.1"
+=======
+    "ws": "^8.18.1"
+>>>>>>> a649c18150ae61a1a79ed6212dfa47e1ae0c0923
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
