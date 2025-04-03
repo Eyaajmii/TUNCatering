@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 // Liste des statuts valides (version normalisée)
 const validStatuses = [
   "en attente",
-  "en cours de préparation", 
   "traité",
   "annulé",
   "en retard",

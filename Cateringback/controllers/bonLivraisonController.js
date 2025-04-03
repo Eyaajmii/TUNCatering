@@ -1,6 +1,6 @@
 // bonLivraison.controller.js
-const BonLivraison = require('../models/bonLivraison.model');
-const Commande = require('../models/commande.model');
+const BonLivraison = require('../models/bonLivraison');
+const Commande = require('../models/Commande');
 
 exports.creerBonLivraison = async (req, res) => {
   try {

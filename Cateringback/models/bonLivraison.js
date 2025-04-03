@@ -12,7 +12,7 @@ const bonLivraisonSchema = new mongoose.Schema({
   },
   vol: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Vol",
+    ref: "vol",
     required: true
   },
   commandes: [{
@@ -20,9 +20,9 @@ const bonLivraisonSchema = new mongoose.Schema({
     ref: "Commande",
     required: true
   }],
-  personnelLivraison: {
+  ChefCabine: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "PersonnelNavigant"
+    ref: "personnelnavigant"
   },
   statut: {
     type: String,
