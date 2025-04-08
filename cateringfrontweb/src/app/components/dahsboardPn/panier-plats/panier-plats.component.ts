@@ -13,6 +13,7 @@ export class PanierPlatsComponent implements OnInit {
   PEntree:string="";
   PPrincipal:string="";
   PDessert:string="";
+  PBoisson:string="";
   commandeFrom:FormGroup;
   constructor(private fb:FormBuilder,private CmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
@@ -25,6 +26,7 @@ export class PanierPlatsComponent implements OnInit {
       this.PEntree=p['Entree'] ||"";
       this.PPrincipal=p['Principaux']||"";
       this.PDessert=p['Dessert']||"";
+      this.PBoisson=p['Boissons']||"";
     })
   }
   onSubmit():void{
@@ -34,6 +36,7 @@ export class PanierPlatsComponent implements OnInit {
       data.append('nomEntree',this.PEntree);
       data.append('nomPlatPrincipal',this.PPrincipal);
       data.append('nomDessert',this.PDessert);
+      data.append('nomBoissons',this.PBoisson);
       data.append('numVol',numVol.toString());
       data.append('MatriculePn',this.commandeFrom.value.MatriculePn);
       this.CmdService.CommanderPlats(data).subscribe({

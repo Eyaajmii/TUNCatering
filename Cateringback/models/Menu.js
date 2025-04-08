@@ -10,13 +10,13 @@ const menuSchema = new mongoose.Schema({
     enum: ["Matin", "Midi", "Soir"],
     required: true,
   },*/
-  Disponible:{
-    type:Boolean,
-    default:true
+  Disponible: {
+    type: Boolean,
+    default: true,
   },
-  prixtotal:{
-    type:Number,
-    default:0
+  prixtotal: {
+    type: Number,
+    default: 0,
   },
   PlatsPrincipaux: [
     {
@@ -36,25 +36,24 @@ const menuSchema = new mongoose.Schema({
       ref: "Meal",
     },
   ],
-  Boissons:[
+  Boissons: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal"
-    }
+      ref: "Meal",
+    },
   ],
-  PetitDejuner:[{
+  /*PetitDejuner:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Meal"
-  }],
+  }],*/
   AdminTn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "AdminTunCatering",
   },
-  DateAjout:{
-    type:Date,
-    default:Date.now
-  }
-  
+  DateAjout: {
+    type: Date,
+    default: Date.now,
+  },
 });
 menuSchema.path("PlatsPrincipaux").validate(function(value){
     return value.length===1;

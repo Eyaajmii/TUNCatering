@@ -1078,6 +1078,42 @@
               "texts": [
                 "omlete"
               ]
+            },
+            {
+              "option": "couscous",
+              "texts": [
+                "couscous"
+              ]
+            },
+            {
+              "option": "ejja",
+              "texts": [
+                "ejja"
+              ]
+            },
+            {
+              "option": "gateau",
+              "texts": [
+                "gateau"
+              ]
+            },
+            {
+              "option": "krima",
+              "texts": [
+                "krima"
+              ]
+            },
+            {
+              "option": "coca cola",
+              "texts": [
+                "coca cola"
+              ]
+            },
+            {
+              "option": "petit déjuner",
+              "texts": [
+                "petit déjuner"
+              ]
             }
           ]
         }

@@ -4,11 +4,19 @@ class mealController {
   //create meal
   static async createMeal(req, res) {
     try {
+      //exitance image
       if (!req.file) {
         return res.status(400).json({ message: "pas d'image." });
       }
-      const { nom, description, typePlat, prix, Disponibilite, Categorie ,quantite} =
-        req.body;
+      const {
+        nom,
+        description,
+        typePlat,
+        prix,
+        Disponibilite,
+        Categorie,
+        quantite,
+      } = req.body;
       if (
         !nom ||
         !description ||
@@ -19,6 +27,11 @@ class mealController {
         !Disponibilite == undefined
       ) {
         return res.status(400).json({ message: "Les champs sont obligés." });
+      }
+      //existance
+      const existe=await plat.findOne({nom});
+      if(existe){
+        return res.status(400).json({ message: "ce plat existe deja." });
       }
       const newmeal = await plat.create({
         nom,
@@ -40,7 +53,7 @@ class mealController {
   //return all meals
   static async getAllMeals() {
     try {
-      return await plat.find({Disponibilite:true});
+      return await plat.find({ Disponibilite: true });
     } catch (error) {
       console.log(error);
     }
@@ -80,23 +93,22 @@ class mealController {
     }
   }
   //Admin set quantity of meal
-  static async miseajourquantite(Entree,PlatPrincipal,Dessert,Boissons,PetitDejuner)
-  {
-    try{
-      const plats=[Entree,PlatPrincipal,Dessert,Boissons,PetitDejuner];
-      for(let p of plats){
-        if(!p){
+  static async miseajourquantite(Entree, PlatPrincipal, Dessert, Boisson) {
+    try {
+      const plats = [Entree, PlatPrincipal, Dessert, Boisson];
+      for (let p of plats) {
+        if (!p) {
           continue;
         }
-        if(p.quantite>0){
-          p.quantite-=1;
+        if (p.quantite > 0) {
+          p.quantite -= 1;
         }
-        if(p.quantite===0){
+        if (p.quantite === 0) {
           p.Disponibilite = false;
         }
         await p.save();
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
     }
   }

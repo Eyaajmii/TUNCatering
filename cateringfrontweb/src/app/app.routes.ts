@@ -7,9 +7,11 @@ import { PanierPlatsComponent } from './components/dahsboardPn/panier-plats/pani
 import { DashboardComponent } from './components/dashboardAdminTunCatering/dashboard/dashboard.component';
 import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/navbar-items/navbar-items.component';
 import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
-import { CommandesTempsReelComponent } from './components/dashboardAdminTunCatering/commandes-temps-reel/commandes-temps-reel.component';
-import { CommandesComponent } from './components/dashboardAdminTunCatering/commande-mouvements/commande-mouvements.component';
 import { AllOrdersComponent } from './components/dashboardAdminTunCatering/all-orders/all-orders.component';
+import { AllMealsComponent } from './components/dashboardAdminTunCatering/all-meals/all-meals.component';
+import { AllMenusComponent } from './components/dashboardAdminTunCatering/all-menus/all-menus.component';
+import { DashboardDirectionComponent } from './components/DashTunisairDirCatering/dashboard-direction/dashboard-direction.component';
+import { EtatCommandeComponent } from './components/dahsboardPn/etat-commande/etat-commande.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
@@ -21,7 +23,9 @@ export const routes: Routes = [
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
     {path:"TousCommandes",title:"Tous Commandes",component:AllOrdersComponent},
-    //{path:"AdminCatering",title:'consulter commande',component:CommandesTempsReelComponent},
-    //{path:"Direction du catering tunisair",title:'consulter commande',component:CommandesComponent},
+    {path:'TousPlats',title:'Tous Plats',component:AllMealsComponent},
+    {path:'TousMenu',title:'Tous Menu',component:AllMenusComponent},
+    {path:'TunisairCatering',title:'Tunisair Catering',component:DashboardDirectionComponent},
+    {path:'MyOrders',title:'My Orders',component:EtatCommandeComponent},
     {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];

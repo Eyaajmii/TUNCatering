@@ -17,18 +17,14 @@ const cors = require("cors");
 const app = express();
 const PORT = 5000;
 
-<<<<<<< HEAD
-// Middleware 
-=======
+
 // Create HTTP server
 const server = http.createServer(app);
 
 // Setup WebSocket and get broadcast functions
 const { broadcastNewOrder, broadcastOrderStatusUpdate } =
   setupWebSocket(server);
-
-// Middleware
->>>>>>> a649c18150ae61a1a79ed6212dfa47e1ae0c0923
+//Middleware
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());

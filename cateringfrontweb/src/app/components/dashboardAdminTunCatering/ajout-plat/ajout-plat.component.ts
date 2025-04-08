@@ -59,7 +59,11 @@ export class AjoutPlatComponent {
         },
         error: (error) => {
           console.error("Erreur lors de l'ajout du plat:", error);
-          alert("Veuillez reessayer")
+          if (error.error.message === "ce plat existe deja.") {
+            alert("Plat déjà existe");
+          } else {
+            alert("Veuillez réessayer");
+          }
         },
         complete: () => {
           this.isSubmit = false; 

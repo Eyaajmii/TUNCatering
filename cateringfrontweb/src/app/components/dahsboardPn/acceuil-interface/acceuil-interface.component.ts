@@ -21,10 +21,12 @@ export class AcceuilInterfaceComponent implements OnInit{
   PlatsEntree:Plat[]=[];
   PlatsPrincipaux:Plat[]=[];
   PlatsDessert:Plat[]=[];
+  Boissons:Plat[]=[];
   //Selected meals
   EntreeSelectionne:Plat|null=null;
   PrincipauxSelectionne:Plat|null=null;
   DessertSelectionne:Plat|null=null;
+  BoissonsSelectionne:Plat|null=null;
   constructor(private menuService:MenuServiceService,private platService:PlatServiceService,private router:Router){}
   ngOnInit(): void {
     this.menuService.TousMenu().subscribe(data => {
@@ -34,13 +36,10 @@ export class AcceuilInterfaceComponent implements OnInit{
 
     this.platService.getallPlats().subscribe(data=>{
       this.plats=data;
-
       this.PlatsEntree=this.plats.filter(plat=>plat.typePlat==="Entrée");
       this.PlatsPrincipaux=this.plats.filter(plat=>plat.typePlat==="Plat Principal");
       this.PlatsDessert=this.plats.filter(plat=>plat.typePlat==="Dessert");
-      console.log("Plats Entrées: ",this.PlatsEntree);
-      console.log("Plats Principaux: ",this.PlatsPrincipaux);
-      console.log("Plats Desserts: ",this.PlatsDessert);
+      this.Boissons=this.plats.filter(plat=>plat.typePlat==="Boisson");
     });
   }
   commanderMenu(nom:string):void{
@@ -54,14 +53,17 @@ export class AcceuilInterfaceComponent implements OnInit{
       this.PrincipauxSelectionne = p;
     } else if (typePlat === 'Dessert') {
       this.DessertSelectionne = p;
+    }else if(typePlat=='Boisson'){
+      this.BoissonsSelectionne=p;
     }
   
-    if (this.EntreeSelectionne && this.PrincipauxSelectionne && this.DessertSelectionne) {
+    if (this.EntreeSelectionne && this.PrincipauxSelectionne && this.DessertSelectionne && this.BoissonsSelectionne) {
       this.router.navigate(['/PanierPlats'], {
         queryParams: {
           Entree: this.EntreeSelectionne.nom,
           Principaux: this.PrincipauxSelectionne.nom,
-          Dessert: this.DessertSelectionne.nom
+          Dessert: this.DessertSelectionne.nom,
+          Boissons:this.BoissonsSelectionne.nom,
         }
       });
     }

@@ -29,7 +29,7 @@ const commandeSchema = new mongoose.Schema({
       message: props => `${props.value} n'est pas un statut valide!`
     },
     default: "en attente",
-    set: v => v.toLowerCase() // Normalisation en minuscules
+    set: v => v.toLowerCase() 
   },
   MatriculePn: {
     type: mongoose.Schema.Types.ObjectId,

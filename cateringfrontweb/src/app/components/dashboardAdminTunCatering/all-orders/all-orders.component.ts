@@ -35,7 +35,6 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
 
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'en cours de préparation', display: 'En préparation', class: 'en-preparation' },
     { value: 'traité', display: 'Traité', class: 'traite' },
     { value: 'annulé', display: 'Annulé', class: 'annule' },
     { value: 'en retard', display: 'En retard', class: 'en-retard' },

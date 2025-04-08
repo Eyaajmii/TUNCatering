@@ -24,8 +24,8 @@ export interface Menu{
   PlatsEntree:Plat[];
   PlatsDessert:Plat[];
   Boissons:Plat[];
-  PetitDejuner:Plat[];
-  Disponible:boolean
+  Disponible:boolean;
+  prixtotal:number;
 }
 @Injectable({
   providedIn: 'root'
@@ -43,10 +43,7 @@ export class MenuServiceService {
   return this.http.get<Plat[]>(`${platURL}/type/Dessert`);
  }
  TousBoissons():Observable<Plat[]>{
-  return this.http.get<Plat[]>(`${platURL}/type/Boissons`);
- }
- TousPetitDejuner():Observable<Plat[]>{
-  return this.http.get<Plat[]>(`${platURL}/type/Petit déjuner`);
+  return this.http.get<Plat[]>(`${platURL}/type/Boisson`);
  }
   creerMenu(data:any):Observable<any>{
     return this.http.post<any>(`${menuURL}/add`,data);

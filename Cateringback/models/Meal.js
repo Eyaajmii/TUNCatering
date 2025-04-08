@@ -5,6 +5,7 @@ const mealSchema = new mongoose.Schema({
   nom: {
     type: String,
     required: true,
+    unique:true,
   },
   description: {
     type: String,
@@ -16,7 +17,7 @@ const mealSchema = new mongoose.Schema({
   },
   typePlat: {
     type: String,
-    enum: ["Entrée", "Plat Principal", "Dessert","Boissons","Petit déjuner"],
+    enum: ["Entrée", "Plat Principal", "Dessert","Boisson","Petit déjuner"],
     required: true,
   },
   Categorie: {

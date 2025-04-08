@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
+const multer = require("multer");
 const upload = multer();
 const CommandeController = require("../controllers/commandeController");
 
-module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
-  // Route pour obtenir toutes les commandes
+module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
   router.get("/", async (req, res) => {
     try {
       const commandes = await CommandeController.getAllCommands();
@@ -14,8 +13,14 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
-// Dans votre contrôleur
-
+  router.get("/Orders/:MatriculePn", async (req, res) => {
+    try {
+      const orders = await CommandeController.getMyOrders(req.params.MatriculePn);
+      res.status(200).json(orders);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
   router.post("/addCommandeMenu", upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
@@ -26,14 +31,14 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
         MatriculePn,
         MatriculeResTun
       );
-      
+
       // Broadcast new order to all connected admin clients
       broadcastNewOrder({
         ...newcommande._doc,
-        type: 'menu',
-        items: [{ nom, quantite: 1 }]
+        type: "menu",
+        items: [{ nom, quantite: 1 }],
       });
-      
+
       res.status(200).json(newcommande);
     } catch (error) {
       res.status(500).send(error.message);
@@ -43,7 +48,15 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
   router.post("/addCommandePlat", upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
-      const { nomEntree, nomPlatPrincipal, nomDessert, nomBoissons, nomPetitDejuner, MatriculeResTun, MatriculePn } = req.body;
+      const {
+        nomEntree,
+        nomPlatPrincipal,
+        nomDessert,
+        nomBoissons,
+        nomPetitDejuner,
+        MatriculeResTun,
+        MatriculePn,
+      } = req.body;
       const newcommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,
@@ -54,20 +67,20 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
         MatriculePn,
         MatriculeResTun
       );
-      
+
       // Broadcast new order to all connected admin clients
       broadcastNewOrder({
         ...newcommande._doc,
-        type: 'plat',
+        type: "plat",
         items: [
           { nom: nomEntree, quantite: 1 },
           { nom: nomPlatPrincipal, quantite: 1 },
           { nom: nomDessert, quantite: 1 },
           { nom: nomBoissons, quantite: 1 },
-          { nom: nomPetitDejuner, quantite: 1 }
-        ].filter(item => item.nom)
+          { nom: nomPetitDejuner, quantite: 1 },
+        ].filter((item) => item.nom),
       });
-      
+
       res.status(200).json(newcommande);
     } catch (err) {
       res.status(500).send(err.message);
@@ -96,26 +109,26 @@ module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
     }
   });
 
-  router.put('/updateStatut/:id', async (req, res) => {
+  router.put("/updateStatut/:id", async (req, res) => {
     try {
       const { Statut } = req.body; // Notez la majuscule ici pour correspondre à votre requête
-      
+
       if (!Statut) {
         return res.status(400).send("Le champ 'Statut' est requis");
       }
-  
+
       const updateCommande = await CommandeController.updateCommandeStatus(
         req.params.id,
         Statut.toLowerCase() // Convertir en minuscule si nécessaire
       );
-      
+
       // Broadcast
       broadcastOrderStatusUpdate({
         _id: req.params.id,
         statut: Statut,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
-      
+
       res.status(200).json(updateCommande);
     } catch (err) {
       if (err.message === "Commande not found") {

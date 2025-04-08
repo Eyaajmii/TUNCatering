@@ -3,15 +3,19 @@ const Meal = require("../models/Meal");
 
 class menuController {
   //create a menu
-  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Boissons,PetitDejuner,Disponible) {
+  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Boissons,Disponible) {
     try {
+      //existance menu
+      const exist = await Menu.findOne({ nom: nom });
+      if (exist) {
+       throw new Error("Menu déja existe");
+      }
       // Vérifier qu'il y a un seul plat pour chaque type
       if (
         PlatsPrincipaux.length !== 1 ||
         PlatsEntree.length !== 1 ||
         PlatsDessert.length !== 1||
-        Boissons.length!==1||
-        PetitDejuner!==1
+        Boissons.length!==1
       ) {
         throw new Error(
           "Vous devez choisir un seul plat pour chaque type de plat"
@@ -22,9 +26,8 @@ class menuController {
       const platsPrincipaux = await Meal.find({_id: { $in: PlatsPrincipaux },});
       const platsEntrees = await Meal.find({ _id: { $in: PlatsEntree } });
       const platsDesserts = await Meal.find({ _id: { $in: PlatsDessert } });
-      const Boissons=await Meal.find({_id: {$in:Boissons}});
-      const PetitDejuner = await Meal.find({ _id: { $in: PetitDejuner } });
-      if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0||Boissons[0]?.quantite<=0||PetitDejuner[0]?.quantite<=0){
+      const boissons=await Meal.find({_id: {$in:Boissons}});
+      if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0||boissons[0]?.quantite<=0){
         throw new Error("Quantité insuffisante pour les plats choisis");
       }
       // verification mm categorie
@@ -32,22 +35,26 @@ class menuController {
         platsPrincipaux[0]?.Categorie,
         platsEntrees[0]?.Categorie,
         platsDesserts[0]?.Categorie,
-        Boissons[0]?.Categorie,
-        PetitDejuner[0]?.Categorie
+        boissons[0]?.Categorie,
       ];
 
       if (new Set(categories).size !== 1) {
         throw new Error("Les plats doivent appartenir à la même catégorie.");
       }
-
+      const prixTotal =
+        (platsPrincipaux[0]?.prix || 0) +
+        (platsEntrees[0]?.prix || 0) +
+        (platsDesserts[0]?.prix || 0) +
+        (boissons[0]?.prix||0);
+      
       const nouveauMenu = await Menu.create({
         nom,
         PlatsPrincipaux,
         PlatsEntree,
         PlatsDessert,
         Boissons,
-        PetitDejuner,
         Disponible:true,
+        prixtotal:prixTotal,
         DateAjout:Date.now(),
       }); 
       return nouveauMenu;
@@ -64,7 +71,6 @@ class menuController {
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
         .populate("Boissons","nom description")
-        .populate("PetitDejuner","nom description");
     } catch (err) {
       console.error(err);
     }
@@ -85,7 +91,6 @@ class menuController {
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
         .populate("Boissons", "nom description")
-        .populate("PetitDejuner", "nom description");
     } catch (err) {
       console.error(err);
     }
@@ -98,7 +103,6 @@ class menuController {
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
         .populate("Boissons", "nom description")
-        .populate("PetitDejuner", "nom description");
     } catch (err) {
       console.error(err);
     }
@@ -119,13 +123,12 @@ class menuController {
         .populate("PlatsPrincipaux")
         .populate("PlatsDessert")
         .populate("Boissons", "nom description")
-        .populate("PetitDejuner", "nom description");
       if(!menu){
         console.log("Menu pas trouvé");
       }
       let menuDispo=true;
       //concatination tous les plats dans un seul ensemble//
-      const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert,...menu.Boissons,...menu.PetitDejuner];
+      const plats=[...menu.PlatsEntree,...menu.PlatsPrincipaux,...menu.PlatsDessert,...menu.Boissons];
       for(let p of plats){
         if(p.quantite>0){
           p.quantite-=1;

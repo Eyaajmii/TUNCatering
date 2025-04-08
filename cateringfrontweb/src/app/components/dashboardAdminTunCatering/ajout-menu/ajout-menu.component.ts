@@ -20,14 +20,12 @@ export class AjoutMenuComponent implements OnInit {
   PlatsEntree:any[]=[];
   PlatsDessert:any[]=[];
   Boissons:any[]=[];
-  PetitDejuner:any[]=[];
   selectedMenu={
     nom:'',
     PlatsPrincipaux:'',
     PlatsEntree:'',
     PlatsDessert:'',
     Boissons:'',
-    PetitDejuner:'',
     Disponible:false
   };
   constructor(private menuService:MenuServiceService){}
@@ -39,7 +37,6 @@ export class AjoutMenuComponent implements OnInit {
     this.menuService.TousEntree().subscribe(data=>this.PlatsEntree=data);
     this.menuService.TousDessert().subscribe(data=>this.PlatsDessert=data);
     this.menuService.TousBoissons().subscribe(data=>this.Boissons=data);
-    this.menuService.TousPetitDejuner().subscribe(data=>this.PetitDejuner=data);
   }
   onSubmit():void{
     const menudata={
@@ -48,7 +45,6 @@ export class AjoutMenuComponent implements OnInit {
       PlatsEntree:[this.selectedMenu.PlatsEntree],
       PlatsDessert:[this.selectedMenu.PlatsDessert],
       Boissons:[this.selectedMenu.Boissons],
-      PetitDejuner:[this.selectedMenu.PetitDejuner],
       Disponible:[this.selectedMenu.Disponible]
     };
     this.menuService.creerMenu(menudata).subscribe({
@@ -58,7 +54,11 @@ export class AjoutMenuComponent implements OnInit {
       },
       error:(err)=>{
         console.log(err);
-        alert('Erreur'+err);
+        if(err.error && err.error.message==='Menu déja existe'){
+          alert("Menu déja existe !");
+        }else{
+          alert('Erreur: ' + err.error.message || err.message);
+        }
       }
   });
   }

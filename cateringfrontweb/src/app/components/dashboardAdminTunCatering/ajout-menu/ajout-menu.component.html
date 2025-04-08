@@ -48,12 +48,6 @@
       <option *ngFor="let meal of Boissons" [value]="meal._id">{{meal.nom}}</option>
     </select>
   </div>
-  <div class="form-group">
-    <label>Petit Déjuner : </label>
-    <select id="PetitDejuner" [(ngModel)]="selectedMenu.PetitDejuner" name="PetitDejuner" required>
-      <option *ngFor="let meal of PetitDejuner" [value]="meal._id">{{meal.nom}}</option>
-    </select>
-  </div>
   <div clas="form-group">  
     <label>Disponible : </label>
     <input id="Disponible"  type="checkbox">
