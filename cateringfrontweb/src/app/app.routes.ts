@@ -9,6 +9,7 @@ import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/nav
 import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
 import { CommandesTempsReelComponent } from './components/dashboardAdminTunCatering/commandes-temps-reel/commandes-temps-reel.component';
 import { CommandesComponent } from './components/dashboardAdminTunCatering/commande-mouvements/commande-mouvements.component';
+import { BonLivraisonComponent } from './components/dashboardAdminTunCatering/bon-livraison/bon-livraison.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
@@ -21,5 +22,6 @@ export const routes: Routes = [
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},
     {path:"AdminCatering",title:'consulter commande',component:CommandesTempsReelComponent},
     {path:"Direction du catering tunisair",title:'consulter commande',component:CommandesComponent},
+    {path:"Bon-Livraison",title:'crer bon livraison',component:BonLivraisonComponent},
     {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];
