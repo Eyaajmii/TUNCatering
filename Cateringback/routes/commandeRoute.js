@@ -6,15 +6,18 @@ const CommandeController = require("../controllers/commandeController");
 
 module.exports = function(broadcastNewOrder, broadcastOrderStatusUpdate) {
   // Route pour obtenir toutes les commandes
-  router.get("/", async (req, res) => {
+  router.get('/vol/:numVol', async (req, res) => {
     try {
-      const commandes = await CommandeController.getAllCommands();
-      res.status(200).json(commandes);
-    } catch (err) {
-      res.status(500).send(err.message);
+      const { numVol } = req.params;
+      const commandes = await CommandeController.getCommandesByNumVol(numVol);
+      res.status(200).json({ success: true, data: commandes });
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message });
     }
   });
+  
 // Dans votre contrôleur
+router.get('/vol/:numVol', CommandeController.getCommandesByNumVol);
 
   router.post("/addCommandeMenu", upload.none(), async (req, res) => {
     try {

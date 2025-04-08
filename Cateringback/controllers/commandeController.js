@@ -8,6 +8,31 @@ const flight = require("../models/vol");
 
 class CommandeController {  
   // Return all orders  
+  static async getCommandesByNumVol(numVol) {
+    try {
+      // Vérifier si le vol existe avec numVol
+      const vol = await flight.findOne({ numVol });
+
+      if (!vol) {
+        throw new Error(`Aucun vol trouvé avec le numéro ${numVol}`);
+      }
+
+      // Trouver les commandes associées à ce vol
+      const commandes = await commande.find({ vol: vol._id })
+        .populate({ path: 'menu', select: 'nom' }) // Afficher le nom du menu
+        .populate({ path: 'plats', select: 'nom' }) // Afficher les plats associés
+        .populate({ path: 'MatriculePn', select: 'nom prenom Matricule' }); // Afficher les détails du personnel
+
+      if (commandes.length === 0) {
+        throw new Error(`Aucune commande trouvée pour le vol ${numVol}`);
+      }
+
+      return commandes;
+    } catch (error) {
+      throw new Error("Erreur lors de la récupération des commandes: " + error.message);
+    }
+  }
+
   static async getAllCommands() {  
     try {  
       const commandes = await commande.find();  
