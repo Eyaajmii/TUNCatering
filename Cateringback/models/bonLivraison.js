@@ -11,6 +11,11 @@ const bonLivraisonSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    Statut:{
+      type:String,
+      enum: ["En attente", "En retard", "Annulé","Livré"],
+      default: "En attente",
+    },
     vol: {
       type: String,
       required: true,

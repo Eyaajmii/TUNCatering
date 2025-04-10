@@ -58,7 +58,6 @@ const commandeSchema = new mongoose.Schema({
   ],
 });
 
-// Méthode pour obtenir les statuts valides (peut être utilisée dans le frontend)
 commandeSchema.statics.getValidStatuses = function() {
   return validStatuses;
 };
