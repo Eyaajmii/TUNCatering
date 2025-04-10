@@ -21,15 +21,31 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
+  router.post("/addCommandeAffrete", upload.none(), async (req, res) => {
+    try {
+      const numvol = parseInt(req.body.numVol);
+      const { nom, MatriculeDirTunCater, nbrCmd } = req.body;
+      const newcommande = await CommandeController.RequestCommande(
+        numvol,
+        nom,
+        MatriculeDirTunCater,
+        nbrCmd,
+        
+      );
+      res.status(200).json(newcommande);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
   router.post("/addCommandeMenu", upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
-      const { nom, MatriculeResTun, MatriculePn } = req.body;
+      const { nom, MatriculePn, MatriculeDirTunCater } = req.body;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
         nom,
         MatriculePn,
-        MatriculeResTun
+        MatriculeDirTunCater
       );
 
       // Broadcast new order to all connected admin clients
@@ -54,8 +70,8 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomDessert,
         nomBoissons,
         nomPetitDejuner,
-        MatriculeResTun,
         MatriculePn,
+        MatriculeDirTunCater,
       } = req.body;
       const newcommande = await CommandeController.RequestCommandeMeal(
         numVol,
@@ -65,7 +81,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomBoissons,
         nomPetitDejuner,
         MatriculePn,
-        MatriculeResTun
+        MatriculeDirTunCater
       );
 
       // Broadcast new order to all connected admin clients

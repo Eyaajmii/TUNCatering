@@ -11,6 +11,18 @@ router.post("/add",async(req,res)=>{
         res.status(500).json({message:"Erreur lors de l'ajout du personnel",err});
     }
 })
+//personnel direction du catering tunisair
+router.post("/addDirTun",async(req,res)=>{
+    try {
+        const{ email,password,username,nom,prenom,telephone,Matricule}=req.body;
+        const newPn=await pnController.creatPnDirCatering(email,password,username,nom,prenom,telephone,Matricule);
+        res.status(201).json({message:"Personnel ajouté avec succès",newPn});
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "Erreur lors de l'ajout du personnel", err });
+    }
+})
 router.post("/addCarnet",async(req,res)=>{
     try{
         const{MatriculePn,Allergies,Maladie,Medicaments,Commentaires}=req.body;

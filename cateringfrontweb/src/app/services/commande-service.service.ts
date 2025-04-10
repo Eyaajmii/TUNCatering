@@ -52,14 +52,17 @@ export class CommandeServiceService {
       this.initializeWebSocket();  
     }  
   }  
-
+  //pour personnel navigant
   CommanderMenu(formData:FormData):Observable<any>{
     return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData);
   }
   CommanderPlats(formData:FormData):Observable<any>{
     return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData);
   } 
-
+  //pour direction tunisair du catering
+  CommanderAffretes(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,formData);
+  }
   private initializeWebSocket(): void {  
     try {  
       if (typeof WebSocket !== 'undefined') {  

@@ -17,43 +17,45 @@ const commandeSchema = new mongoose.Schema({
   },
   dateCommnade: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   Statut: {
     type: String,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         // Validation insensible à la casse
         return validStatuses.includes(v.toLowerCase());
       },
-      message: props => `${props.value} n'est pas un statut valide!`
+      message: (props) => `${props.value} n'est pas un statut valide!`,
     },
     default: "en attente",
-    set: v => v.toLowerCase() 
+    set: (v) => v.toLowerCase(),
   },
   MatriculePn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "personnelnavigant",
-    default: null
+    default: null,
   },
-  MatriculeResTun: {
+  MatriculeDirTunCater: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "ResponsableTunDirCatering",
-    default: null
+    ref: "PersonnelTunDirCatering",
+    default: null,
   },
   vol: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vol",
-    required: true    
+    required: true,
   },
   menu: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Menu",
   },
-  plats: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Meal",
-  }],
+  plats: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Meal",
+    },
+  ],
 });
 
 // Méthode pour obtenir les statuts valides (peut être utilisée dans le frontend)

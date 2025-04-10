@@ -1,1 +1,28 @@
-<p>commande-affrette works!</p>
+<div class="commande-container">
+  <h2>Commande de Menus</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="matriculeDirTunCater">Matricule du Responsable</label>
+      <input id="matriculeDirTunCater" formControlName="MatriculeDirTunCater" name="matriculeDirTunCater" required />
+    </div>
+
+    <div class="form-group">
+      <label for="numVol">Numéro de Vol</label>
+      <input id="numVol" formControlName="numVol" name="numVol" type="number" required />
+    </div>
+
+    <div class="form-group">
+      <label for="nbrCmd">Nombre de Personnels</label>
+      <input id="nbrCmd" formControlName="nbrCmd" name="nbrCmd" type="number" min="1" required />
+    </div>
+
+    <div class="form-group">
+      <div *ngIf="menus.length === 0">Chargement des menus...</div>
+     <select formControlName="nom">
+      <option *ngFor="let menu of menus" [value]="menu.nom">{{ menu.nom }}</option>
+     </select>
+    </div>
+    
+    <button type="submit">Passer Commande</button>
+  </form>
+</div>

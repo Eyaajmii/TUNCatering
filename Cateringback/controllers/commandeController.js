@@ -1,5 +1,4 @@
 const commande = require("../models/Commande");
-const personnel = require("../models/personnelnavigant");
 const Menu = require("../models/Menu");
 const plat = require("../models/Meal");
 const menucontroller = require("./menuController");
@@ -18,12 +17,12 @@ class CommandeController {
       throw new Error("Error retrieving commands: " + error.message);
     }
   }
-  static async getMyOrders(MatriculePn){
-    try{
-      const Myorders = await commande.find({MatriculePn:MatriculePn});
+  static async getMyOrders(MatriculePn) {
+    try {
+      const Myorders = await commande.find({ MatriculePn: MatriculePn });
       console.log("Commandes récupérées:", Myorders);
       return Myorders;
-    }catch(err){
+    } catch (err) {
       console.error("Erreur lors de la récupération des commandes:", err);
     }
   }
@@ -46,14 +45,75 @@ class CommandeController {
       if (!cmd) {
         throw new Error("Commande not found");
       }
-      return cmd; // Ensure to return the command
+      return cmd;
     } catch (error) {
       throw new Error("Error retrieving command: " + error.message);
     }
   }
+  //Orders for tunisair direction
+  static async RequestCommande(numVol, nom, MatriculeDirTunCater, nbrCmd) {
+    try {
+      if (typeof numVol !== "number") {
+        throw new Error("numVol must be a number");
+      }
+
+      const vol = await flight.findOne({ numVol: numVol });
+      if (!vol) {
+        throw new Error("Flight not found");
+      }
+
+      const volId = vol._id;
+      const dureeVol = parseInt(vol.DureeVol);
+      const cmdExist = await commande.countDocuments({
+        vol: volId,
+        MatriculeDirTunCater,
+      });
+      if (dureeVol > 6 && cmdExist>=2) {
+        throw new Error("Only 2 menu are allowed per PN for flights > 6h");
+      }
+      if (dureeVol <= 6 && cmdExist>=1) {
+        throw new Error("Only 1 menu is allowed per PN for flights ≤ 6h");
+      }
+
+      const menu = await Menu.findOne({ nom: nom });
+      if (!menu || !menu.Disponible) {
+        throw new Error("Menu not available");
+      }
+
+      const menuId = menu._id;
+      const date = new Date();
+      const limitdate = new Date(vol.dateVolDep);
+      if (date > limitdate) {
+        throw new Error("Commande not allowed after the flight departure time");
+      }
+
+      const deadline = new Date(limitdate);
+      if (["Tunis", "Monastir", "Djerba"].includes(vol.Depart)) {
+        deadline.setHours(deadline.getHours() - 3);
+      } else if (
+        ["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)
+      ) {
+        deadline.setHours(deadline.getHours() - 12);
+      }
+
+      const newCmd = await commande.create({
+        vol: volId,
+        menu: menuId,
+        dateCommnade: date,
+        Statut: "En attente",
+        NombreCommande: nbrCmd,
+        MatriculeDirTunCater: MatriculeDirTunCater,
+      });
+      await menucontroller.miseajourmenuCommande(nom);
+      return newCmd;
+    } catch (err) {
+      console.error("Erreur lors de la récupération des commandes:", err);
+      throw err;
+    }
+  }
 
   // Order Menu
-  static async RequestCommandeMenu(numVol, nom, MatriculePn, MatriculeResTun) {
+  static async RequestCommandeMenu(numVol, nom, MatriculePn) {
     try {
       if (typeof numVol !== "number") {
         throw new Error("numVol must be a number");
@@ -107,7 +167,6 @@ class CommandeController {
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         MatriculePn: MatriculePn || undefined,
-        MatriculeResTun: MatriculeResTun || undefined,
       });
 
       await menucontroller.miseajourmenuCommande(nom);
@@ -125,8 +184,7 @@ class CommandeController {
     nomDessert,
     nomBoissons,
     nomPetitDejuner,
-    MatriculePn,
-    MatriculeResTun
+    MatriculePn
   ) {
     try {
       if (typeof numVol !== "number") {
@@ -225,7 +283,6 @@ class CommandeController {
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         MatriculePn: MatriculePn || undefined,
-        MatriculeResTun: MatriculeResTun || undefined,
       });
 
       await platcontroller.miseajourquantite(

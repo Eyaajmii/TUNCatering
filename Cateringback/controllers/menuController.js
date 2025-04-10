@@ -86,11 +86,11 @@ class menuController {
   //return all menus
   static async getAllMenu() {
     try {
-      return Menu.find()
+      return Menu.find({ Disponible: true })
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
-        .populate("Boissons", "nom description")
+        .populate("Boissons", "nom description");
     } catch (err) {
       console.error(err);
     }
