@@ -13,6 +13,18 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
+  router.get("/vol/:numVol", async (req, res) => {
+    try {
+      const { numVol } = req.params;
+      const commandes = await CommandeController.getCommandesByNumVol(numVol);
+      res.status(200).json({ success: true, data: commandes });
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+  });
+
+  router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);
+
   router.get("/Orders/:MatriculePn", async (req, res) => {
     try {
       const orders = await CommandeController.getMyOrders(req.params.MatriculePn);

@@ -63,6 +63,15 @@ export class CommandeServiceService {
   CommanderAffretes(formData:FormData):Observable<any>{
     return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,formData);
   }
+  //commandebynumVol
+  getCommandesByVol(numVol: string): Observable<any> {
+    return this.http.get<any>(`${commandeURL}/vol/${numVol}`).pipe(
+      catchError(error => {
+        console.error('Error fetching commandes by vol:', error);
+        return of([]);
+      })
+    );
+  }
   private initializeWebSocket(): void {  
     try {  
       if (typeof WebSocket !== 'undefined') {  

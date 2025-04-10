@@ -17,6 +17,32 @@ class CommandeController {
       throw new Error("Error retrieving commands: " + error.message);
     }
   }
+  //return orders by numvol
+  static async getCommandesByNumVol(numVol) {
+    try {
+      const vol = await flight.findOne({ numVol });
+
+      if (!vol) {
+        throw new Error(`Aucun vol trouvé avec le numéro ${numVol}`);
+      }
+      const commandes = await commande
+        .find({ vol: vol._id })
+        .populate({ path: "menu", select: "nom" })
+        .populate({ path: "plats", select: "nom" }) 
+        .populate({ path: "MatriculePn", select: "nom prenom Matricule" }); 
+
+      if (commandes.length === 0) {
+        throw new Error(`Aucune commande trouvée pour le vol ${numVol}`);
+      }
+      return commandes;
+    } catch (error) {
+      throw new Error(
+        "Erreur lors de la récupération des commandes: " + error.message
+      );
+    }
+  }
+
+  //return personnelOrder by they matricule
   static async getMyOrders(MatriculePn) {
     try {
       const Myorders = await commande.find({ MatriculePn: MatriculePn });
@@ -68,10 +94,10 @@ class CommandeController {
         vol: volId,
         MatriculeDirTunCater,
       });
-      if (dureeVol > 6 && cmdExist>=2) {
+      if (dureeVol > 6 && cmdExist >= 2) {
         throw new Error("Only 2 menu are allowed per PN for flights > 6h");
       }
-      if (dureeVol <= 6 && cmdExist>=1) {
+      if (dureeVol <= 6 && cmdExist >= 1) {
         throw new Error("Only 1 menu is allowed per PN for flights ≤ 6h");
       }
 
@@ -302,7 +328,7 @@ class CommandeController {
     try {
       const updatedCommande = await commande.findByIdAndUpdate(
         id,
-        { Statut: newStatus }, // Notez la majuscule 'Statut' pour correspondre au schéma
+        { Statut: newStatus }, 
         { new: true, runValidators: true }
       );
 

@@ -13,6 +13,7 @@ import { AllMenusComponent } from './components/dashboardAdminTunCatering/all-me
 import { DashboardDirectionComponent } from './components/DashTunisairDirCatering/dashboard-direction/dashboard-direction.component';
 import { EtatCommandeComponent } from './components/dahsboardPn/etat-commande/etat-commande.component';
 import { CommandeAffretteComponent } from './components/DashTunisairDirCatering/commande-affrette/commande-affrette.component';
+import { AjoutBonLivraisonComponent } from './components/dashboardAdminTunCatering/ajout-bon-livraison/ajout-bon-livraison.component';
 export const routes: Routes = [
     { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
     {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
@@ -29,5 +30,6 @@ export const routes: Routes = [
     {path:'TunisairCatering',title:'Tunisair Catering',component:DashboardDirectionComponent},
     {path:'MyOrders',title:'My Orders',component:EtatCommandeComponent},
     {path:'CommandeAffretes',title:'Commande Affretes',component:CommandeAffretteComponent},
+    {path:'CreateBonLivraison',title:'Ajouter bonLivraison',component:AjoutBonLivraisonComponent},
     {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
 ];

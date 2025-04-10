@@ -41,7 +41,7 @@ app.use("/api/vol", volRoute);
 app.use("/api/pn", pnRouter);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
-// Import and use commandeRoute with injected WebSocket functions
+
 const commandeRoute = require("./routes/commandeRoute")(
   broadcastNewOrder,
   broadcastOrderStatusUpdate
