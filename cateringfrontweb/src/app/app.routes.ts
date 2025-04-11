@@ -17,6 +17,7 @@ import { AjoutBonLivraisonComponent } from './components/dashboardAdminTunCateri
 import { ConsulteCommandesComponent } from './components/DashTunisairDirCatering/consulte-commandes/consulte-commandes.component';
 import { HomeComponent } from './components/dahsboardPn/home/home.component';
 import { AjoutFactureComponent } from './components/dashboardAdminTunCatering/ajout-facture/ajout-facture.component';
+import { TousFacturesComponent } from './components/dashboardAdminTunCatering/tous-factures/tous-factures.component';
 export const routes: Routes = [
     //personnels navigant
     {path:'AcceuilPersonnel',title:'Acceuil',component:AcceuilInterfaceComponent,children:[
@@ -36,6 +37,7 @@ export const routes: Routes = [
         {path:'TousMenu',title:'Tous Menu',component:AllMenusComponent},
         {path:'CreateBonLivraison',title:'Ajouter bonLivraison',component:AjoutBonLivraisonComponent},
         {path:'createFacture',title:'Ajouter facture',component:AjoutFactureComponent},
+        {path:'TousFactures',title:'Tous factures',component:TousFacturesComponent},
     ]},
     /*{path:"navbaritem",title:'navbaritem',component:NavbarItemsComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},*/

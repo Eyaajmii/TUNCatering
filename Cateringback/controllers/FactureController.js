@@ -100,6 +100,15 @@ class FactureController {
       return { success: false, message: err.message };
     }
   }
+  static async TousLesFacture(){
+    try{
+      const factures = await Facture.find();
+      console.log("factures récupérées:", factures);
+      return factures;
+    }catch{
+      console.error("Erreur dans TousLesFacture");
+    }
+  }
 }
 
 module.exports = FactureController;

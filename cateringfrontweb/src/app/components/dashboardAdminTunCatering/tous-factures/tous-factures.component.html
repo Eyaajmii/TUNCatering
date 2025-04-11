@@ -1,0 +1,23 @@
+<!-- tous-factures.component.html -->
+<div class="facture-container">
+    <h2>Liste des factures</h2>
+    <div *ngIf="loading">Chargement des factures...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <ul *ngIf="!loading">
+      <li *ngFor="let f of factures" class="facture-item">
+        <div>
+          <strong>N° Facture:</strong> {{ f.numeroFacture }}
+        </div>
+        <div>
+          <strong>Date:</strong> {{ f.DateFacture | date:'shortDate' }}
+        </div>
+        <div>
+          <strong>Statut:</strong> {{ f.Statut }}
+        </div>
+        <div>
+          <strong>Montant total:</strong> {{ f.montantTotal }} TND
+        </div>
+      </li>
+    </ul>
+    <div *ngIf="!connectionStatus" class="warning">Connexion WebSocket perdue...</div>
+  </div>

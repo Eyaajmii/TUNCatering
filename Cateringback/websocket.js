@@ -45,10 +45,36 @@ function setupWebSocket(server) {
       }
     });
   }
+  function broadcastNewFacture(Facture){
+    clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "NEW_Facture",
+            data: Facture,
+          })
+        );
+      }
+    })
+  }
+  function broadcastFactureStatusUpdate(updatedFacture) {
+    clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "STATUS_UPDATE",
+            data: updatedFacture,
+          })
+        );
+      }
+    });
+  }
 
   return {
     broadcastNewOrder,
-    broadcastOrderStatusUpdate
+    broadcastOrderStatusUpdate,
+    broadcastNewFacture,
+    broadcastFactureStatusUpdate,
   };
 }
 

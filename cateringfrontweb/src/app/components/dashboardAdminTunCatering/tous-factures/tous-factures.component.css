@@ -1,0 +1,18 @@
+.facture-container {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  .facture-item {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  .error {
+    color: red;
+  }
+  .warning {
+    color: orange;
+    font-weight: bold;
+  }
