@@ -1,0 +1,37 @@
+<div class="container mt-4">
+    <h2>Créer une facture</h2>
+  
+    <div class="form-group mb-3">
+      <label for="date">Date du vol :</label>
+      <input type="date" class="form-control" [(ngModel)]="dateFacture" name="date" />
+    </div>
+  
+    <button class="btn btn-primary" (click)="onSubmit()">Créer</button>
+  
+    <div *ngIf="facture" class="mt-4">
+      <h4>Facture Créée</h4>
+      <p><strong>Numéro :</strong> {{ facture.numeroFacture }}</p>
+      <p><strong>Date :</strong> {{ facture.DateFacture | date }}</p>
+      <p><strong>Statut :</strong> {{ facture.Statut }}</p>
+      <p><strong>Montant total :</strong> {{ facture.montantTotal }} TND</p>
+  
+      <h5 class="mt-3">Montants par vol :</h5>
+      <ul>
+        <li *ngFor="let mv of facture.montantParVol">
+          Vol : {{ mv.vol }} | Montant : {{ mv.montant }} TND
+        </li>
+      </ul>
+  
+      <h5 class="mt-3">Montants par personnel :</h5>
+      <ul>
+        <li *ngFor="let mpn of facture.montantParPn">
+          ID Personnel : {{ mpn.personnel }} | Montant : {{ mpn.montant }} TND
+        </li>
+      </ul>
+    </div>
+  
+    <div *ngIf="erreur" class="alert alert-danger mt-3">
+      {{ erreur }}
+    </div>
+  </div>
+  
