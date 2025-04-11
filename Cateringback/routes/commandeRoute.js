@@ -49,30 +49,6 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeMenu", upload.none(), async (req, res) => {
-    try {
-      const numVol = parseInt(req.body.numVol);
-      const { nom, MatriculePn, MatriculeDirTunCater } = req.body;
-      const newcommande = await CommandeController.RequestCommandeMenu(
-        numVol,
-        nom,
-        MatriculePn,
-        MatriculeDirTunCater
-      );
-
-      // Broadcast new order to all connected admin clients
-      broadcastNewOrder({
-        ...newcommande._doc,
-        type: "menu",
-        items: [{ nom, quantite: 1 }],
-      });
-
-      res.status(200).json(newcommande);
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-
   router.post("/addCommandePlat", upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
@@ -81,39 +57,38 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
-        nomPetitDejuner,
         MatriculePn,
         MatriculeDirTunCater,
       } = req.body;
-      const newcommande = await CommandeController.RequestCommandeMeal(
+
+      const newCommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
-        nomPetitDejuner,
         MatriculePn,
         MatriculeDirTunCater
       );
 
       // Broadcast new order to all connected admin clients
       broadcastNewOrder({
-        ...newcommande._doc,
+        ...newCommande._doc,
         type: "plat",
         items: [
           { nom: nomEntree, quantite: 1 },
           { nom: nomPlatPrincipal, quantite: 1 },
           { nom: nomDessert, quantite: 1 },
           { nom: nomBoissons, quantite: 1 },
-          { nom: nomPetitDejuner, quantite: 1 },
         ].filter((item) => item.nom),
       });
 
-      res.status(200).json(newcommande);
+      res.status(200).json(newCommande);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
+
 
   router.get("/total", async (req, res) => {
     try {

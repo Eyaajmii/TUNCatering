@@ -2,14 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MenuServiceService } from '../../../services/menu-service.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NavbarComponent } from '../navbar/navbar.component';
-import { NavbarItemsComponent } from '../navbar-items/navbar-items.component';
 
 
 @Component({
   selector: 'app-ajout-menu',
   standalone:true,
-  imports: [FormsModule, CommonModule, NavbarComponent, NavbarItemsComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './ajout-menu.component.html',
   styleUrl: './ajout-menu.component.css'
 })

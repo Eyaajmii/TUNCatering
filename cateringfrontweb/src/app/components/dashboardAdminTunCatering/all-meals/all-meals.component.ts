@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Plat, PlatServiceService } from '../../../services/plat-service.service';
 import { CommonModule } from '@angular/common';
+import { NavbarItemsComponent } from '../navbar-items/navbar-items.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-all-meals',
@@ -9,6 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './all-meals.component.css'
 })
 export class AllMealsComponent implements OnInit{
+  //NavOpen:boolean=true;
   plats:Plat[]=[];
   constructor(private mealService:PlatServiceService){}
   ngOnInit(): void {

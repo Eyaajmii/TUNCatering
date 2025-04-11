@@ -1,6 +1,64 @@
-<div class="Layout">
+<!--<div class="Layout">
     <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
-<div class="layout-left">
-    <app-navbar-items [status]="NavOpen"></app-navbar-items>
+    <div class="layout-left">
+        <app-navbar-items [status]="NavOpen"></app-navbar-items>
+    </div>
+    <router-outlet></router-outlet>
+</div>-->
+<div class="Layout">
+    <div class="navbar">
+        <div class="navbar-top">
+            <button (click)="NavOpen = !NavOpen" class="toggle-button">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <img src="logocatering.png" alt="Logo" class="logo"> 
+        </div>
+    </div>
+
+    <div class="layout-content">
+        <div class="layout-left">
+            <div class="sidebar" [ngClass]="NavOpen ? 'genisSideBar' : 'darSideBar'">
+                <div class="user-info">
+                    <div class="name-role">
+                        <div>WELCOME!</div>
+                    </div>
+                </div>
+
+                <div class="section-title">Navigation</div>
+
+                <div class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</div>
+
+                <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Commandes</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/DashAdmin/TousCommandes">Consulter les commandes</div>
+                </div>
+
+                <div class="menu-item open"><i class="fa-solid fa-utensils"></i><span>Plats</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/DashAdmin/TousPlats">Consulter les plats</div>
+                    <div class="menu-item" routerLink="/DashAdmin/ajoutplat">Ajouter un plat</div>
+                    <div class="menu-item">Modifier un plat</div>
+                    <div class="menu-item">Supprimer un plat</div>
+                </div>
+
+                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Menus</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/DashAdmin/TousMenu">Consulter les menus</div>
+                    <div class="menu-item" routerLink="/DashAdmin/ajoutmenu">Ajouter un menu</div>
+                    <div class="menu-item">Modifier un menu</div>
+                    <div class="menu-item">Supprimer un menu</div>
+                </div>
+
+                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Bon de livraison</span></div>
+                <div class="submenu">
+                    <div class="menu-item">Consulter les bons de livraison</div>
+                    <div class="menu-item" routerLink="/DashAdmin/CreateBonLivraison">Ajouter un bon de livraison</div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
 </div>
-</div>
+

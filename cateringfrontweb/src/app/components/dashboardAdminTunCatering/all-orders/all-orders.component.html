@@ -1,53 +1,77 @@
-<div class="container">
-    <h2>Commandes en temps réel</h2>
+<div class="content">
+  <div class="container">
+    <h2 class="mb-5">Les commandes</h2>
 
     <div class="connection-status" [class.connected]="connectionStatus" [class.disconnected]="!connectionStatus">
-        {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}
+      {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}
     </div>
 
     <div *ngIf="error" class="alert alert-danger">
-        {{ error }}
+      {{ error }}
     </div>
 
     <div *ngIf="loading" class="loading-indicator">
-        Chargement des commandes...
+      Chargement des commandes...
     </div>
 
-    <div class="filters">
-        <select [(ngModel)]="filtres.statut" class="form-control">
-            <option value="tous">Toutes les commandes</option>
-            <option *ngFor="let status of availableStatuses" [value]="status.value">
-                {{ status.display }}
-            </option>
-        </select>
+    <div class="filters mb-3">
+      <select [(ngModel)]="filtres.statut" class="form-control">
+        <option value="tous">Toutes les commandes</option>
+        <option *ngFor="let status of availableStatuses" [value]="status.value">
+          {{ status.display }}
+        </option>
+      </select>
     </div>
 
-    <div class="commandes-list" *ngIf="!loading && !error">
-        <div *ngFor="let commande of filteredCommands" class="commande-card">
-            <h3>Commande #{{ formatId(commande._id) }}</h3>
-            <p>Date et heure: {{ formatDateTime(commande.dateCommnade) }}</p>            <p>Statut:
-                <span [class]="getStatusClass(commande.Statut)">
-                    {{ getStatusDisplayText(commande.Statut) }}
-                </span>
-            </p>
-            <div class="plats-list">
-                <h4>Plats:</h4>
-                <ul>
-                    <li *ngFor="let plat of commande.plats">
-                        <span class="plat-nom">{{ plat.nom }}</span>
-                        <span class="plat-type">{{ plat.typePlat }}</span>
-                        <span class="plat-prix">{{ plat. prix | currency:'TND':'symbol':'1.3-3'  }}</span>
-                    </li>
-                </ul>
-            </div>
-
-            <select [(ngModel)]="commande.Statut"
-                    (change)="changerStatut(commande._id, commande.Statut)"
-                    class="form-control">
+    <div class="table-responsive">
+      <table class="table table-striped custom-table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Vol</th>
+            <th scope="col">Matricule </th>
+            
+            <th scope="col">Menu</th>
+            <th scope="col">Plats</th>
+            <th scope="col">Nombre de commande</th>
+            <th scope="col">Statut</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="!loading && !error">
+          <tr *ngFor="let commande of filteredCommands">
+            <td>#{{ formatId(commande._id) }}</td>
+            <td>{{ commande.vol?.numVol }}</td>
+            <td>
+              <div *ngIf="!commande.MatriculeDirTunCater?.Matricule">
+                <div>Personnel navigant</div>
+              </div>
+              <div *ngIf="commande.MatriculeDirTunCater?.Matricule">
+                <div>Direction du catering chez Tunisair</div>
+                <div>{{ commande.MatriculeDirTunCater?.Matricule }}</div>
+              </div>
+              
+              <div>{{ commande.MatriculePn?.Matricule }}</div>
+            </td>            
+            
+            <td>{{ commande.menu?.nom  }}</td>
+            <td>
+              <ul>
+                <li *ngFor="let plat of commande.plats">
+                  {{ plat.nom }}
+                </li>
+              </ul>
+            </td>
+            <td>{{ commande.NombreCommande }}</td>
+            <td>
+              <select [(ngModel)]="commande.Statut" (change)="changerStatut(commande._id, commande.Statut)" class="form-control">
                 <option *ngFor="let status of availableStatuses" [value]="status.value">
-                    {{ status.display }}
+                  {{ status.display }}
                 </option>
-            </select>
-        </div>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>

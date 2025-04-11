@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommandeServiceService } from '../../../services/commande-service.service';
+import { CommandeServiceService, Menu } from '../../../services/commande-service.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,11 @@ interface Commande {
   Statut: string;
   plats: Plat[];
   dateCommnade: Date;
-  // Add other fields from your model as needed
+  NombreCommande:number;
+  MatriculePn: any;
+  MatriculeDirTunCater: any;
+  menu: Menu;
+  vol:any
 }
 
 @Component({

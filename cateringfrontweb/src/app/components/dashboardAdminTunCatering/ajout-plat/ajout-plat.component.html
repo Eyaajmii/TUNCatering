@@ -1,10 +1,3 @@
-<div class="Layout">
-  <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
-<div class="layout-left">
-  <app-navbar-items [status]="NavOpen"></app-navbar-items>
-</div>
-</div>
-<p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Ajouter un plat</p>
 <div class="form-container">
   <h5> Ajouter un plat</h5>
   <form [formGroup]="mealForm" (ngSubmit)="onSubmit()">

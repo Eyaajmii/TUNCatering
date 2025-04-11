@@ -9,7 +9,12 @@ class CommandeController {
   // Return all orders
   static async getAllCommands() {
     try {
-      const commandes = await commande.find();
+      const commandes = await commande
+        .find()
+        .populate("MatriculePn", "Matricule nom")
+        .populate("MatriculeDirTunCater", "Matricule nom")
+        .populate("menu", "nom")
+        .populate("vol", "numVol");
       console.log("Commandes récupérées:", commandes);
       return commandes;
     } catch (error) {
@@ -28,8 +33,8 @@ class CommandeController {
       const commandes = await commande
         .find({ vol: vol._id })
         .populate({ path: "menu", select: "nom" })
-        .populate({ path: "plats", select: "nom" }) 
-        .populate({ path: "MatriculePn", select: "nom prenom Matricule" }); 
+        .populate({ path: "plats", select: "nom" })
+        .populate({ path: "MatriculePn", select: "nom prenom Matricule" });
 
       if (commandes.length === 0) {
         throw new Error(`Aucune commande trouvée pour le vol ${numVol}`);
@@ -209,7 +214,6 @@ class CommandeController {
     nomPlatPrincipal,
     nomDessert,
     nomBoissons,
-    nomPetitDejuner,
     MatriculePn
   ) {
     try {
@@ -217,7 +221,7 @@ class CommandeController {
         throw new Error("numVol must be a number");
       }
 
-      const vol = await flight.findOne({ numVol: numVol });
+      const vol = await flight.findOne({ numVol });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -251,39 +255,36 @@ class CommandeController {
       });
       const Boissons = await plat.findOne({
         nom: nomBoissons,
-        typePlat: "Boissons",
-      });
-      const PetitDejuner = await plat.findOne({
-        nom: nomPetitDejuner,
-        typePlat: "Petit déjeuner",
+        typePlat: "Boisson",
       });
 
-      if (!Entree || !PlatPrincipal || !Dessert) {
-        throw new Error("Plat not found");
+      if (!Entree || !PlatPrincipal || !Dessert || !Boissons) {
+        throw new Error("One or more plat not found");
       }
+
       if (
         !Entree.Disponibilite ||
         !PlatPrincipal.Disponibilite ||
-        !Dessert.Disponibilite
+        !Dessert.Disponibilite ||
+        !Boissons.Disponibilite
       ) {
-        throw new Error("Plat indisponible");
+        throw new Error("One or more plats are unavailable");
       }
 
       const categorie = Entree.Categorie;
       if (
         PlatPrincipal.Categorie !== categorie ||
         Dessert.Categorie !== categorie ||
-        (Boissons && Boissons.Categorie !== categorie) ||
-        (PetitDejuner && PetitDejuner.Categorie !== categorie)
+        Boissons.Categorie !== categorie
       ) {
-        throw new Error(
-          "Tous les plats doivent appartenir à la même catégorie."
-        );
+        throw new Error("All plats must belong to the same category");
       }
 
       const date = new Date();
       const limitdate = new Date(vol.dateVolDep);
       const deadline = new Date(limitdate);
+
+      // Adjust deadline based on destination
       if (["Tunis", "Monastir", "Djerba"].includes(vol.Destination)) {
         deadline.setHours(deadline.getHours() - 3);
       } else if (
@@ -293,19 +294,13 @@ class CommandeController {
       }
 
       if (date > limitdate) {
-        throw new Error("Commande not allowed after the flight departure time");
+        throw new Error("Order not allowed after the flight departure time");
       }
 
       const newCmd = await commande.create({
         vol: volId,
-        plats: [
-          Entree._id,
-          PlatPrincipal._id,
-          Dessert._id,
-          Boissons ? Boissons._id : null,
-          PetitDejuner ? PetitDejuner._id : null,
-        ],
-        dateCommnade: date,
+        plats: [Entree._id, PlatPrincipal._id, Dessert._id, Boissons._id],
+        dateCommande: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         MatriculePn: MatriculePn || undefined,
@@ -315,20 +310,21 @@ class CommandeController {
         Entree,
         PlatPrincipal,
         Dessert,
-        Boissons,
-        PetitDejuner
+        Boissons
       );
-      console.log("Commande bien affectée");
+
+      console.log("Commande well assigned");
       return newCmd;
     } catch (err) {
       throw new Error("Error creating meal order: " + err.message);
     }
   }
+
   static async updateCommandeStatus(id, newStatus) {
     try {
       const updatedCommande = await commande.findByIdAndUpdate(
         id,
-        { Statut: newStatus }, 
+        { Statut: newStatus },
         { new: true, runValidators: true }
       );
 

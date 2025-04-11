@@ -1,0 +1,44 @@
+<div class="commandes-container">  
+    <h2>Gestion des Commandes</h2>  
+
+    <div class="status-indicator" [class.connected]="connectionStatus">  
+        {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}  
+    </div>  
+
+    <div *ngIf="loading" class="loading-indicator">  
+        Chargement en cours...  
+    </div>  
+
+    <div *ngIf="error" class="error-message">  
+        {{ error }}  
+    </div>  
+
+    <div class="commandes-list">  
+        <div *ngFor="let commande of commands" class="commande-card">  
+            <div class="commande-header">  
+                <h3>Commande #{{ formatId(commande._id) }}</h3>  
+                <span class="commande-date">{{ formatDateTime(commande.dateCommnade) }}</span>  
+            </div>  
+
+            <div class="commande-status">  
+                <span [class]="getStatusClass(commande.Statut)">  
+                    {{ getStatusDisplayText(commande.Statut) }}  
+                </span>  
+            </div>  
+
+            <div class="commande-actions">  
+                <select [(ngModel)]="commande.Statut"   
+                        (change)="changerStatut(commande._id, commande.Statut)"  
+                        class="status-select">  
+                    <option *ngFor="let status of availableStatuses" [value]="status.value">  
+                        {{ status.display }}  
+                    </option>  
+                </select>  
+            </div>  
+        </div>  
+    </div>  
+    
+    <button (click)="exportToExcel()" class="export-button">  
+        Exporter en Excel  
+    </button>  
+</div>

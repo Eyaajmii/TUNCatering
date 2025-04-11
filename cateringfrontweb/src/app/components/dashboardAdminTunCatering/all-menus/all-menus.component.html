@@ -1,8 +1,47 @@
-<h1>Les menus </h1>
-<div *ngFor="let m of menus">
-    <h2>{{m.nom}}</h2>
-    <p>{{m.PlatsPrincipaux[0].nom}}</p>
-    <p>{{m.PlatsEntree[0].nom}}</p>
-    <p>{{m.PlatsDessert[0].nom}}</p>
-    <p>{{m.Boissons[0].nom}}</p>
+<div class="limiter">
+    <div class="container-table100">
+        <div class="wrap-table100">
+            <div class="table100">
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="7" style="text-align: center;">
+                                <h2>Les menus</h2>
+                            </th>
+                        </tr>
+                        <tr class="table100-head">
+                            <th class="column1">Nom</th>
+                            <th class="column2">Entrée</th>
+                            <th class="column3">Plat principal</th>
+                            <th class="column4">Desert</th>
+                            <th class="column5">Disponible</th>
+                            <th class="column6">Prix total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let m of menus">
+                        <td>
+                            {{m.nom}}
+                        </td>
+                        <td>
+                            {{m.PlatsEntree[0].nom}}
+                        </td>
+                        <td>
+                            {{m.PlatsPrincipaux[0].nom}}
+                        </td>
+                        <td>
+                            {{m.PlatsDessert[0].nom}}
+                        </td>
+                        <td>
+                            <input type="checkbox" [checked]="m.Disponible" disabled>
+                        </td>
+                        <td>
+                            {{m.prixtotal | currency:'TND':'symbol':'1.3-3'}}
+                        </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

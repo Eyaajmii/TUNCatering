@@ -20,6 +20,11 @@
   
   .btn {
     min-width: 120px;
+    background-color: #F3797e;
+  }
+  .btn2 {
+    min-width: 120px;
+    background-color: #f4484e;
   }
   
   .alert {

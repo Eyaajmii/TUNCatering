@@ -62,8 +62,6 @@ exports.createBonLivraison = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Données manquantes ou invalides" });
     }
-
-    // Recherche du vol par numVol
     const vol = await Vol.findOne({ numVol: volId });
     if (!vol) {
       return res.status(404).json({
@@ -86,6 +84,7 @@ exports.createBonLivraison = async (req, res) => {
       numeroBon,
       vol: volId.toString(),
       commandes,
+      Statut:"En attente",
     });
 
     await newBonLivraison.save();
@@ -166,7 +165,7 @@ exports.updateStatutBonLivraison = async (req, res) => {
     const { id } = req.params;
     const { statut } = req.body;
 
-    if (!["en préparation", "prêt", "livré", "annulé"].includes(statut)) {
+    if (!["En attente", "En retard", "Annulé", "Livré"].includes(statut)) {
       return res
         .status(400)
         .json({ success: false, message: "Statut invalide" });

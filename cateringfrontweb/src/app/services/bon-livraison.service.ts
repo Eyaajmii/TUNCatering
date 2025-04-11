@@ -15,7 +15,7 @@ export class BonLivraisonService {
   }
 
   createBonLivraison(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+    return this.http.post<any>(`${this.apiUrl}/add`, data);
   }
 
   downloadPdf(numeroBon: string): Observable<Blob> {

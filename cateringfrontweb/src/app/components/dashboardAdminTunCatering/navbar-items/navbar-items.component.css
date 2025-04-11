@@ -33,14 +33,14 @@
     padding: 20px;
     font-size: 20px;
     font-weight: bold;
-    background-color: #0A192F;
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
   
   .sidebar .user-info {
-    background-color: #0A192F;
+    background-color: white;
     padding: 20px;
     display: flex;
     align-items: center;
@@ -60,7 +60,7 @@
   }
   
   .sidebar .section-title {
-    color: #ffffff;
+    color: #a2a2a2;
     font-size: 12px;
     text-transform: uppercase;
     padding: 15px 20px 5px 20px;
@@ -71,17 +71,17 @@
     display: flex;
     align-items: center;
     padding: 12px 20px;
-    color: #ffffff;
+    color: #a2a2a2;
     cursor: pointer;
     transition: 0.3s;
   }
   
   .sidebar .menu-item:hover {
-    background-color: #482a4e;
+    background-color: #4B49AC;
   }
   
   .sidebar .menu-item.active {
-    background-color: #0A192F;
+    background-color: white;
     color: #ffffff;
   }
   
@@ -92,7 +92,7 @@
   /* Submenus */
   .sidebar .submenu {
     padding-left: 40px;
-    background-color: #0A192F;
+    background-color: white;
     display: none;
   }
   

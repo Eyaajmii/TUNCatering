@@ -1,15 +1,8 @@
-  
-  p{
-    margin-top: -40%;
-    margin-left: 20%;
-    padding: 0;
-
-}
 .form-container{
     padding:10px;
     border-radius: 10px;
     background-color: white;
-    border-top: 4px solid green;
+    border-top: 4px solid #F3797e;
     margin-left:30%;
     width: 40%;
 }
@@ -80,7 +73,7 @@ textarea{
     outline: none;
 }*/
 .btn-submit{
-    background: #005803;
+    background: #F3797e;
     color: white;
     grid-column: span 2;
     padding: 12px 20px; 
@@ -91,34 +84,9 @@ textarea{
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-left: 40%;
 }
 .btn-submit:hover{
-background: #0056b3;
+background: #a73236;
 }
-.Layout{
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-}
-.layout-left{
-    display: flex;
-    flex: 1;
-    height: 100vh;
-}
-app-navbar{
-    height: 50px;
-    flex-shrink: 0;
-    position: fixed;
-    z-index: 1000;
-    width: 100%;
-}
-app-navbar-items {
-    flex-shrink: 0;
-    position: fixed;
-    top: 50px; 
-    height: calc(100vh - 50px); 
-    z-index: 999;
-    overflow-y: auto; 
-    background-color: #0A192F;
-}
+

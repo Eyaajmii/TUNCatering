@@ -1,0 +1,76 @@
+.commandes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .status-indicator {
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  
+  .status-indicator.connected {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .status-indicator:not(.connected) {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .loading-indicator {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+  }
+  
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .commande-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #fafafa;
+  }
+  
+  .commande-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .commande-date {
+    color: #616161;
+    font-size: 0.9em;
+  }
+  
+  .commande-status span {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+  }
+  
+  .status-select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #bdbdbd;
+  }
+  
+  /* Classes de statut */
+  .status-en-attente { background-color: #fff3e0; color: #e65100; }
+  .status-en-cours-de-préparation { background-color: #e3f2fd; color: #1565c0; }
+  .status-traité { background-color: #e8f5e9; color: #2e7d32; }
+  .status-annulé { background-color: #ffebee; color: #c62828; }
+  .status-en-retard { background-color: #f3e5f5; color: #6a1b9a; }
+  .status-livré { background-color: #e0f7fa; color: #00838f; }

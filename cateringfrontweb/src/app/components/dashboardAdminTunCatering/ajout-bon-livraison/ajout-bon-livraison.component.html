@@ -4,7 +4,7 @@
     <div class="form-group">
       <label for="numVol">Numéro de Vol :</label>
       <input type="text" id="numVol" [(ngModel)]="numVol" class="form-control" placeholder="Entrez le numéro de vol">
-      <button (click)="searchCommandes()" class="btn btn-primary mt-2">Rechercher</button>
+      <button (click)="searchCommandes()" class="btn">Rechercher</button>
     </div>
   
     <div *ngIf="errorMessage" class="alert alert-danger mt-3">
@@ -42,7 +42,7 @@
   
   
         <!-- Form to create Bon de Livraison -->
-        <button (click)="createBonLivraison()" class="btn btn-success mt-3">Créer Bon de Livraison</button>
+        <button (click)="createBonLivraison()" class="btn btn2">Créer Bon de Livraison</button>
       </div>
     </div>
   </div>
