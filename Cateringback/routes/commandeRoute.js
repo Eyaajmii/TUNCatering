@@ -49,6 +49,27 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
+  router.post("/addCommandeMenu", upload.none(), async (req, res) => {
+    try {
+      const numVol = parseInt(req.body.numVol);
+      const { nom, MatriculeResTun, MatriculePn } = req.body;
+      const newcommande = await CommandeController.RequestCommandeMenu(
+        numVol,
+        nom,
+        MatriculePn,
+        MatriculeResTun
+      );
+      broadcastNewOrder({
+        ...newcommande._doc,
+        type: "menu",
+        items: [{ nom, quantite: 1 }],
+      });
+
+      res.status(200).json(newcommande);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
   router.post("/addCommandePlat", upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);

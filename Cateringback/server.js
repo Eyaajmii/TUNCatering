@@ -10,6 +10,7 @@ const menuRoute = require("./routes/menuRoute");
 const volRoute = require("./routes/volRoute");
 const pnRouter = require("./routes/pnRouter");
 const bonLivraisonRouter=require("./routes/bonLivraisonRoute");
+const FactureRoute=require("./routes/FactureRoute");
 const chatRoute = require("./routes/ChatbotNLPRoute");
 const methodOverride = require("method-override");
 const cors = require("cors");
@@ -41,7 +42,7 @@ app.use("/api/vol", volRoute);
 app.use("/api/pn", pnRouter);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
-
+app.use("/api/facture", FactureRoute);
 const commandeRoute = require("./routes/commandeRoute")(
   broadcastNewOrder,
   broadcastOrderStatusUpdate

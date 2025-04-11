@@ -31,6 +31,10 @@ const commandeSchema = new mongoose.Schema({
     default: "en attente",
     set: (v) => v.toLowerCase(),
   },
+  montantsTotal:{
+    type: Number,
+    default:0
+  },
   MatriculePn: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "personnelnavigant",

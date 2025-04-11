@@ -126,13 +126,14 @@ class CommandeController {
       ) {
         deadline.setHours(deadline.getHours() - 12);
       }
-
+      const total = menu.prixtotal * nbrCmd;
       const newCmd = await commande.create({
         vol: volId,
         menu: menuId,
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: nbrCmd,
+        montantsTotal:total,
         MatriculeDirTunCater: MatriculeDirTunCater,
       });
       await menucontroller.miseajourmenuCommande(nom);
@@ -190,13 +191,14 @@ class CommandeController {
       ) {
         deadline.setHours(deadline.getHours() - 12);
       }
-
+      const total = menu.prixtotal;
       const newCmd = await commande.create({
         vol: volId,
         menu: menuId,
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
+        montantsTotal:total,
         MatriculePn: MatriculePn || undefined,
       });
 
@@ -296,13 +298,14 @@ class CommandeController {
       if (date > limitdate) {
         throw new Error("Order not allowed after the flight departure time");
       }
-
+      const total = Entree.prix + PlatPrincipal.prix + Dessert.prix;
       const newCmd = await commande.create({
         vol: volId,
         plats: [Entree._id, PlatPrincipal._id, Dessert._id, Boissons._id],
         dateCommande: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
+        montantsTotal:total,
         MatriculePn: MatriculePn || undefined,
       });
 

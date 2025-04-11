@@ -12,36 +12,42 @@ const FactureSchema = new mongoose.Schema(
       default: Date.now,
     },
     DateFacture: {
-        type: Date,
-        required: true
+      type: Date,
+      required: true,
     },
     Statut: {
       type: String,
       enum: ["En attente", "Annulé", "Confirmé"],
       default: "En attente",
     },
-    BonsLivraison:[{
+    BonsLivraison: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'bonLivraison'
-    }],
+        ref: "bonLivraison",
+      },
+    ],
     montantTotal: {
-        type:Number,
-        default:0,
+      type: Number,
+      default: 0,
     },
-    montantParVol: [{
-        vol:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'vol'
+    montantParVol: [
+      {
+        vol: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "vol",
         },
-        montant:Number
-    }],
-    montantParPn: [{
-        peronnel:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'peronnelnavigant'
+        montant: Number,
+      },
+    ],
+    montantParPn: [
+      {
+        personnel: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "personnelnavigant",
         },
-        montant:Number,
-    }],
+        montant: Number,
+      },
+    ],
   },
   {
     timestamps: true,
