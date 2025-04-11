@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs");
 
 router.post("/add", bonLivraisonController.createBonLivraison);
+router.get("/all", bonLivraisonController.getAllBonsLivraisons);
 router.get("/:id", bonLivraisonController.getBonLivraisonById);
 router.get("/vol/:volId", bonLivraisonController.getBonByVolId);
 router.put("/:id/statut", bonLivraisonController.updateStatutBonLivraison);

@@ -195,3 +195,17 @@ exports.updateStatutBonLivraison = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
+exports.getAllBonsLivraisons = async (req, res) => {
+  try {
+    const bnlivs = await BonLivraison.find();
+    res.status(200).json({
+      success: true,
+      message: "Statut mis à jour",
+      data: bnlivs,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du statut :", error);
+    res.status(500).json({ success: false, message: "Erreur serveur" });
+  }
+};
+
