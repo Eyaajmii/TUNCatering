@@ -1,0 +1,48 @@
+<div class="container">
+    <h2>Rechercher les Commandes par Numéro de Vol</h2>
+  
+    <div class="form-group">
+      <label for="numVol">Numéro de Vol :</label>
+      <input type="text" id="numVol" [(ngModel)]="numVol" class="form-control" placeholder="Entrez le numéro de vol">
+      <button (click)="searchCommandes()" class="btn">Rechercher</button>
+    </div>
+  
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="commandes.length > 0" class="card mt-3">
+      <div class="card-header">Commandes associées au vol {{ numVol }}</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID Commande</th>
+              <th>Menu</th>
+              <th>Plats</th>
+              <th>Personnel Navigant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let commande of commandes">
+              <td>{{ commande._id | slice:0:6 }}</td>
+              <td>{{ commande.menu?.nom }}</td>
+              <td>
+                <ul>
+                  <li *ngFor="let plat of commande.plats">{{ plat.nom }}</li>
+                </ul>
+              </td>
+              <td>
+                {{ commande.MatriculePn?.nom }} {{ commande.MatriculePn?.prenom }} ({{ commande.MatriculePn?.Matricule }})
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+  
+  
+        <!-- Form to create Bon de Livraison -->
+        <button (click)="createBonLivraison()" class="btn btn2">Créer Bon de Livraison</button>
+      </div>
+    </div>
+  </div>

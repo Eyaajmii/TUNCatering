@@ -1,0 +1,162 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  /*.Layout{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .layout-left{
+    display: flex;
+    flex: 1;
+    height: 100vh;
+  }
+  app-navbar{
+    height: 50px;
+    flex-shrink: 0;
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+  }
+  app-navbar-items {
+    flex-shrink: 0;
+    position: fixed;
+    top: 50px; 
+    height: calc(100vh - 50px); 
+    z-index: 999;
+    overflow-y: auto; 
+    background-color: white;
+  }*/
+  /* Global reset */
+  
+  /* Navbar */
+  .navbar {
+    background-color: white;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .logo{
+    height: 70px;
+    width: 150px;
+    position: absolute;
+    left: 50px;
+  }
+  .logoo{
+    height: 30px;
+    width: 150px;
+    position: absolute;
+    right: 15px;
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #5a5a5a;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  /* Layout */
+  .layout-content {
+    display: flex;
+    height: calc(100vh - 50px);
+  }
+  
+  .layout-left {
+    height: 100%;
+    background-color: white;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #F5F7FF;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    background-color: white;
+    color: #333;
+    height: 100%;
+    transition: width 0.3s;
+    overflow: auto;
+  }
+  
+  .genisSideBar {
+    width: 250px;
+  }
+  
+  .darSideBar {
+    width: 60px;
+  }
+  
+  .darSideBar .menu-item span,
+  .darSideBar .user-info,
+  .darSideBar .section-title {
+    display: none;
+  }
+  
+  .sidebar .user-info {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .sidebar .name-role {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+  
+  .section-title {
+    color: #6C7383;
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 15px 20px 5px 20px;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #6C7383;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .menu-item:hover {
+    background-color: #4B49AC;
+    color: white;
+  }
+  
+  .menu-item i {
+    margin-right: 10px;
+  }
+  
+  .submenu {
+    padding-left: 40px;
+    background-color: white;
+    display: none;
+  }
+  
+  .menu-item.open + .submenu {
+    display: block;
+  }
+  

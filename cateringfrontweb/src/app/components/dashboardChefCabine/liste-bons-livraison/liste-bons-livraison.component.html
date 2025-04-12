@@ -1,0 +1,81 @@
+<div class="container">
+    <h2>Liste des Bons de Livraison</h2>
+  
+    <div *ngIf="isLoading" class="text-center mt-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="successMessage" class="alert alert-success mt-3">
+      {{ successMessage }}
+    </div>
+  
+    <div *ngIf="bonsLivraison.length > 0" class="card mt-3">
+      <div class="card-header">Bons de livraison enregistrés</div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Numéro Bon</th>
+              <th>Vol</th>
+              <th>Nombre de Commandes</th>
+              <th>Personnel Livraison</th>
+              <th>Statut</th>
+              <th>Conformité</th> <!-- New column for conformite -->
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bon of bonsLivraison" [class.table-secondary]="bon.Statut === 'Annulé'">
+              <td>{{ bon.numeroBon }}</td>
+              <td>{{ bon.vol }}</td>
+              <td>{{ bon.commandes?.length || 0 }}</td>
+              <td>
+                {{ bon.personnelLivraison?.nom || 'Non assigné' }}
+                {{ bon.personnelLivraison?.prenom || '' }}
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getStatusBadgeClass(bon.Statut)">
+                  {{ bon.Statut }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getConformiteBadgeClass(bon.conformite)">
+                  {{ bon.conformite }}
+                </span>
+              </td> <!-- Display conformite with a badge -->
+              <td>
+                <button 
+                  (click)="downloadPdf(bon.numeroBon)" 
+                  class="btn btn-sm btn-primary me-2"
+                  [disabled]="isLoading">
+                  <i class="bi bi-download"></i> PDF
+                </button>
+                
+                <button 
+                  (click)="cancelBonLivraison(bon._id)" 
+                  class="btn btn-sm btn-danger"
+                  *ngIf="bon.Statut !== 'Annulé'"
+                  [disabled]="isLoading">
+                  <i class="bi bi-x-circle"></i> Annuler
+                </button>
+                
+                <span *ngIf="bon.Statut === 'Annulé'" class="text-muted">
+                  Annulé
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <div *ngIf="!isLoading && bonsLivraison.length === 0 && !errorMessage" class="alert alert-info mt-3">
+      Aucun bon de livraison trouvé.
+    </div>
+  </div>

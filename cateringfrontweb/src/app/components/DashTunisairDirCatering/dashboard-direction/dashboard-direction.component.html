@@ -1,0 +1,43 @@
+<div class="Layout">
+    <div class="navbar">
+        <div class="navbar-top">
+            <button (click)="NavOpen = !NavOpen" class="toggle-button">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <img src="logotun.png" alt="Logo" class="logo"> 
+            <img src="logocatering.png" alt="Logo" class="logoo"> 
+        </div>
+    </div>
+
+    <div class="layout-content">
+        <div class="layout-left">
+            <div class="sidebar" [ngClass]="NavOpen ? 'genisSideBar' : 'darSideBar'">
+                <div class="user-info">
+                    <div class="name-role">
+                        <div>WELCOME!</div>
+                    </div>
+                </div>
+
+                <div class="section-title">Navigation</div>
+
+                <div class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</div>
+
+                <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Commandes</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/TunisairCatering/TousCommande">Consulter les commandes</div>
+                    <div class="menu-item" routerLink="/TunisairCatering/CommandeAffretes">Commande Affrétés</div>
+                </div>
+
+                <!-- Nouvelle section pour les livraisons -->
+                <div class="menu-item open"><i class="fa-solid fa-truck"></i><span>Livraisons</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/TunisairCatering/bon-Livraison">Consulter les livraisons</div>
+
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
