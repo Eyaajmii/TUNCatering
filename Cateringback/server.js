@@ -10,7 +10,6 @@ const menuRoute = require("./routes/menuRoute");
 const volRoute = require("./routes/volRoute");
 const pnRouter = require("./routes/pnRouter");
 const bonLivraisonRouter=require("./routes/bonLivraisonRoute");
-const FactureRoute=require("./routes/FactureRoute");
 const chatRoute = require("./routes/ChatbotNLPRoute");
 const methodOverride = require("method-override");
 const cors = require("cors");
@@ -23,8 +22,14 @@ const PORT = 5000;
 const server = http.createServer(app);
 
 // Setup WebSocket and get broadcast functions
-const { broadcastNewOrder, broadcastOrderStatusUpdate } =
-  setupWebSocket(server);
+const {
+  broadcastNewOrder,
+  broadcastOrderStatusUpdate,
+  broadcastNewFacture,
+  broadcastFactureStatusUpdate,
+  broadcastNewReclamation,
+  broadcastReclamationStatusUpdate,
+} = setupWebSocket(server);
 //Middleware
 app.use(bodyParser.json());
 app.use(express.json());
@@ -42,6 +47,15 @@ app.use("/api/vol", volRoute);
 app.use("/api/pn", pnRouter);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
+const reclamationRouter = require("./routes/ReclamationRoute")(
+  broadcastNewReclamation,
+  broadcastReclamationStatusUpdate
+);
+app.use("/api/reclamation", reclamationRouter);
+const FactureRoute = require("./routes/FactureRoute")(
+  broadcastNewFacture,
+  broadcastFactureStatusUpdate
+);
 app.use("/api/facture", FactureRoute);
 const commandeRoute = require("./routes/commandeRoute")(
   broadcastNewOrder,

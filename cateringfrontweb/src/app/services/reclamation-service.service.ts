@@ -4,27 +4,26 @@ import { Observable, Subject, EMPTY, of } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
 import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
 import { isPlatformBrowser } from '@angular/common';  
-const FactureURL = "http://localhost:5000/api/facture"; 
 const WS_URL = "ws://localhost:5000"; 
 @Injectable({
   providedIn: 'root'
 })
-export class FactureService {
+export class ReclamationServiceService {
+  private reclamationURL = "http://localhost:5000/api/reclamation"; 
   private socket$: WebSocketSubject<any> | null = null;  
-  private newfacture$ = new Subject<any>();  
+  private newReclamation$ = new Subject<any>();  
   private statusUpdates$ = new Subject<any>();  
   private connectionStatus$ = new Subject<boolean>();  
   private isBrowser: boolean;  
-  constructor(private http: HttpClient,@Inject(PLATFORM_ID) private platformId: Object) { 
+  constructor(private http:HttpClient,@Inject(PLATFORM_ID) private platformId: Object){ 
     this.isBrowser = isPlatformBrowser(this.platformId);
     if(this.isBrowser){
       this.initializeWebSocket(); 
     }
   }
-  ajouterFacture(date:string):Observable<any>{
-    return this.http.post<any>(`${FactureURL}/addFacture`,{date});
+  AjouterReclamation(data:any):Observable<any>{
+    return this.http.post<any>(`${this.reclamationURL}/creerReclamation`,data);
   }
-
   private initializeWebSocket(): void {  
     try {  
       if (typeof WebSocket !== 'undefined') {  
@@ -80,8 +79,8 @@ export class FactureService {
   }
   private handleMessage(msg: any): void {  
     try {  
-      if (msg.type === 'NEW_Facture') {  
-        this.newfacture$.next(msg.data);  
+      if (msg.type === 'NEW_RECLAMATION') {  
+        this.newReclamation$.next(msg.data);  
       } else if (msg.type === 'STATUS_UPDATE') {  
         this.statusUpdates$.next(msg.data);  
       }  
@@ -94,43 +93,49 @@ export class FactureService {
       setTimeout(() => this.connect(), 5000);  
     }  
   }
-getNewFactures(): Observable<any> {
-  return this.newfacture$.asObservable();
-}
-getStatusUpdate():Observable<any>{
-  return this.statusUpdates$.asObservable();
-}
-getConnectionStatus(): Observable<boolean> {
-  return this.connectionStatus$.asObservable();
-}
-//changer statut
-ModifierStatut(id:string,nouveauStatut:string):Observable<any>{
-  return this.http.put(`${FactureURL}/updateStatusFacture/${id}`,{Statut:nouveauStatut}).pipe(
-    tap(updatedfacture=>{
-      if (this.socket$ && !this.socket$.closed) {  
-        this.socket$.next({  
-          type: 'STATUS_UPDATE_REQUEST',  
-          data: { _id: id, Statut: nouveauStatut }  
-        });  
-      }  
-    }),
-    catchError(error => {  
-      console.error('Error updating bill status:', error);  
-      throw error;
-    })  
-  );
-}
-getAllFactures(): Observable<any> {
-  return this.http.get<any>(`${FactureURL}/tousfactures`);
-}
-loseConnection(): void {  
-  if (this.socket$) {  
-    this.socket$.complete();  
-    this.socket$ = null;  
+  getNewReclamation():Observable<any>{
+    return this.newReclamation$.asObservable();
+  }
+  getStatusUpdate():Observable<any>{
+    return this.statusUpdates$.asObservable();
+  }
+  getConnectionStatus(): Observable<boolean> {
+    return this.connectionStatus$.asObservable();
+  }
+  loseConnection(): void {  
+    if (this.socket$) {  
+      this.socket$.complete();  
+      this.socket$ = null;  
+    }  
   }  
-}  
-
-get isWebSocketAvailable(): boolean {  
-  return this.isBrowser && typeof WebSocket !== 'undefined';  
-}  
+  
+  get isWebSocketAvailable(): boolean {  
+    return this.isBrowser && typeof WebSocket !== 'undefined';  
+  }
+  ////
+  getMesReclamations(MatriculePn:string):Observable<any[]>{
+    return this.http.get<any[]>(`${this.reclamationURL}/reclamations/${MatriculePn}`);
+  }
+  getDetailreclamation(id:string):Observable<any>{
+    return this.http.get<any>(`${this.reclamationURL}/detail/${id}`);
+  }
+  repondreReclamation(id:string,newStatut:string,MessageReponse:string,MatriculeDirTunCater:string):Observable<any>{
+    return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{newStatut:newStatut,MessageReponse:MessageReponse,MatriculeDirTunCater:MatriculeDirTunCater}).pipe(
+      tap(updatedreclamation=>{
+        if (this.socket$ && !this.socket$.closed) {  
+          this.socket$.next({  
+            type: 'STATUS_UPDATE_REQUEST',  
+            data: { _id: id, Statut: newStatut,MessageReponse:MessageReponse, MatriculeDirTunCater:MatriculeDirTunCater}  
+          });  
+        }  
+      }),
+      catchError(error => {  
+        console.error('Error updating reclamation status:', error);  
+        throw error;
+      })  
+    );
+  }
+  getTousReclamations():Observable<any[]>{
+    return this.http.get<any[]>(`${this.reclamationURL}/reclamations`);
+  }
 }

@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const facturecontroller=require("../controllers/FactureController");
 
+module.exports=function(broadcastNewFacture,broadcastFactureStatusUpdate){
 router.post("/addFacture",async(req,res)=>{
     try{
         const{date}=req.body;
         const facture = await facturecontroller.creerFacture(date);
         broadcastNewFacture({
-            ...facture._doc,
-            type:"Facture",
+          ...facture._doc,
+          type: "Facture",
+          items: [{ facture, quantite: 1 }],
         });
         res.status(200).json(facture);
     }catch(err){
@@ -23,5 +25,27 @@ router.get("/tousfactures",async(req,res)=>{
         res.status(400).json({message:err.message});
     }
 })
-
-module.exports = router;
+router.put("/updateStatusFacture/:id",async(req,res)=>{
+    try{
+        const {Statut}=req.body;
+        const update = await facturecontroller.updateFactureStatus(
+          req.params.id,
+          Statut.toLowerCase()
+        );
+        broadcastFactureStatusUpdate({
+          _id: req.params.id,
+          statut: Statut,
+          updatedAt: new Date(),
+        });
+        res.status(200).json(update);
+    }catch(err){
+        if (err.message === "facture not found") {
+          res.status(404).send(err.message);
+        } else {
+          console.error("Erreur de mise à jour:", err);
+          res.status(500).send(err.message);
+        }
+    }
+});
+return router;
+}

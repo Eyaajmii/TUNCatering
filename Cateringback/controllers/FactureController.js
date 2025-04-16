@@ -109,6 +109,18 @@ class FactureController {
       console.error("Erreur dans TousLesFacture");
     }
   }
+  //Tunisiar update status
+  static async updateFactureStatus(id,newStatus){
+    try{
+      const updateFact = await Facture.findByIdAndUpdate(id, { Statut :newStatus},{new:true,runValidators:true});
+      if(!updateFact){
+        throw new Error("Aucune facture trouvé! ");
+      }
+      return updateFact;
+    }catch(err){
+      throw err;
+    }
+  }
 }
 
 module.exports = FactureController;

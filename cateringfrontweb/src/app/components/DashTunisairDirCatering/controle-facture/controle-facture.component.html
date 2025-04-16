@@ -1,0 +1,47 @@
+
+<div class="content">
+    <div class="container">
+      <h2 class="mb-5">Les commandes</h2>
+  
+      <div class="connection-status" [class.connected]="connectionStatus" [class.disconnected]="!connectionStatus">
+        {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}
+      </div>
+  
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+  
+      <div *ngIf="loading" class="loading-indicator">
+        Chargement des commandes...
+      </div>
+  
+      <div class="table-responsive">
+        <table class="table table-striped custom-table">
+          <thead>
+            <tr>
+              <th scope="col">Numero</th>              
+              <th scope="col">Date facture</th>
+              <th scope="col">Montant totale</th>
+             <!-- <th scope="col">Nombre de commande</th>-->
+              <th scope="col">Statut</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="!loading && !error">
+            <tr *ngFor="let f of factures">
+              <td>#{{ formatId(f._id) }}</td>
+              <td>#{{formatDateTime(f.DateFacture)}}</td>
+              <td>{{f.montantTotal}}</td>            
+              <td>
+                <select [(ngModel)]="f.Statut" (change)="changerStatut(f._id, f.Statut)" class="form-control">
+                  <option *ngFor="let status of availableStatuses" [value]="status.value">
+                    {{ status.display }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

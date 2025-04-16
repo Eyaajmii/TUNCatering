@@ -23,7 +23,7 @@ function setupWebSocket(server) {
       console.error('WebSocket error:', error);
     });
   });
-
+  //commande
   function broadcastNewOrder(order) {
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -45,6 +45,7 @@ function setupWebSocket(server) {
       }
     });
   }
+  //facture
   function broadcastNewFacture(Facture){
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -69,12 +70,39 @@ function setupWebSocket(server) {
       }
     });
   }
+  //reclamation
+  function broadcastNewReclamation(reclamation) {
+    clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "NEW_RECLAMATION",
+            data: reclamation,
+          })
+        );
+      }
+    });
+  }
 
+  function broadcastReclamationStatusUpdate(updatedReclamation) {
+    clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "STATUS_UPDATE",
+            data: updatedReclamation,
+          })
+        );
+      }
+    });
+  }
   return {
     broadcastNewOrder,
     broadcastOrderStatusUpdate,
     broadcastNewFacture,
     broadcastFactureStatusUpdate,
+    broadcastNewReclamation,
+    broadcastReclamationStatusUpdate,
   };
 }
 

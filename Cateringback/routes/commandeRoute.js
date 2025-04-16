@@ -135,7 +135,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.put("/updateStatut/:id", async (req, res) => {
     try {
-      const { Statut } = req.body; // Notez la majuscule ici pour correspondre à votre requête
+      const { Statut } = req.body; 
 
       if (!Statut) {
         return res.status(400).send("Le champ 'Statut' est requis");
@@ -143,7 +143,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
       const updateCommande = await CommandeController.updateCommandeStatus(
         req.params.id,
-        Statut.toLowerCase() // Convertir en minuscule si nécessaire
+        Statut.toLowerCase() 
       );
 
       // Broadcast

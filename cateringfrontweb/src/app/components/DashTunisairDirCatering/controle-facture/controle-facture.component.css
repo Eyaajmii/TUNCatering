@@ -1,0 +1,96 @@
+/* Global Styles */
+.content {
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .mb-5 {
+    margin-bottom: 30px;
+  }
+  
+  .connection-status {
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+  
+  .connection-status.connected {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .connection-status.disconnected {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .alert {
+    margin-bottom: 20px;
+  }
+  
+  .loading-indicator {
+    font-size: 16px;
+    color: #007bff;
+  }
+  
+  .filters select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #f8f9fa;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    vertical-align: middle;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  ul li {
+    margin: 5px 0;
+  }
+  
+  .status-en-attente {
+    background-color: #ffc107;
+  }
+  
+  .status-traite {
+    background-color: #28a745;
+  }
+  
+  .status-annule {
+    background-color: #dc3545;
+  }
+  
+  .status-en-retard {
+    background-color: #ffc107;
+  }
+  
+  .status-livre {
+    background-color: #007bff;
+  }
+  

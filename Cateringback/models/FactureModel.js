@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
-
+const validStatuses = [
+  "en attente",
+  "annulé",
+  "Confirmé"
+];
 const FactureSchema = new mongoose.Schema(
   {
     numeroFacture: {
@@ -17,7 +21,7 @@ const FactureSchema = new mongoose.Schema(
     },
     Statut: {
       type: String,
-      enum: ["En attente", "Annulé", "Confirmé"],
+      enum: ["En attente", "annulé", "confirmé"],
       default: "En attente",
     },
     BonsLivraison: [
