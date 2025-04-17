@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 const User = require("./User"); 
 const personnelnavigantSchema = new mongoose.Schema(
   {
-    ...User.schema.obj,
+    userId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    
     Matricule: {
       type: String,
       required: true,

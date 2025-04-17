@@ -1,0 +1,11 @@
+<h2>Détail de la Réclamation</h2>
+
+<div *ngIf="reclamation">
+  <p><strong>Objet:</strong> {{ reclamation.Objet }}</p>
+  <p><strong>Message:</strong> {{ reclamation.MessageEnvoye }}</p>
+  <p><strong>Date:</strong> {{ reclamation.dateSoumission| date }}</p>
+  <p><strong>Statut:</strong> {{ reclamation.Statut }}</p>
+  <p><strong>Réponse:</strong> {{ reclamation.MessageReponse }}</p>
+</div>
+
+<!--<a routerLink="/reclamations-pn" [queryParams]="{ matricule: reclamation.MatriculePN }">⬅ Retour</a>-->

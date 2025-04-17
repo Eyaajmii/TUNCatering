@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      unique: true,
       required: true,
     },
     nom: { type: String, required: false },
@@ -22,9 +21,19 @@ const userSchema = new mongoose.Schema(
       required: false,
       match: /^[0-9]{8}$/,
     },
-    token:{
-      type:String,
-      required:false
+    role: {
+      type: String,
+      enum: [
+        "Personnel navigant",
+        "Personnel Tunisie Catering",
+        "Personnel de Direction du Catering Tunisiar",
+        "Personnel de Direction du Personnel Tunisiar",
+      ],
+      required: true,
+    },
+    token: {
+      type: String,
+      required: false,
     },
   },
   {

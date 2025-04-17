@@ -31,18 +31,16 @@ const commandeSchema = new mongoose.Schema({
     default: "en attente",
     set: (v) => v.toLowerCase(),
   },
-  montantsTotal:{
+  montantsTotal: {
     type: Number,
-    default:0
+    default: 0,
   },
   MatriculePn: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "personnelnavigant",
+    type: String,
     default: null,
   },
   MatriculeDirTunCater: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "PersonnelTunDirCatering",
+    type: String,
     default: null,
   },
   vol: {

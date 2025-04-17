@@ -20,15 +20,23 @@ import { AjoutFactureComponent } from './components/dashboardAdminTunCatering/aj
 import { TousFacturesComponent } from './components/dashboardAdminTunCatering/tous-factures/tous-factures.component';
 import { ControleFactureComponent } from './components/DashTunisairDirCatering/controle-facture/controle-facture.component';
 import { ReclamationComponent } from './components/dahsboardPn/reclamation/reclamation.component';
+import { TousreclamationComponent } from './components/DashTunisairDirCatering/tousreclamation/tousreclamation.component';
+import { ConsulterReclamationComponent } from './components/dahsboardPn/consulter-reclamation/consulter-reclamation.component';
+import { ReponsereclamationComponent } from './components/dahsboardPn/reponsereclamation/reponsereclamation.component';
+import { LoginComponent } from './components/login/login.component';
+import { DashHomeComponent } from './components/DashTunisairPersonnel/dash-home/dash-home.component';
 export const routes: Routes = [
+    {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
-    {path:'AcceuilPersonnel',title:'Acceuil',component:AcceuilInterfaceComponent,children:[
-         {path:'',redirectTo:'Home',pathMatch:'full'},
+    {path:'AccueilPersonnel',title:'Accueil',component:AcceuilInterfaceComponent,children:[
+        {path:'',redirectTo:'Home',pathMatch:'full'},
         {path:'Home',title:'Home',component:HomeComponent},
         {path:'commandeMenu',title:'Commander',component:CommandeMenuComponent},
         {path:'PanierPlats',title:'Panier Plats',component:PanierPlatsComponent},
         {path:'MyOrders',title:'My Orders',component:EtatCommandeComponent},
         {path:'reclamation',title:'Reclamation',component:ReclamationComponent},
+        {path:'MesReclamations',title:'Mes réclamations',component:ConsulterReclamationComponent},
+        {path:'reponse/:id',title:'Reponse reclamation',component:ReponsereclamationComponent}
     ]},
     //Dashboard admin tunisie catering
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent,children:[
@@ -49,8 +57,10 @@ export const routes: Routes = [
         {path:'CommandeAffretes',title:'Commande Affretes',component:CommandeAffretteComponent},
         {path:'TousCommande',title:'Les commandes',component:ConsulteCommandesComponent},
         {path:'ControleFacture',title:'Controler facture',component:ControleFactureComponent},
+        {path:'TousReclamations',title:'Tous Reclamations',component:TousreclamationComponent},
     ]},
     //Dashboard admin direcetion personnel
+    {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent},
     
-    {path:'',redirectTo:'DashAdmin',pathMatch:'full'}
+    {path:'',redirectTo:'login',pathMatch:'full'}
 ];

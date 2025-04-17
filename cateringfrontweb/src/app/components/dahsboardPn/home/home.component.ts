@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit{
     });
   }
   commanderMenu(nom:string):void{
-    this.router.navigate(['/AcceuilPersonnel/commandeMenu'],{queryParams:{Menu:nom}});
+    this.router.navigate(['/AccueilPersonnel/commandeMenu'],{queryParams:{Menu:nom}});
   }
   //deactiverLesautresplats
   SelectedMeal(p: Plat, typePlat: string) {
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit{
     }
   
     if (this.EntreeSelectionne && this.PrincipauxSelectionne && this.DessertSelectionne && this.BoissonsSelectionne) {
-      this.router.navigate(['/AcceuilPersonnel/PanierPlats'], {
+      this.router.navigate(['/AccueilPersonnel/PanierPlats'], {
         queryParams: {
           Entree: this.EntreeSelectionne.nom,
           Principaux: this.PrincipauxSelectionne.nom,

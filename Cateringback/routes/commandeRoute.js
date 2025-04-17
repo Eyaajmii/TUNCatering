@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const upload = multer();
 const CommandeController = require("../controllers/commandeController");
+const { authenticateToken } = require("../middlware/auth");
 
 module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
   router.get("/", async (req, res) => {
@@ -27,16 +28,18 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/Orders/:MatriculePn", async (req, res) => {
     try {
-      const orders = await CommandeController.getMyOrders(req.params.MatriculePn);
+      const { MatriculePn } = req.user.username;
+      const orders = await CommandeController.getMyOrders(MatriculePn);
       res.status(200).json(orders);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeAffrete", upload.none(), async (req, res) => {
+  router.post("/addCommandeAffrete", authenticateToken,upload.none(), async (req, res) => {
     try {
       const numvol = parseInt(req.body.numVol);
-      const { nom, MatriculeDirTunCater, nbrCmd } = req.body;
+      const { nom,nbrCmd } = req.body;
+      const MatriculeDirTunCater = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommande(
         numvol,
         nom,
@@ -49,15 +52,15 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeMenu", upload.none(), async (req, res) => {
+  router.post("/addCommandeMenu", authenticateToken,upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
-      const { nom, MatriculeResTun, MatriculePn } = req.body;
+      const { nom } = req.body;
+       const MatriculePn = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
         nom,
         MatriculePn,
-        MatriculeResTun
       );
       broadcastNewOrder({
         ...newcommande._doc,
@@ -70,7 +73,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(error.message);
     }
   });
-  router.post("/addCommandePlat", upload.none(), async (req, res) => {
+  router.post("/addCommandePlat", authenticateToken,upload.none(), async (req, res) => {
     try {
       const numVol = parseInt(req.body.numVol);
       const {
@@ -78,10 +81,9 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
-        MatriculePn,
         MatriculeDirTunCater,
       } = req.body;
-
+       const MatriculePn = req.user.Matricule;
       const newCommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,

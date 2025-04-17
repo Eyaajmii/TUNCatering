@@ -17,7 +17,6 @@ export class CommandeAffretteComponent implements OnInit{
 constructor(private commandeService: CommandeServiceService,private menuService: MenuServiceService,private fb: FormBuilder) {
   this.form = this.fb.group({
     'numVol':[''],
-    'MatriculeDirTunCater':[''],
     'nom':[''],
     'nbrCmd':[''],
   })
@@ -37,7 +36,6 @@ constructor(private commandeService: CommandeServiceService,private menuService:
       const numVol = parseInt(this.form.value.numVol);
       const data=new FormData();
       data.append('numVol',numVol.toString());
-      data.append('MatriculeDirTunCater',this.form.value.MatriculeDirTunCater);
       data.append('nom',this.form.value.nom.trim());
       data.append('nbrCmd',this.form.value.nbrCmd.toString());
       this.commandeService.CommanderAffretes(data).subscribe({

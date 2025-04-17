@@ -1,7 +1,7 @@
-const mongoose=require('mongoose');
+const mongoose = require("mongoose");
 const userSchema = require("./User").schema;
 
-const PersonnelTunDirCateringSchema = new mongoose.Schema({
+const PersonnelTunDirPersonnelSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -15,6 +15,6 @@ const PersonnelTunDirCateringSchema = new mongoose.Schema({
   },
 });
 module.exports = mongoose.model(
-  "PersonnelTunDirCatering",
-  PersonnelTunDirCateringSchema
+  "PersonnelTunDirPersonnel",
+  PersonnelTunDirPersonnelSchema
 );

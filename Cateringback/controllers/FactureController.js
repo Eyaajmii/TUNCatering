@@ -45,7 +45,7 @@ class FactureController {
       const newFacture = new Facture({
         numeroFacture: "FCT-" + Date.now(),
         DateFacture: new Date(),
-        Statut: "En attente",
+        Statut: "en attente",
         BonsLivraison: bonsLivraison.map((bn) => bn._id),
       });
 

@@ -113,8 +113,8 @@ export class ReclamationServiceService {
     return this.isBrowser && typeof WebSocket !== 'undefined';  
   }
   ////
-  getMesReclamations(MatriculePn:string):Observable<any[]>{
-    return this.http.get<any[]>(`${this.reclamationURL}/reclamations/${MatriculePn}`);
+  getMesReclamations(MatriculePn:string):Observable<any>{
+    return this.http.get<any>(`${this.reclamationURL}/reclamation/${MatriculePn}`);
   }
   getDetailreclamation(id:string):Observable<any>{
     return this.http.get<any>(`${this.reclamationURL}/detail/${id}`);
@@ -135,7 +135,7 @@ export class ReclamationServiceService {
       })  
     );
   }
-  getTousReclamations():Observable<any[]>{
-    return this.http.get<any[]>(`${this.reclamationURL}/reclamations`);
+  getTousReclamations():Observable<any>{
+    return this.http.get<any>(`${this.reclamationURL}/reclamations`);
   }
 }

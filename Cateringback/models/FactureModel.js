@@ -21,8 +21,8 @@ const FactureSchema = new mongoose.Schema(
     },
     Statut: {
       type: String,
-      enum: ["En attente", "annulé", "confirmé"],
-      default: "En attente",
+      enum: ["en attente", "annulé", "confirmé"],
+      default: "en attente",
     },
     BonsLivraison: [
       {

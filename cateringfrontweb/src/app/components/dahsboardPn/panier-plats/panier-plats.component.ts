@@ -18,7 +18,6 @@ export class PanierPlatsComponent implements OnInit {
   constructor(private fb:FormBuilder,private CmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
       'numVol':['',[Validators.required,Validators.pattern(/^\d{3}$/)]],
-      'MatriculePn':['',Validators.required]
     })
   }
   ngOnInit(): void {
@@ -38,7 +37,6 @@ export class PanierPlatsComponent implements OnInit {
       data.append('nomDessert',this.PDessert);
       data.append('nomBoissons',this.PBoisson);
       data.append('numVol',numVol.toString());
-      data.append('MatriculePn',this.commandeFrom.value.MatriculePn);
       this.CmdService.CommanderPlats(data).subscribe({
         next: res => {
             console.log("Commande effectuée avec succès", res);

@@ -16,7 +16,7 @@ router.post("/creerReclamation",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
-router.get("/reclamations/:MatriculePn",async(req,res)=>{
+router.get("/reclamation/:MatriculePn",async(req,res)=>{
     try{
         const reclamations = await reclamationController.MesReclamations(req.params.MatriculePn);
         res.status(200).json({ reclamations });
@@ -40,6 +40,8 @@ router.put("/repondre/:id",async(req,res)=>{
         broadcastReclamationStatusUpdate({
           _id: req.params.id,
           statut: newStatut,
+          MessageReponse,
+          MatriculeDirTunCater,
           updatedAt: new Date(),
         });
         res.status(200).json({message:"Reponse envoyee avec succes",reponse});

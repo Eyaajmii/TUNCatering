@@ -3,20 +3,20 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 const http = require("http");
+require('dotenv').config();
 const setupWebSocket = require("./websocket");
-const authRoutes = require("./routes/auth");
 const mealRoutes = require("./routes/mealRoute");
 const menuRoute = require("./routes/menuRoute");
 const volRoute = require("./routes/volRoute");
 const pnRouter = require("./routes/pnRouter");
 const bonLivraisonRouter=require("./routes/bonLivraisonRoute");
+const authRouter=require("./routes/auth");
 const chatRoute = require("./routes/ChatbotNLPRoute");
 const methodOverride = require("method-override");
 const cors = require("cors");
 
 const app = express();
 const PORT = 5000;
-
 
 // Create HTTP server
 const server = http.createServer(app);
@@ -40,13 +40,14 @@ app.use("/uploads", express.static("uploads"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-app.use("/api/auth", authRoutes);
+
 app.use("/api/meal", mealRoutes);
 app.use("/api/menu", menuRoute);
 app.use("/api/vol", volRoute);
 app.use("/api/pn", pnRouter);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
+app.use("/api/auth",authRouter);
 const reclamationRouter = require("./routes/ReclamationRoute")(
   broadcastNewReclamation,
   broadcastReclamationStatusUpdate

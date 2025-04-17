@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';  
+import { HttpClient, HttpHeaders } from '@angular/common/http';  
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';  
 import { isPlatformBrowser } from '@angular/common';  
 import { Observable, Subject, EMPTY, of } from 'rxjs';  
@@ -54,14 +54,26 @@ export class CommandeServiceService {
   }  
   //pour personnel navigant
   CommanderMenu(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData,{headers});
   }
   CommanderPlats(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData,{headers});
   } 
   //pour direction tunisair du catering
   CommanderAffretes(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,formData);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,formData,{headers});
   }
   //commandebynumVol
   getCommandesByVol(numVol: string): Observable<any> {

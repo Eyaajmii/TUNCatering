@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReclamationServiceService } from '../../../services/reclamation-service.service';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 export interface Reclamation{
   _id:string,
   Objet:string,
@@ -13,7 +14,7 @@ export interface Reclamation{
 }
 @Component({
   selector: 'app-tousreclamation',
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './tousreclamation.component.html',
   styleUrl: './tousreclamation.component.css'
 })
@@ -39,8 +40,8 @@ connectionStatus: boolean = false;
   loadReclamation(){
     this.loading = true;
     this.reclamationService.getTousReclamations().subscribe({
-      next:(reclamation:any[])=>{
-        this.reclamations=reclamation;
+      next:(response:any)=>{
+        this.reclamations=response.reclamations;
         this.loading=false;
       },
       error:(err)=>{

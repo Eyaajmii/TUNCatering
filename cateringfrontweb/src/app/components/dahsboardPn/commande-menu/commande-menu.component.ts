@@ -15,11 +15,10 @@ export class CommandeMenuComponent implements OnInit {
   constructor(private fb: FormBuilder,private cmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
       'numVol':['',[Validators.required,Validators.pattern(/^\d{3}$/)]],
-      'MatriculePn':['',Validators.required]
     })
   }
   
-  ngOnInit(): void {
+  ngOnInit(): void { 
     this.route.queryParams.subscribe(params=>{
       this.nom=params['Menu']||'';
     })
@@ -30,7 +29,6 @@ export class CommandeMenuComponent implements OnInit {
           const data=new FormData();
           data.append('nom',this.nom);
           data.append('numVol',numVol.toString());
-          data.append('MatriculePn',this.commandeFrom.value.MatriculePn);
           this.cmdService.CommanderMenu(data).subscribe({
             next: res => {
                 console.log("Commande effectuée avec succès", res);

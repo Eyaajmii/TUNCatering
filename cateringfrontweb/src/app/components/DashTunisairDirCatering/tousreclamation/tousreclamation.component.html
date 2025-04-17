@@ -1,1 +1,49 @@
-<p>tousreclamation works!</p>
+<div class="reclamation-container">
+    <h2>📋 Liste des Réclamations</h2>
+  
+    <div *ngIf="loading" class="loading">Chargement...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  
+    <div *ngIf="!loading && reclamations.length === 0" class="empty">Aucune réclamation trouvée.</div>
+  
+    <table class="reclamation-table" *ngIf="reclamations.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Objet</th>
+          <th>Message</th>
+          <th>Réponse</th>
+          <th>Statut</th>
+          <th>Nouvelle Réponse</th>
+          <th>Nouveau Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of reclamations">
+          <td>{{ formatId(r._id) }}</td>
+          <td>{{ r.Objet }}</td>
+          <td>{{ r.MessageEnvoye }}</td>
+          <td>{{ r.MessageReponse || 'Pas encore de réponse' }}</td>
+          <td>
+            <span [class]="r.Statut.toLowerCase()">{{ r.Statut }}</span>
+          </td>
+          <td>
+            <textarea [(ngModel)]="r.MessageReponse" placeholder="Répondre..." rows="2"></textarea>
+          </td>
+          <td>
+            <select [(ngModel)]="r.Statut">
+              <option *ngFor="let s of availableStatuses" [value]="s.value">{{ s.display }}</option>
+            </select>
+          </td>
+          <td>
+            <input type="text" placeholder="Matricule directeur" [(ngModel)]="r.MatriculeDirTunCater" />
+            <button (click)="changer(r._id, r.Statut,r.MessageReponse, r.MatriculeDirTunCater)">
+              Valider
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
