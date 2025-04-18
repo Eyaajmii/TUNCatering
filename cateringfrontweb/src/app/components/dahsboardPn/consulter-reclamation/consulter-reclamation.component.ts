@@ -27,17 +27,19 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
   subscriptions: Subscription[] = [];
   constructor(private reclamationservice:ReclamationServiceService,private route:ActivatedRoute,private router:Router) { }
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.MatriculePn = params['matricule'];
-      if (this.MatriculePn) {
-        this.onMatriculeChange();
+    this.reclamationservice.getMesReclamations().subscribe({
+      next:(response:any)=>{
+        this.reclamations=response.reclamations;
+      },
+      error:(err)=>{
+        console.error('Error loading reclamation:', err);
+        alert('erreurrrrr')
       }
     });
-
     const newReclamation=this.reclamationservice.getNewReclamation().subscribe(rec=>{
-      if(rec.MatriculePn===this.MatriculePn){
+      
         this.reclamations.push(rec);
-      }
+
     });
     const updateReclamation=this.reclamationservice.getStatusUpdate().subscribe(update=>{
       const i=this.reclamations.findIndex(r=>r._id===update._id);
@@ -48,21 +50,7 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
     });
     this.subscriptions.push(newReclamation,updateReclamation);
   }
-  onMatriculeChange(): void {
-    if (this.MatriculePn && this.MatriculePn.trim() !== '') {
-      this.reclamationservice.getMesReclamations(this.MatriculePn.trim()).subscribe({
-        next:(response:any)=>{
-          this.reclamations=response.reclamations;
-        },
-        error:(err)=>{
-          console.error('Error loading reclamation:', err);
-          alert('erreurrrrr')
-        }
-      });
-    } else {
-      this.reclamations = [];
-    }
-  }
+  
   voirDetails(id: string) {
     this.router.navigate(['/AccueilPersonnel/reponse/', id]);
   }

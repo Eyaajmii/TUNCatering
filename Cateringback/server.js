@@ -8,7 +8,7 @@ const setupWebSocket = require("./websocket");
 const mealRoutes = require("./routes/mealRoute");
 const menuRoute = require("./routes/menuRoute");
 const volRoute = require("./routes/volRoute");
-const pnRouter = require("./routes/pnRouter");
+const CarnetSanteRoute = require("./routes/CarnetSanteRouter");
 const bonLivraisonRouter=require("./routes/bonLivraisonRoute");
 const authRouter=require("./routes/auth");
 const chatRoute = require("./routes/ChatbotNLPRoute");
@@ -44,7 +44,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/meal", mealRoutes);
 app.use("/api/menu", menuRoute);
 app.use("/api/vol", volRoute);
-app.use("/api/pn", pnRouter);
+app.use("/api/carnetsante", CarnetSanteRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
 app.use("/api/auth",authRouter);
@@ -52,12 +52,14 @@ const reclamationRouter = require("./routes/ReclamationRoute")(
   broadcastNewReclamation,
   broadcastReclamationStatusUpdate
 );
+
 app.use("/api/reclamation", reclamationRouter);
 const FactureRoute = require("./routes/FactureRoute")(
   broadcastNewFacture,
   broadcastFactureStatusUpdate
 );
 app.use("/api/facture", FactureRoute);
+
 const commandeRoute = require("./routes/commandeRoute")(
   broadcastNewOrder,
   broadcastOrderStatusUpdate

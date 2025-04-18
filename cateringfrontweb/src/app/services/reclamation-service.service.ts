@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, Subject, EMPTY, of } from 'rxjs';  
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
@@ -22,7 +22,11 @@ export class ReclamationServiceService {
     }
   }
   AjouterReclamation(data:any):Observable<any>{
-    return this.http.post<any>(`${this.reclamationURL}/creerReclamation`,data);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${this.reclamationURL}/creerReclamation`,data,{headers});
   }
   private initializeWebSocket(): void {  
     try {  
@@ -113,19 +117,28 @@ export class ReclamationServiceService {
     return this.isBrowser && typeof WebSocket !== 'undefined';  
   }
   ////
-  getMesReclamations(MatriculePn:string):Observable<any>{
-    return this.http.get<any>(`${this.reclamationURL}/reclamation/${MatriculePn}`);
+  getMesReclamations():Observable<any>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.get<any>(`${this.reclamationURL}/reclamation`,{headers});
   }
   getDetailreclamation(id:string):Observable<any>{
-    return this.http.get<any>(`${this.reclamationURL}/detail/${id}`);
+    return this.http.get<any>(`${this.reclamationURL}/reclamation/detail/${id}`);
   }
-  repondreReclamation(id:string,newStatut:string,MessageReponse:string,MatriculeDirTunCater:string):Observable<any>{
-    return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{newStatut:newStatut,MessageReponse:MessageReponse,MatriculeDirTunCater:MatriculeDirTunCater}).pipe(
+
+  repondreReclamation(id:string,newStatut:string,MessageReponse:string):Observable<any>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{newStatut:newStatut,MessageReponse:MessageReponse},{headers}).pipe(
       tap(updatedreclamation=>{
         if (this.socket$ && !this.socket$.closed) {  
           this.socket$.next({  
             type: 'STATUS_UPDATE_REQUEST',  
-            data: { _id: id, Statut: newStatut,MessageReponse:MessageReponse, MatriculeDirTunCater:MatriculeDirTunCater}  
+            data: { _id: id, Statut: newStatut,MessageReponse:MessageReponse}  
           });  
         }  
       }),

@@ -15,7 +15,7 @@ export class AjoutBonLivraisonComponent {
   commandes: any[] = [];
   errorMessage: string = '';
   selectedCommandes: string[] = [];
-  personnelLivraisonId: string = ''; // Ensure this field is populated
+  personnelLivraisonId: string = ''; 
 
   constructor(
     private commandeService: CommandeServiceService,
@@ -56,7 +56,7 @@ export class AjoutBonLivraisonComponent {
     }
 
     const bonLivraisonData: any = {
-      numeroBon: `BL-${new Date().getFullYear()}-${(Math.random() * 10000).toFixed(0)}`, // Nombre temporaire
+      numeroBon: `BL-${new Date().getFullYear()}-${(Math.random() * 10000).toFixed(0)}`, 
       volId: this.numVol,
       commandes: this.selectedCommandes,
     };

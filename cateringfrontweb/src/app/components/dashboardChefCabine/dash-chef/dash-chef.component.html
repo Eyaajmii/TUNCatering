@@ -1,0 +1,34 @@
+<div class="Layout">
+    <div class="navbar">
+        <div class="navbar-top">
+            <button (click)="NavOpen = !NavOpen" class="toggle-button">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <img src="logocatering.png" alt="Logo" class="logo"> 
+        </div>
+    </div>
+
+    <div class="layout-content">
+        <div class="layout-left">
+            <div class="sidebar" [ngClass]="NavOpen ? 'genisSideBar' : 'darSideBar'">
+                <div class="user-info">
+                    <div class="name-role">
+                        <div>WELCOME!</div>
+                    </div>
+                </div>
+
+                <div class="section-title">Navigation</div>
+
+                <div class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</div>
+
+                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Bon de livraison</span></div>
+                <div class="submenu">
+                    <div class="menu-item" routerLink="/DashboardChefCabine/bonLivraison">Consulter les bons de livraison</div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

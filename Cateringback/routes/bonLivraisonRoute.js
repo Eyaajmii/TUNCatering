@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const BonLivraison=require("../models/bonLivraison");
 const bonLivraisonController = require("../controllers/bonLivraisonController");
-const BonLivraison = require("../models/bonLivraison");
-const path = require("path");
-const fs = require("fs");
 
 router.post("/add", bonLivraisonController.createBonLivraison);
 router.get("/all", bonLivraisonController.getAllBonsLivraisons);
 router.get("/:id", bonLivraisonController.getBonLivraisonById);
 router.get("/vol/:volId", bonLivraisonController.getBonByVolId);
 router.put("/:id/statut", bonLivraisonController.updateStatutBonLivraison);
+router.put("/:id/conformite", bonLivraisonController.updateConformite);
+router.delete("/:id", bonLivraisonController.deleteBonLivraison);
+router.put("/scan/:id", bonLivraisonController.scanBonLivraison);
 router.get("/pdf/:numeroBon", async (req, res) => {
   try {
     const { numeroBon } = req.params;

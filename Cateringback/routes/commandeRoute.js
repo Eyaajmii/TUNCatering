@@ -26,9 +26,9 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);
 
-  router.get("/Orders/:MatriculePn", async (req, res) => {
+  router.get("/Orders", authenticateToken ,async (req, res) => {
     try {
-      const { MatriculePn } = req.user.username;
+      const  MatriculePn  = req.user.Matricule;
       const orders = await CommandeController.getMyOrders(MatriculePn);
       res.status(200).json(orders);
     } catch (err) {

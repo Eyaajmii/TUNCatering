@@ -1,23 +1,11 @@
 <div class="container mt-4">
   <h2 class="mb-3">Mes Réclamations</h2>
 
-  <!-- Input pour le Matricule -->
-  <div class="form-group">
-    <label for="matriculeInput">Matricule PN</label>
-    <input
-      type="text"
-      id="matriculeInput"
-      [(ngModel)]="MatriculePn"
-      (ngModelChange)="onMatriculeChange()"
-      class="form-control"
-      placeholder="Entrez votre matricule"
-    />
-  </div>
+
 
   <div *ngIf="reclamations.length === 0 ">
     <p>
       Aucune réclamation trouvée pour le matricule
-      <strong>{{ MatriculePn }}</strong>.
     </p>
   </div>
 

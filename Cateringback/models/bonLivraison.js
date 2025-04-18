@@ -11,9 +11,9 @@ const bonLivraisonSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    Statut:{
-      type:String,
-      enum: ["En attente", "En retard", "Annulé","Livré"],
+    Statut: {//par chef de cabine
+      type: String,
+      enum: ["En attente", "En retard", "Annulé", "Livré"],
       default: "En attente",
     },
     vol: {
@@ -35,7 +35,7 @@ const bonLivraisonSchema = new mongoose.Schema(
     personnelLivraison: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "personnelnavigant",
-      required: false, 
+      required: false,
     },
 
     signatureResponsable: {
@@ -43,6 +43,14 @@ const bonLivraisonSchema = new mongoose.Schema(
     },
     dateLivraison: {
       type: Date,
+    },
+    conformite: {//conformite par tunisie catering
+      type: String,
+      enum: ["Confirmé", "Non confirmé", "Non vérifié", "En attente"],
+      default: "Non vérifié",
+    },
+    qrCodeImage: {
+      type: String, // base64 ou chemin vers fichier
     },
   },
   {

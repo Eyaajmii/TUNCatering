@@ -2,8 +2,7 @@ const mongoose=require('mongoose');
 
 const CarnetsanteSchema = new mongoose.Schema({
   MatriculePn: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "personnelnavigant",
+    type: String,
     require: true,
   },
   Allergies: [

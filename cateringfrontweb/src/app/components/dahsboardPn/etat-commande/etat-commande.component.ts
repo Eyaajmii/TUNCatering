@@ -13,16 +13,16 @@ import { FormsModule } from '@angular/forms';
 })
 export class EtatCommandeComponent implements OnInit, OnDestroy {
   commandes: any[] = [];
-  matriculePn: string = '';
   subscriptions: Subscription[] = [];
 
   constructor(private commandeService: CommandeServiceService) {}
 
   ngOnInit(): void {
+    this.commandeService.getMyOrders().subscribe(d => {
+      this.commandes = d || [];
+    });
     const newOrderSub = this.commandeService.getNewOrders().subscribe(newOrder => {
-      if (newOrder.MatriculePn === this.matriculePn) {
         this.commandes.push(newOrder);
-      }
     });
 
     const statusUpdateSub = this.commandeService.getStatusUpdates().subscribe(update => {
@@ -34,16 +34,6 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
     });
 
     this.subscriptions.push(newOrderSub, statusUpdateSub);
-  }
-
-  onMatriculeChange(): void {
-    if (this.matriculePn && this.matriculePn.trim() !== '') {
-      this.commandeService.getMyOrders(this.matriculePn.trim()).subscribe(d => {
-        this.commandes = d || [];
-      });
-    } else {
-      this.commandes = [];
-    }
   }
 
   ngOnDestroy(): void {

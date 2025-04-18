@@ -1,36 +1,36 @@
 .container {
-    max-width: 1200px;
-    margin-top: 2rem;
-  }
-  
-  .card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .table th {
-    background-color: #f8f9fa;
-    position: sticky;
-    top: 0;
-  }
-  
-  .badge {
-    margin-right: 5px;
-    margin-bottom: 5px;
-  }
-  
-  .btn {
-    min-width: 120px;
-    background-color: #F3797e;
-  }
-  .btn2 {
-    min-width: 120px;
-    background-color: #f4484e;
-  }
-  
-  .alert {
-    margin-top: 1rem;
-  }
-  
-  .spinner-border {
-    vertical-align: middle;
-  }
+  max-width: 1200px;
+  margin-top: 2rem;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+}
+
+.badge {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.btn {
+  min-width: 120px;
+  background-color: #F3797e;
+}
+.btn2 {
+  min-width: 120px;
+  background-color: #f4484e;
+}
+
+.alert {
+  margin-top: 1rem;
+}
+
+.spinner-border {
+  vertical-align: middle;
+}

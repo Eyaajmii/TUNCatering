@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema(
         "Personnel Tunisie Catering",
         "Personnel de Direction du Catering Tunisiar",
         "Personnel de Direction du Personnel Tunisiar",
+        "Administrateur"
       ],
       required: true,
     },

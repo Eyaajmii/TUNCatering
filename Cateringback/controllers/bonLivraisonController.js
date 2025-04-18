@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const BonLivraison = require("../models/bonLivraison");
 const Vol = require("../models/vol");
 const Commande = require("../models/Commande");
@@ -6,6 +5,7 @@ const PersonnelNavigant = require("../models/personnelnavigant");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+const QRCode = require("qrcode");
 
 async function generateBonLivraisonPDF(bonLivraison) {
   return new Promise(async (resolve, reject) => {
@@ -17,7 +17,7 @@ async function generateBonLivraisonPDF(bonLivraison) {
 
       const fileName = `bon_livraison_${bonLivraison.numeroBon}.pdf`;
       const filePath = path.join(pdfDir, fileName);
-      const pdfPath = `/pdfs/${fileName}`; // Relative path for DB storage
+      const pdfPath = `/pdfs/${fileName}`;
 
       const doc = new PDFDocument();
       const stream = fs.createWriteStream(filePath);
@@ -40,6 +40,19 @@ async function generateBonLivraisonPDF(bonLivraison) {
       bonWithCommandes.commandes.forEach((commande, index) => {
         doc.text(`${index + 1}. Commande ${commande._id}`);
       });
+      if (bonLivraison.qrCodeImage) {
+        const qrImageBuffer = Buffer.from(
+          bonLivraison.qrCodeImage.split(",")[1],
+          "base64"
+        );
+        doc.addPage();
+        doc.fontSize(16).text("QR Code associé :", { align: "center" });
+        doc.image(qrImageBuffer, {
+          fit: [200, 200],
+          align: "center",
+          valign: "center",
+        });
+      }
 
       doc.end();
 
@@ -55,13 +68,14 @@ exports.createBonLivraison = async (req, res) => {
   try {
     console.log("Requête reçue :", req.body);
 
-    const { numeroBon, volId, commandes } = req.body;
+    const { numeroBon, volId, commandes, conformite } = req.body;
 
     if (!numeroBon || !volId || !commandes || commandes.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "Données manquantes ou invalides" });
     }
+
     const vol = await Vol.findOne({ numVol: volId });
     if (!vol) {
       return res.status(404).json({
@@ -69,6 +83,7 @@ exports.createBonLivraison = async (req, res) => {
         message: `Aucun vol trouvé avec le numéro ${volId}`,
       });
     }
+
     const commandesValides = await Promise.all(
       commandes.map((commandeId) => Commande.findById(commandeId))
     );
@@ -84,9 +99,12 @@ exports.createBonLivraison = async (req, res) => {
       numeroBon,
       vol: volId.toString(),
       commandes,
-      Statut:"En attente",
+      Statut: "En attente", // Valeur par défaut
+      conformite: conformite || "Non vérifié", // Valeur par défaut
     });
-
+    const qrData = `Bon de Livraison: ${numeroBon}`;
+    const qrCodeImage = await QRCode.toDataURL(qrData);
+    newBonLivraison.qrCodeImage = qrCodeImage;
     await newBonLivraison.save();
 
     // Generate PDF after saving
@@ -159,7 +177,74 @@ exports.getBonLivraisonById = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
+// Dans votre contrôleur scanBonLivraison
+exports.scanBonLivraison = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { qrData } = req.body; // Ajoutez cette ligne
 
+    const bonLivraison = await BonLivraison.findById(id);
+
+    if (!bonLivraison) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Bon non trouvé" });
+    }
+
+    // Vérification du QR code
+    const expectedQR = `Bon de Livraison: ${bonLivraison.numeroBon}`;
+    if (qrData !== expectedQR) {
+      return res
+        .status(400)
+        .json({ success: false, message: "QR Code invalide" });
+    }
+
+    bonLivraison.Statut = "Livré";
+    bonLivraison.dateLivraison = new Date();
+    await bonLivraison.save();
+
+    res.status(200).json({ success: true, data: bonLivraison });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+exports.updateConformite = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { conformite } = req.body;
+
+    if (
+      !["Confirmé", "Non confirmé", "Non vérifié", "En attente"].includes(
+        conformite
+      )
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Valeur de conformité invalide" });
+    }
+
+    const bonLivraison = await BonLivraison.findByIdAndUpdate(
+      id,
+      { conformite },
+      { new: true }
+    );
+
+    if (!bonLivraison) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Bon de livraison introuvable." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Conformité mise à jour",
+      data: bonLivraison,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de la conformité :", error);
+    res.status(500).json({ success: false, message: "Erreur serveur" });
+  }
+};
 exports.updateStatutBonLivraison = async (req, res) => {
   try {
     const { id } = req.params;
@@ -171,9 +256,17 @@ exports.updateStatutBonLivraison = async (req, res) => {
         .json({ success: false, message: "Statut invalide" });
     }
 
+    // Déduire la conformité automatiquement
+    let conformite = "En attente";
+    if (statut === "Livré") {
+      conformite = "Confirmé";
+    } else if (statut === "Annulé" || statut === "En retard") {
+      conformite = "Non confirmé";
+    }
+
     const bonLivraison = await BonLivraison.findByIdAndUpdate(
       id,
-      { statut },
+      { Statut: statut, conformite }, 
       { new: true }
     );
 
@@ -183,15 +276,34 @@ exports.updateStatutBonLivraison = async (req, res) => {
         .json({ success: false, message: "Bon de livraison introuvable." });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Statut mis à jour",
-        data: bonLivraison,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Statut (et conformité) mis à jour",
+      data: bonLivraison,
+    });
   } catch (error) {
     console.error("Erreur lors de la mise à jour du statut :", error);
+    res.status(500).json({ success: false, message: "Erreur serveur" });
+  }
+};
+exports.deleteBonLivraison = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const bonLivraison = await BonLivraison.findByIdAndDelete(id);
+
+    if (!bonLivraison) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Bon de livraison introuvable." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Bon de livraison supprimé avec succès",
+    });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du bon de livraison :", error);
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
@@ -208,4 +320,3 @@ exports.getAllBonsLivraisons = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
-

@@ -79,12 +79,12 @@ connectionStatus: boolean = false;
       })
     );
   }
-  changer(id: string, nouveauStatut: string,MessageReponse:string,MatriculeDirTunCater:string){
+  changer(id: string, nouveauStatut: string,MessageReponse:string){
     if (!this.availableStatuses.some(s => s.value === nouveauStatut)) {
       this.error = 'Statut invalide';
       return;
     }
-    this.reclamationService.repondreReclamation(id, nouveauStatut,MessageReponse,MatriculeDirTunCater).subscribe({
+    this.reclamationService.repondreReclamation(id, nouveauStatut,MessageReponse).subscribe({
       next: (response) => {
         console.log('Statut mis à jour avec succès:', response);
         const index = this.reclamations.findIndex(c => c._id === id);

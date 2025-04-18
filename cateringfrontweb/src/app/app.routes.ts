@@ -25,6 +25,13 @@ import { ConsulterReclamationComponent } from './components/dahsboardPn/consulte
 import { ReponsereclamationComponent } from './components/dahsboardPn/reponsereclamation/reponsereclamation.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashHomeComponent } from './components/DashTunisairPersonnel/dash-home/dash-home.component';
+import { AjoutCarnetComponent } from './components/dahsboardPn/ajout-carnet/ajout-carnet.component';
+import { HomeAdminComponent } from './components/Administrateur/home-admin/home-admin.component';
+import { RegisterComponent } from './components/Administrateur/register/register.component';
+import { TousBonLivraisonComponent } from './components/dashboardAdminTunCatering/tous-bon-livraison/tous-bon-livraison.component';
+import { DashChefComponent } from './components/dashboardChefCabine/dash-chef/dash-chef.component';
+import { ListebonslivraisonsComponent } from './components/dashboardChefCabine/listebonslivraisons/listebonslivraisons.component';
+import { AllbonslivraisonsComponent } from './components/DashTunisairDirCatering/allbonslivraisons/allbonslivraisons.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -36,7 +43,8 @@ export const routes: Routes = [
         {path:'MyOrders',title:'My Orders',component:EtatCommandeComponent},
         {path:'reclamation',title:'Reclamation',component:ReclamationComponent},
         {path:'MesReclamations',title:'Mes réclamations',component:ConsulterReclamationComponent},
-        {path:'reponse/:id',title:'Reponse reclamation',component:ReponsereclamationComponent}
+        {path:'reponse/:id',title:'Reponse reclamation',component:ReponsereclamationComponent},
+        {path:'CarnetSante',title:'Carnet de santé',component:AjoutCarnetComponent}
     ]},
     //Dashboard admin tunisie catering
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent,children:[
@@ -47,6 +55,7 @@ export const routes: Routes = [
         {path:'TousPlats',title:'Tous Plats',component:AllMealsComponent},
         {path:'TousMenu',title:'Tous Menu',component:AllMenusComponent},
         {path:'CreateBonLivraison',title:'Ajouter bonLivraison',component:AjoutBonLivraisonComponent},
+        { path: 'bonslivraison',title:'Tous les bons de livraisons', component:TousBonLivraisonComponent },
         {path:'createFacture',title:'Ajouter facture',component:AjoutFactureComponent},
         {path:'TousFactures',title:'Tous factures',component:TousFacturesComponent},
     ]},
@@ -58,9 +67,17 @@ export const routes: Routes = [
         {path:'TousCommande',title:'Les commandes',component:ConsulteCommandesComponent},
         {path:'ControleFacture',title:'Controler facture',component:ControleFactureComponent},
         {path:'TousReclamations',title:'Tous Reclamations',component:TousreclamationComponent},
+        {path:'TousBonsLivraion',title:'Les bons de livraison',component:AllbonslivraisonsComponent},
     ]},
     //Dashboard admin direcetion personnel
     {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent},
-    
+    //Dashboard adminstarteurr
+    {path:'Dashboard',title:'Dashbord',component:HomeAdminComponent,children:[
+        {path:'register',title:'Register',component:RegisterComponent},
+    ]},
+    //dashChef
+    {path:'DashboardChefCabine',title:'Dashbord',component:DashChefComponent,children:[
+        {path:'bonLivraison',title:'Bon livraison',component:ListebonslivraisonsComponent},
+    ]},
     {path:'',redirectTo:'login',pathMatch:'full'}
 ];

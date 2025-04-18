@@ -4,6 +4,7 @@ const pn=require("../models/personnelnavigant");
 const pnTunisieCatering=require("../models/AdminTunCatering");
 const pnDirectionCatering=require("../models/PersonnelTunDirCatering");
 const pnDirectionPersonnel=require("../models/personnelDirPersonnel");
+const admin=require("../models/adminModel")
 const{generateAccesToken}=require("../middlware/auth");
 
 class AuthController{
@@ -43,6 +44,10 @@ class AuthController{
                     userId:newuser._id,
                     Matricule
                 })
+            }else if(role == "Administrateur"){
+                await admin.create({
+                    userId:newuser._id,
+                })
             }
             return newuser;
         }catch(err){
@@ -59,10 +64,16 @@ class AuthController{
             if(!isValidPassword){
                 throw new Error("Mot de passe incorrect");
             }
+            let TypePersonnel = null;
+            if (Finduser.role === "Personnel navigant") {
+              const pnData = await pn.findOne({ Matricule });
+              if (pnData) TypePersonnel = pnData.TypePersonnel;
+            }
             const token = generateAccesToken(
               Finduser.username,
-              Matricule ||null,
-              Finduser.role
+              Matricule || null,
+              Finduser.role,
+              TypePersonnel
             );
             return {token};
         }catch(err){

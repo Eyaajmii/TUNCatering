@@ -14,7 +14,6 @@ export class ReclamationComponent {
     this.reclamationForm=this.fb.group({
       'Objet':[''],
       'MessageEnvoye':[''],
-      'MatriculePn':['']
     })
   }
   onSubmit():void{
@@ -22,7 +21,6 @@ export class ReclamationComponent {
       const data={
       Objet:this.reclamationForm.value.Objet,
       MessageEnvoye:this.reclamationForm.value.MessageEnvoye,
-      MatriculePn:this.reclamationForm.value.MatriculePn,
       };
       
       this.ReclamationService.AjouterReclamation(data).subscribe({

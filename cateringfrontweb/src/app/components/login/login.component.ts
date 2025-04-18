@@ -23,14 +23,21 @@ export class LoginComponent {
         const decoded = this.authService.decodeToken(res.token);
         if(decoded && decoded.role){
         const role = decoded.role;
+        const typePersonnel = decoded.TypePersonnel;
         if(role=="Personnel navigant"){
-          this.router.navigate(['/AccueilPersonnel']);
+          if (typePersonnel === "Chef de cabine") {
+            this.router.navigate(['/DashboardChefCabine']);
+          } else {
+            this.router.navigate(['/AccueilPersonnel']);
+          }
         }else if(role=="Personnel Tunisie Catering"){
           this.router.navigate(['/DashAdmin']);
         }else if(role=="Personnel de Direction du Catering Tunisiar"){
           this.router.navigate(['/TunisairCatering']);
         }else if(role=="Personnel de Direction du Personnel Tunisiar"){
           this.router.navigate(['/DashTunisairPersonnel']);
+        }else if(role=="Administrateur"){
+          this.router.navigate(['/Dashboard']);
         }else{
           this.router.navigate(['/']);
         }

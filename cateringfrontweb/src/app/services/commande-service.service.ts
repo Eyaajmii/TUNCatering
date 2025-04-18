@@ -191,8 +191,12 @@ export class CommandeServiceService {
     );  
   }  
   //MyOrders
-  getMyOrders(matriculePn: string): Observable<any[]> {
-    return this.http.get<any[]>(`${commandeURL}/Orders/${matriculePn}`).pipe(
+  getMyOrders(): Observable<any[]> {
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.get<any[]>(`${commandeURL}/Orders`,{headers}).pipe(
       switchMap(orders => {
         const platIds = [...new Set(orders.flatMap(order => order.plats))];
         const menunoms = [...new Set(orders.map(order => order.menu))]; 

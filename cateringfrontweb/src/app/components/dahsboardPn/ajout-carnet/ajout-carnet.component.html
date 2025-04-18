@@ -1,0 +1,12 @@
+<h2>Soumettre ton carnet de santé</h2>
+<form [formGroup]="carnetForm" (ngSubmit)="onSubmit()">
+    <label>Allergies:</label>
+    <input type="text" name="Allergies" formControlName="Allergies" required />
+    <label>Maladie:</label>
+    <input type="text" formControlName="Maladie" name="Maladie" required/>
+    <label>Medicaments:</label>
+    <textarea formControlName="Medicaments" name="Medicaments" required></textarea>
+    <label>Commentaires:</label>
+    <textarea formControlName="Commentaires" name="Commentaires" required></textarea>
+    <button type="submit">Ajouter</button>
+  </form>

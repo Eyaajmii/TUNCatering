@@ -20,15 +20,15 @@ const ReclamationSchema = new mongoose.Schema({
     enum: ["En attente", "traité"],
     default: "En attente",
   },
+  imageUrl: {
+    type: String,
+    default: "",
+  },
   MatriculePn: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "personnelnavigant",
-    default: null,
+    type: String,
   },
   MatriculeDirTunCater: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "PersonnelTunDirCatering",
-    default: null,
+    type: String,
   },
 });
 module.exports = mongoose.model(
