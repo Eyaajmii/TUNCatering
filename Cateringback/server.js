@@ -12,14 +12,27 @@ const CarnetSanteRoute = require("./routes/CarnetSanteRouter");
 const bonLivraisonRouter=require("./routes/bonLivraisonRoute");
 const authRouter=require("./routes/auth");
 const chatRoute = require("./routes/ChatbotNLPRoute");
+const prelevementRoute=require("./routes/Prelevementroute");
 const methodOverride = require("method-override");
 const cors = require("cors");
+const socketIo=require("socket.io");
 
 const app = express();
 const PORT = 5000;
-
 // Create HTTP server
 const server = http.createServer(app);
+global.io=socketIo(server,{
+  cors: {origin:'*'}
+});
+io.on('connection', (socket) => {
+  console.log('Client connecté');
+
+  socket.on('disconnect', () => {
+    console.log('Client déconnecté');
+  });
+});
+
+app.set('socketio', io); 
 
 // Setup WebSocket and get broadcast functions
 const {
@@ -48,6 +61,7 @@ app.use("/api/carnetsante", CarnetSanteRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
 app.use("/api/auth",authRouter);
+app.use("/api/prelevement", prelevementRoute);
 const reclamationRouter = require("./routes/ReclamationRoute")(
   broadcastNewReclamation,
   broadcastReclamationStatusUpdate

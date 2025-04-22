@@ -1114,6 +1114,12 @@
               "texts": [
                 "petit déjuner"
               ]
+            },
+            {
+              "option": "couscous au poulet",
+              "texts": [
+                "couscous au poulet"
+              ]
             }
           ]
         }

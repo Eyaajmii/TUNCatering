@@ -53,7 +53,7 @@ class mealController {
   //return all meals
   static async getAllMeals() {
     try {
-      return await plat.find({ Disponibilite: true });
+      return await plat.find();
     } catch (error) {
       console.log(error);
     }

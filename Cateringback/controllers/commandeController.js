@@ -4,6 +4,7 @@ const plat = require("../models/Meal");
 const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
 const flight = require("../models/vol");
+const notification=require("../models/NotificationModel");
 
 class CommandeController {
   // Return all orders
@@ -137,6 +138,18 @@ class CommandeController {
         MatriculeDirTunCater: MatriculeDirTunCater,
       });
       await menucontroller.miseajourmenuCommande(nom);
+      await notification.create({
+        message: `Nouvelle commande creé pour le vol ${numVol}`,
+        user: MatriculeDirTunCater,
+        notificationType: "info",
+        commandeId: newCmd._id,
+      });
+          global.io.emit("newNotification", {
+          message: `Nouvelle commande créée pour le vol ${numVol}`,
+          user: MatriculeDirTunCater,
+          type: "info",
+          commandeId: newCmd._id,
+        });
       return newCmd;
     } catch (err) {
       console.error("Erreur lors de la récupération des commandes:", err);
@@ -201,8 +214,19 @@ class CommandeController {
         montantsTotal:total,
         MatriculePn: MatriculePn || undefined,
       });
-
       await menucontroller.miseajourmenuCommande(nom);
+      await notification.create({
+        message: `Nouvelle commande creé pour le vol ${numVol}`,
+        user: MatriculePn,
+        notificationType: 'info',
+        commandeId: newCmd._id
+      });
+        global.io.emit('newNotification', {
+          message: `Nouvelle commande créée pour le vol ${numVol}`,
+          user: MatriculePn,
+          type: 'info',
+          commandeId: newCmd._id
+        });
       return newCmd;
     } catch (err) {
       throw new Error("Error creating command: " + err.message);
@@ -215,7 +239,7 @@ class CommandeController {
     nomEntree,
     nomPlatPrincipal,
     nomDessert,
-    nomBoissons,
+    nomBoissons=null,
     MatriculePn
   ) {
     try {
@@ -255,12 +279,15 @@ class CommandeController {
         nom: nomDessert,
         typePlat: "Dessert",
       });
-      const Boissons = await plat.findOne({
+      
+      let Boissons =null;
+      if(nomBoissons){
+        Boissons=await plat.findOne({
         nom: nomBoissons,
         typePlat: "Boisson",
       });
-
-      if (!Entree || !PlatPrincipal || !Dessert || !Boissons) {
+}
+      if (!Entree || !PlatPrincipal || !Dessert ) {
         throw new Error("One or more plat not found");
       }
 
@@ -268,7 +295,7 @@ class CommandeController {
         !Entree.Disponibilite ||
         !PlatPrincipal.Disponibilite ||
         !Dessert.Disponibilite ||
-        !Boissons.Disponibilite
+        (Boissons && !Boissons.Disponibilite)
       ) {
         throw new Error("One or more plats are unavailable");
       }
@@ -277,7 +304,7 @@ class CommandeController {
       if (
         PlatPrincipal.Categorie !== categorie ||
         Dessert.Categorie !== categorie ||
-        Boissons.Categorie !== categorie
+        (Boissons && Boissons.Categorie !== categorie)
       ) {
         throw new Error("All plats must belong to the same category");
       }
@@ -298,10 +325,13 @@ class CommandeController {
       if (date > limitdate) {
         throw new Error("Order not allowed after the flight departure time");
       }
-      const total = Entree.prix + PlatPrincipal.prix + Dessert.prix;
+      const total = Entree.prix + PlatPrincipal.prix + Dessert.prix+(Boissons ? Boissons.prix : 0);
+      const platsArray = Boissons 
+        ? [Entree._id, PlatPrincipal._id, Dessert._id, Boissons._id]
+        : [Entree._id, PlatPrincipal._id, Dessert._id];
       const newCmd = await commande.create({
         vol: volId,
-        plats: [Entree._id, PlatPrincipal._id, Dessert._id, Boissons._id],
+        plats: platsArray,
         dateCommande: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
@@ -309,13 +339,28 @@ class CommandeController {
         MatriculePn: MatriculePn || undefined,
       });
 
-      await platcontroller.miseajourquantite(
-        Entree,
-        PlatPrincipal,
-        Dessert,
-        Boissons
-      );
-
+      if (Boissons) {
+        await platcontroller.miseajourquantite(
+          Entree,
+          PlatPrincipal,
+          Dessert,
+          Boissons
+        );
+      } else {
+        await platcontroller.miseajourquantite(Entree, PlatPrincipal, Dessert);
+      }
+      await notification.create({
+        message: `Nouvelle commande creé pour le vol ${numVol}`,
+        user: MatriculePn,
+        notificationType: "info",
+        commandeId: newCmd._id,
+      });
+      global.io.emit("newNotification", {
+          message: `Nouvelle commande créée pour le vol ${numVol}`,
+          user: MatriculePn,
+          type: "info",
+          commandeId: newCmd._id,
+        });
       console.log("Commande well assigned");
       return newCmd;
     } catch (err) {
@@ -334,6 +379,20 @@ class CommandeController {
       if (!updatedCommande) {
         throw new Error("Commande not found");
       }
+      await notification.create({
+        message: `Statut de la commande mis à jour en ${newStatus}`,
+        user:updatedCommande.MatriculePn || updatedCommande.MatriculeDirTunCater,
+        notificationType: "info",
+        commandeId: updatedCommande._id,
+      });
+
+      io.emit("newNotification", {
+        message: `Statut mis à jour pour une commande`,
+        user:
+          updatedCommande.MatriculePn || updatedCommande.MatriculeDirTunCater,
+        type: "info",
+        commandeId: updatedCommande._id,
+      });
 
       return updatedCommande;
     } catch (error) {

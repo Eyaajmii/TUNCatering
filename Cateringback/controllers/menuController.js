@@ -86,7 +86,7 @@ class menuController {
   //return all menus
   static async getAllMenu() {
     try {
-      return Menu.find({ Disponible: true })
+      return Menu.find()
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
