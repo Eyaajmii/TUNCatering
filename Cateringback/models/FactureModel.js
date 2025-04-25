@@ -46,8 +46,7 @@ const FactureSchema = new mongoose.Schema(
     montantParPn: [
       {
         personnel: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "personnelnavigant",
+          type:String
         },
         montant: Number,
       },

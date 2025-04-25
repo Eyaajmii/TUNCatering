@@ -32,6 +32,9 @@ import { TousBonLivraisonComponent } from './components/dashboardAdminTunCaterin
 import { DashChefComponent } from './components/dashboardChefCabine/dash-chef/dash-chef.component';
 import { ListebonslivraisonsComponent } from './components/dashboardChefCabine/listebonslivraisons/listebonslivraisons.component';
 import { AllbonslivraisonsComponent } from './components/DashTunisairDirCatering/allbonslivraisons/allbonslivraisons.component';
+import { CreerPrelevemntComponent } from './components/DashTunisairPersonnel/creer-prelevemnt/creer-prelevemnt.component';
+import { ConsultfactureComponent } from './components/DashTunisairPersonnel/consultfacture/consultfacture.component';
+import { TousPrelevementsComponent } from './components/DashTunisairPersonnel/tous-prelevements/tous-prelevements.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -70,7 +73,11 @@ export const routes: Routes = [
         {path:'TousBonsLivraion',title:'Les bons de livraison',component:AllbonslivraisonsComponent},
     ]},
     //Dashboard admin direcetion personnel
-    {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent},
+    {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent,children:[
+        {path:'prelevement',title:'Création prélevement',component:CreerPrelevemntComponent},
+        {path:'TousPrelevement',title:'Tous les prélevements',component:TousPrelevementsComponent},
+        {path:'Lesfactures',title:'Les factures',component:ConsultfactureComponent}
+    ]},
     //Dashboard adminstarteurr
     {path:'Dashboard',title:'Dashbord',component:HomeAdminComponent,children:[
         {path:'register',title:'Register',component:RegisterComponent},

@@ -1,8 +1,7 @@
 const mongoose=require("mongoose");
 const prelevementSchem=new mongoose.Schema({
     personnel:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:"personnelnavigant",
+        type: String,
         required: true
     },
     dateDebut:{

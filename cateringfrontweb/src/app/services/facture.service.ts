@@ -5,6 +5,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
 import { isPlatformBrowser } from '@angular/common';  
 const FactureURL = "http://localhost:5000/api/facture"; 
+const PrelevementURL = "http://localhost:5000/api/prelevement"; 
 const WS_URL = "ws://localhost:5000"; 
 @Injectable({
   providedIn: 'root'
@@ -133,4 +134,12 @@ loseConnection(): void {
 get isWebSocketAvailable(): boolean {  
   return this.isBrowser && typeof WebSocket !== 'undefined';  
 }  
+
+/*Partie prelevement*/ 
+ajouterPrelevement(dateDebut:string,dateFin:string):Observable<any>{
+  return this.http.post<any>(`${PrelevementURL}/creer`, { dateDebut, dateFin });
+}
+lesPrelevement():Observable<any>{
+  return this.http.get<any>((`${PrelevementURL}/tousPrelvement`));
+}
 }

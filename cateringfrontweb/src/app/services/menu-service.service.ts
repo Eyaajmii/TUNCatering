@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -45,8 +45,15 @@ export class MenuServiceService {
  TousBoissons():Observable<Plat[]>{
   return this.http.get<Plat[]>(`${platURL}/type/Boisson`);
  }
+ TouspetitDej():Observable<Plat[]>{
+  return this.http.get<Plat[]>(`${platURL}/type/Petit déjuner `);
+ }
   creerMenu(data:any):Observable<any>{
-    return this.http.post<any>(`${menuURL}/add`,data);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${menuURL}/add`,data,{headers});
   }
   TousMenu():Observable<Menu[]>{
     return this.http.get<Menu[]>(`${menuURL}/`);

@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';  
-import { CommandeServiceService } from '../../../services/commande-service.service';  
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ReclamationServiceService } from '../../../services/reclamation-service.service';
 
 
 @Component({
@@ -10,6 +11,15 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   templateUrl: './dashboard-direction.component.html',
   styleUrl: './dashboard-direction.component.css'
 })
-export class DashboardDirectionComponent{  
-    NavOpen: boolean = true;
+export class DashboardDirectionComponent implements OnInit {
+  NavOpen: boolean = true;
+  notifications: any[] = [];
+  constructor(private reclamationService:ReclamationServiceService, private toastr: ToastrService){}
+
+  ngOnInit(): void {
+   this.reclamationService.getNewReclamation().subscribe(notification => {
+    // this.notifications.push(notification);
+     this.toastr.success(notification.message,"Nouvelle réclamation recu");
+   });
+ }
 }

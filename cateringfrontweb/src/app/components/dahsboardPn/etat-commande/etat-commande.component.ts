@@ -18,8 +18,14 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
   constructor(private commandeService: CommandeServiceService) {}
 
   ngOnInit(): void {
-    this.commandeService.getMyOrders().subscribe(d => {
-      this.commandes = d || [];
+    this.commandeService.getMyOrders().subscribe({
+      next: (data) => {
+        this.commandes = data;
+        console.log('Commandes reçues:', data);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des commandes:', err);
+      }
     });
     const newOrderSub = this.commandeService.getNewOrders().subscribe(newOrder => {
         this.commandes.push(newOrder);

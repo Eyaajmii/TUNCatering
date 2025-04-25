@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Observable, Subject, EMPTY, of } from 'rxjs';  
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
 import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
+import { ToastrService } from 'ngx-toastr';
 interface Plat {
   _id: string;
   nom: string;
@@ -45,7 +46,8 @@ export class CommandeServiceService {
   private readonly apiUrlMenu = 'http://localhost:5000/api/menu';
   constructor(  
     private http: HttpClient,  
-    @Inject(PLATFORM_ID) private platformId: Object  
+    @Inject(PLATFORM_ID) private platformId: Object  ,
+    private toastr: ToastrService
   ) {  
     this.isBrowser = isPlatformBrowser(this.platformId);  
     if (this.isBrowser) {  
@@ -139,12 +141,15 @@ export class CommandeServiceService {
     });  
   }  
 
-  private handleMessage(msg: any): void {  
+  private handleMessage(msg: any): void {
+    console.log("Message reçu :", msg);  
     try {  
       if (msg.type === 'NEW_ORDER') {  
-        this.newOrders$.next(msg.data);  
-      } else if (msg.type === 'STATUS_UPDATE') {  
+        this.newOrders$.next(msg.data);
+       // this.toastr.success('Nouvelle commande recue','Notification');  
+      } else if (msg.type === 'STATUS_UPDATE' ) {  
         this.statusUpdates$.next(msg.data);  
+        //this.toastr.info('Statut de la commande mis à jour', 'Mise à jour');
       }  
     } catch (e) {  
       console.error('Error processing WebSocket message:', e);  
@@ -157,105 +162,17 @@ export class CommandeServiceService {
     }  
   }  
   //AllOrders
-  getInitialOrders(): Observable<any[]> {  
-    return this.http.get<any[]>(commandeURL).pipe(  
-      switchMap(orders => {  
-        const platIds = [...new Set(orders.flatMap(order => order.plats))];  
-        
-        if (platIds.length === 0) {  
-          return of(orders);  
-        }  
-  
-        return this.getPlatsDetails(platIds).pipe(  
-          map((plats: Plat[]) => {  
-            const platMap = new Map<string, Plat>(plats.map(plat => [plat._id, plat]));  
-            
-            return orders.map(order => ({  
-              ...order,  
-              plats: order.plats.map((platId: string) =>   
-                platMap.get(platId) || this.createEmptyPlat(platId)  
-              )  
-            }));  
-          }),  
-          catchError(error => {  
-            console.error('Error processing meal details:', error);  
-            // Return the original orders without meal details  
-            return of(orders);  
-          })  
-        );  
-      }),  
-      catchError(error => {  
-        console.error('Error loading initial orders:', error);  
-        return of([]);  
-      })  
-    );  
-  }  
-  //MyOrders
-  getMyOrders(): Observable<any[]> {
-    const token = localStorage.getItem('token'); 
-    const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-    return this.http.get<any[]>(`${commandeURL}/Orders`,{headers}).pipe(
-      switchMap(orders => {
-        const platIds = [...new Set(orders.flatMap(order => order.plats))];
-        const menunoms = [...new Set(orders.map(order => order.menu))]; 
-  
-        if (platIds.length === 0 && menunoms.length === 0) {
-          return of(orders);
-        }
-  
-        return this.getPlatsDetails(platIds).pipe(
-          switchMap(plats => {
-            const platMap = new Map<string, Plat>(plats.map(plat => [plat._id, plat]));
-  
-            if (menunoms.length === 0) {
-              return of(
-                orders.map(order => ({
-                  ...order,
-                  plats: order.plats.map((platId: string) => platMap.get(platId) || this.createEmptyPlat(platId))
-                }))
-              );
-            }
-  
-            
-            return this.getMenuDetails(menunoms[0]).pipe(  
-              map(menu => {
-                const menuMap = new Map<string, Menu>();
-                if (menu) {
-                  menuMap.set(menu.nom, menu);
-                }
-  
-                return orders.map(order => ({
-                  ...order,
-                  plats: order.plats.map((platId: string) => platMap.get(platId) || this.createEmptyPlat(platId)),
-                  menuDetails: menuMap.get(order.menu) || null
-                }));
-              }),
-              catchError(error => {
-                console.error('Error processing menu details:', error);
-                return of(
-                  orders.map(order => ({
-                    ...order,
-                    plats: order.plats.map((platId: string) => platMap.get(platId) || this.createEmptyPlat(platId))
-                  }))
-                );
-              })
-            );
-          }),
-          catchError(error => {
-            console.error('Error processing meal details:', error);
-            return of(orders);
-          })
-        );
-      }),
-      catchError(error => {
-        console.error('Error loading orders:', error);
-        return of([]);
-      })
-    );
-  }
-  
+    getInitialOrders(): Observable<any[]> {  
+      return this.http.get<any[]>(commandeURL)
+    }
+getMyOrders(): Observable<any[]> {
+      const token = localStorage.getItem('token'); 
+      const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<any[]>(`${commandeURL}/Orders`,{headers})
+
+}
 private createEmptyPlat(platId: string): Plat {
   return {
     _id: platId,
@@ -296,15 +213,6 @@ private createEmptyPlat(platId: string): Plat {
         })  
       );  
   }  
-  //menu detail
-  getMenuDetails(menunom:string):Observable<Menu|null>{
-    return this.http.post<Menu>(`${this.apiUrlMenu}/detailMenu`,{nom:menunom}).pipe(
-      catchError(error => {
-        console.error('Error fetching meal details:', error);
-        return of(null);
-      })
-    );
-  }
   /*getMouvements(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/commandes/mouvements`);
   }*/

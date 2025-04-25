@@ -1,0 +1,39 @@
+<div class="container mt-4">
+  <h2>Ajouter un prélèvement</h2>
+
+  <form (ngSubmit)="OnSoumettre()" #prelevementForm="ngForm">
+    <div class="form-group mb-3">
+      <label for="dateDebut">Date de début</label>
+      <input
+        type="date"
+        id="dateDebut"
+        class="form-control"
+        required
+        name="dateDebut"
+        [(ngModel)]="dateDebut"
+      />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="dateFin">Date de fin</label>
+      <input
+        type="date"
+        id="dateFin"
+        class="form-control"
+        required
+        name="dateFin"
+        [(ngModel)]="dateFin"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Valider</button>
+  </form>
+</div>
+<div *ngIf="prelevement" class="mt-4">
+  <h4>Prélèvements Créés</h4>
+  <ul>
+    <li *ngFor="let p of prelevement">
+      Du {{ p.dateDebut | date:'yyyy-MM-dd' }} au {{ p.dateFin | date:'yyyy-MM-dd' }} :
+      Matricule : {{ p.personnel }} | Montant : {{ p.montantTotal }} TND
+    </li>
+  </ul>
+</div>

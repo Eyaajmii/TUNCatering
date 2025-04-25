@@ -81,6 +81,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
+        nomsPetitdejuner,
         MatriculeDirTunCater,
       } = req.body;
        const MatriculePn = req.user.Matricule;
@@ -90,6 +91,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
+        nomsPetitdejuner,
         MatriculePn,
         MatriculeDirTunCater
       );

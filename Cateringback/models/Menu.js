@@ -42,13 +42,12 @@ const menuSchema = new mongoose.Schema({
       ref: "Meal",
     },
   ],
-  /*PetitDejuner:[{
+  PetitDejuner:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Meal"
-  }],*/
-  AdminTn: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "AdminTunCatering",
+  }],
+  personnelTunisieCatering: {
+    type: String,
   },
   DateAjout: {
     type: Date,

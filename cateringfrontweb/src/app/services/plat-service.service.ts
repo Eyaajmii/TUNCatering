@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 const  URL="http://localhost:5000/api/meal";
@@ -22,7 +22,11 @@ export class PlatServiceService {
   constructor(private http:HttpClient) { }
   //ajouter plat
   creerPlat(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${URL}/add`,formData);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${URL}/add`,formData,{headers});
   }
   //donner tous les plats
   getallPlats():Observable<Plat[]>{

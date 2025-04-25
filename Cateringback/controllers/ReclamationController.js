@@ -1,4 +1,6 @@
 const reclamation=require("../models/ReclamationModel")
+const notification = require("../models/NotificationModel");
+
 class reclamationController {
   //pn
   static async creerReclamation(Objet, MessageEnvoye, MatriculePn) {
@@ -10,7 +12,19 @@ class reclamationController {
         MatriculePn,
         MatriculeDirTunCater:null,
         dateSoumission: Date.now(),
-        Statut: "En attente",
+        Statut: "en attente",
+      });
+      const notifcreer=await notification.create({
+        message: `Nouvelle réclamation créée pour le personnel navigant ${MatriculePn}`,
+        user: MatriculePn,
+        notificationType: "reclamation",
+      });
+      global.io.emit("newNotification", {
+        _id: notifcreer._id,
+        message: notifcreer.message,
+        createdAt: notifcreer.createdAt,
+        user: notifcreer.user,
+        notificationType: notifcreer.notificationType,
       });
       return newReclamation;
     } catch (err) {
@@ -39,18 +53,25 @@ class reclamationController {
     }
   }
   //tunisair
-  static async reponseReclamation(
-    id,
-    newStatut,
-    MessageReponse,
-    MatriculeDirTunCater
-  ) {
+  static async reponseReclamation(id,newStatut,MessageReponse,MatriculeDirTunCater) {
     try {
       const updatedReclamation = await reclamation.findByIdAndUpdate(
         id,
         { MessageReponse, MatriculeDirTunCater, Statut: newStatut },
         { new: true, runValidators: true }
       );
+      const notifcreer = await notification.create({
+        message: `Statut de la réclamation mis à jour en ${newStatut}`,
+        user: updatedReclamation.MatriculePn,
+        notificationType: "reclamation",
+      });
+        global.io.emit("newNotification", {
+          _id: notifcreer._id,
+          message: notifcreer.message,
+          createdAt: notifcreer.createdAt,
+          user: notifcreer.user,
+          notificationType: notifcreer.notificationType,
+        });
       return updatedReclamation;
     } catch (err) {
       throw err;

@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 const ReclamationSchema = new mongoose.Schema({
+  NumeroReclamation: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   dateSoumission: {
     type: Date,
     default: Date.now,
@@ -17,7 +22,7 @@ const ReclamationSchema = new mongoose.Schema({
   },
   Statut: {
     type: String,
-    enum: ["En attente", "traité"],
+    enum: ["en attente", "traité"],
     default: "En attente",
   },
   imageUrl: {

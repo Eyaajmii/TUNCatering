@@ -29,8 +29,8 @@ class mealController {
         return res.status(400).json({ message: "Les champs sont obligés." });
       }
       //existance
-      const existe=await plat.findOne({nom});
-      if(existe){
+      const existe = await plat.findOne({ nom });
+      if (existe) {
         return res.status(400).json({ message: "ce plat existe deja." });
       }
       const newmeal = await plat.create({
@@ -42,6 +42,7 @@ class mealController {
         Categorie,
         quantite,
         //adminTn,
+        personnelTunisieCatering: req.user.username,
         image: req.file.filename,
       });
       res.status(200).json(newmeal);
@@ -110,6 +111,27 @@ class mealController {
       }
     } catch (err) {
       console.log(err);
+    }
+  }
+  static async  miseajourqtePetitdejuner(Petitdejuner = []) {
+    try {
+      for (let plat of Petitdejuner) {
+        if (!plat) continue;
+
+        if (plat.quantite > 0) {
+          plat.quantite -= 1;
+        }
+
+        if (plat.quantite === 0) {
+          plat.Disponibilite = false;
+        }
+        await plat.save();
+      }
+    } catch (err) {
+      console.error(
+        "Erreur lors de la mise à jour du petit déjeuner :",
+        err.message
+      );
     }
   }
 }

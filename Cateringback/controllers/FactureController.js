@@ -28,8 +28,8 @@ class FactureController {
         populate: [
           { path: "menu", select: "nom" },
           { path: "plats", select: "nom" },
-          { path: "MatriculePn", select: "Matricule" },
-          { path: "MatriculeDirTunCater", select: "Matricule" },
+          { path: "MatriculePn", select: "_id Matricule" },
+          { path: "MatriculeDirTunCater", select: "_id Matricule" },
         ],
       });
       //filtrer les bons non livré
@@ -64,9 +64,9 @@ class FactureController {
 
           let pn = null;
           if (commande.MatriculePn) {
-            pn = commande.MatriculePn._id?.toString();
+            pn = commande.MatriculePn;
           } else if (commande.MatriculeDirTunCater) {
-            pn = commande.MatriculeDirTunCater._id?.toString();
+            pn = commande.MatriculeDirTunCater;
           }
 
           if (pn) {

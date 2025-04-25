@@ -3,7 +3,8 @@ const router = express.Router();
 const menuController = require("../controllers/menuController");
 const Meal=require("../models/Meal");
 const Menu = require("../models/Menu");
-router.post("/add", async (req, res) => {
+const {authenticateToken}=require("../middlware/auth")
+router.post("/add", authenticateToken, async (req, res) => {
   try {
     const {
       nom,
@@ -13,6 +14,7 @@ router.post("/add", async (req, res) => {
       Boissons,
       Disponible,
     } = req.body;
+    const personnelTunisieCatering = req.user.username;
     if (
       PlatsPrincipaux.length !== 1 ||
       PlatsEntree.length !== 1 ||
@@ -31,20 +33,19 @@ router.post("/add", async (req, res) => {
       PlatsEntree,
       PlatsDessert,
       Boissons,
-      Disponible
+      Disponible,
+      personnelTunisieCatering
     );
     res.status(200).json(nouveauMenu);
   } catch (error) {
-    console.error(error); 
+    console.error(error);
     if (error.message === "Menu déja existe") {
       return res.status(400).json({ message: "Menu déjà existe" });
     }
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la création du menu",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Erreur lors de la création du menu",
+      error: error.message,
+    });
   }
 });
 

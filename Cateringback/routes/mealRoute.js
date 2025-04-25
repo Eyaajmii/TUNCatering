@@ -3,6 +3,7 @@ const mealController=require("../controllers/mealController");
 const upload=require("../middlware/upload");
 const router = express.Router();
 const Meal = require('../models/Meal');
+const{authenticateToken}=require("../middlware/auth");
 router.get("/",async(req,res)=>{
     try{
         const meals = await mealController.getAllMeals();
@@ -11,7 +12,7 @@ router.get("/",async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 });
-router.post("/add", upload.single("image"), mealController.createMeal);
+router.post("/add", authenticateToken,upload.single("image"), mealController.createMeal);
 
 router.get("/:id",async(req,res)=>{
     try{

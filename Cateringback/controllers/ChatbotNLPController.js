@@ -132,7 +132,7 @@ exports.chatbotMessage = async (req, res) => {
   }
 };
 async function updateMealEntities() {
-  const meals = await Meal.getAllMeals(); // Fetch meals from DB
+  const meals = await Meal.getAllMeals(); 
   for (const meal of meals) {
     manager.addNamedEntityText(
       "meal",

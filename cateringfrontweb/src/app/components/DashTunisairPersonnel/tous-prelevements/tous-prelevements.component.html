@@ -1,0 +1,31 @@
+<div class="container mt-4">
+    <h2>Liste de tous les prélèvements</h2>
+  
+    <!-- Affichage conditionnel -->
+    <div *ngIf="prelevements.length > 0; else aucunPrelevement">
+      <table class="table table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Matricule</th>
+            <th>Montant Total (TND)</th>
+            <th>Date Début</th>
+            <th>Date Fin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of prelevements">
+            <td>{{ p.personnel }}</td>
+            <td>{{ p.montantTotal }}</td>
+            <td>{{ p.dateDebut | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ p.dateFin | date: 'yyyy-MM-dd' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Message s'il n'y a pas de prélèvements -->
+    <ng-template #aucunPrelevement>
+      <p class="text-muted mt-3">Aucun prélèvement trouvé.</p>
+    </ng-template>
+  </div>
+  

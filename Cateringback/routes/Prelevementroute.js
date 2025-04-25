@@ -8,10 +8,18 @@ router.post("/creer",async(req,res)=>{
         if (!dateDebut || !dateFin) {
             return res.status(400).json({ message: "dateDebut et dateFin sont requis." });
         }
-        const prelevement = await prelevementcontroller.creerPrelvement(dateDebut,dateFin);
+        const prelevement = await prelevementcontroller.creerPrelevement(dateDebut,dateFin);
         return res.status(201).json(prelevement);
     }catch(err){
         res.status(500).json({message:err.message});
+    }
+})
+router.get("/tousPrelvement",async(req,res)=>{
+    try{
+        const prelevements = await prelevementcontroller.tousPrelevement();
+        return res.status(200).json(prelevements);
+    }catch(err){
+        res.status(500).json({message: err.message});
     }
 })
 module.exports=router;

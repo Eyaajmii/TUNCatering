@@ -30,9 +30,7 @@
             <th scope="col">ID</th>
             <th scope="col">Vol</th>
             <th scope="col">Matricule </th>
-            
-            <th scope="col">Menu</th>
-            <th scope="col">Plats</th>
+            <th scope="col">Menu/Plats</th>
             <th scope="col">Nombre de commande</th>
             <th scope="col">Statut</th>
           </tr>
@@ -52,9 +50,9 @@
               
               <div>{{ commande.MatriculePn?.Matricule }}</div>
             </td>            
-            
-            <td>{{ commande.menu?.nom  }}</td>
+          
             <td>
+              {{ commande.menu?.nom  }}
               <ul>
                 <li *ngFor="let plat of commande.plats">
                   {{ plat.nom }}

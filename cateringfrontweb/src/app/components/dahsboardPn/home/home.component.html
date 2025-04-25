@@ -40,7 +40,7 @@
                 </p>
                 <div class="menu-footer">
                     <span class="menu-category">Menu complet</span>
-                    <button class="btn btn-primary btn-sm" (click)="commanderMenu(menu.nom)">
+                    <button class="btn btn-primary btn-sm" (click)="commanderMenu(menu.nom)" [disabled]="!menu.Disponible">
                         Commander
                     </button>
                 </div>
@@ -90,6 +90,14 @@
               </div>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-5">
+              <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
+              <div class="ps-3">
+                <h6 class="mt-n1 mb-0">Petit déjuner</h6>
+              </div>
+            </a>
+          </li>
         </ul>
 
         <div class="tab-content">
@@ -103,7 +111,7 @@
                     <h5 class="d-flex justify-content-between border-bottom pb-2">
                       <span>{{ entree.nom }}</span>
                       <span class="text-primary">{{ entree.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="EntreeSelectionne && EntreeSelectionne !== entree">
+                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree ) ">
                         <i class="fa-solid fa-basket-shopping"></i>
                       </button>
                     </h5>
@@ -124,7 +132,7 @@
                     <h5 class="d-flex justify-content-between border-bottom pb-2">
                       <span>{{ principal.nom }}</span>
                       <span class="text-primary">{{ principal.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]="PrincipauxSelectionne && PrincipauxSelectionne !== principal">
+                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]=" !principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)">
                         <i class="fa-solid fa-basket-shopping"></i>
                       </button>
                     </h5>
@@ -145,7 +153,7 @@
                     <h5 class="d-flex justify-content-between border-bottom pb-2">
                       <span>{{ dessert.nom }}</span>
                       <span class="text-primary">{{ dessert.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]="DessertSelectionne && DessertSelectionne !== dessert">
+                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]=" !dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)">
                         <i class="fa-solid fa-basket-shopping"></i>
                       </button>
                     </h5>
@@ -165,7 +173,7 @@
                     <h5 class="d-flex justify-content-between border-bottom pb-2">
                       <span>{{ b.nom }}</span>
                       <span class="text-primary">{{ b.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]="BoissonsSelectionne && BoissonsSelectionne !== b">
+                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]=" !b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)">
                         <i class="fa-solid fa-basket-shopping"></i>
                       </button>
                     </h5>
@@ -174,6 +182,31 @@
                 </div>
               </div>
             </div>
+          </div>
+          <!-- Petit déjuner -->
+          <div id="tab-5" class="tab-pane fade p-0">
+            <div class="row g-4">
+              <div class="col-lg-6" *ngFor="let dj of Petitdejuner">
+                <div class="d-flex align-items-center">
+                  <img *ngIf="dj.image" [src]="'http://localhost:5000/uploads/' + dj.image" class="flex-shrink-0 img-fluid rounded" alt="{{dj.nom}}" style="width: 80px;">
+                  <div class="w-100 d-flex flex-column text-start ps-4">
+                    <h5 class="d-flex justify-content-between border-bottom pb-2">
+                      <span>{{ dj.nom }}</span>
+                      <span class="text-primary">{{ dj.prix }} DT</span>
+                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dj, 'Petit déjuner')">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                      </button>
+                    </h5>
+                    <small class="fst-italic">{{ dj.description }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-4" *ngIf="afficherButtonPanier()">
+            <button class="btn btn-primary px-4 py-2" (click)="allerAuPanier()">
+              <i class="fa fa-shopping-cart me-2"></i> Aller au panier
+            </button>
           </div>
         </div> <!-- tab-content -->
       </div>

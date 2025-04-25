@@ -28,9 +28,8 @@ const mealSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  AdminTn: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "AdminTunCatering",
+  personnelTunisieCatering: {
+    type: String
   },
   image: {
     type: String,

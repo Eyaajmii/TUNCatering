@@ -1,14 +1,20 @@
 <div class="container">
     <h2>Votre commande</h2>
-    <p><strong>Entrée :</strong> {{ PEntree }}</p>
-    <p><strong>Plat Principal :</strong> {{ PPrincipal }}</p>
-    <p><strong>Dessert :</strong> {{ PDessert }}</p>
-    <p><strong>Boisson : </strong>{{PBoisson}}</p>
-  
+    <ul>
+      <li *ngIf="PEntree">Entrée : {{ PEntree }}</li>
+      <li *ngIf="PPrincipal">Plat principal : {{ PPrincipal }}</li>
+      <li *ngIf="PDessert">Dessert : {{ PDessert }}</li>
+      <li *ngIf="PBoisson">Boisson : {{ PBoisson }}</li>
+      <li *ngIf="PDej.length > 0">
+        <ul>
+          Tes plats de petit déjuner : 
+          <li *ngFor="let plat of PDej">{{ plat }}</li>
+        </ul>
+      </li>
+    </ul>
     <form [formGroup]="commandeFrom" (ngSubmit)="onSubmit()">
       <label for="numVol">Numéro de vol :</label>
       <input type="text" id="numVol" formControlName="numVol" class="form-control" required>
-  
       <button type="submit" class="btn btn-success">Valider la commande</button>
     </form>
   </div>

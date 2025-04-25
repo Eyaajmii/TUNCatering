@@ -21,12 +21,16 @@ const app = express();
 const PORT = 5000;
 // Create HTTP server
 const server = http.createServer(app);
+
 global.io=socketIo(server,{
   cors: {origin:'*'}
 });
 io.on('connection', (socket) => {
   console.log('Client connecté');
-
+  /*socket.on('joinRoom',(Matricule)=>{
+    console.log(`Le socket ${socket.id} a rejoint la room ${Matricule}`);
+    socket.join(Matricule);
+  })*/
   socket.on('disconnect', () => {
     console.log('Client déconnecté');
   });

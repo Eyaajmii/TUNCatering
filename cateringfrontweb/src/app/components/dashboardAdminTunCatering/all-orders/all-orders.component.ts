@@ -20,7 +20,7 @@ interface Commande {
   NombreCommande:number;
   MatriculePn: any;
   MatriculeDirTunCater: any;
-  menu: Menu;
+  menu?: Menu;
   vol:any
 }
 
@@ -58,7 +58,7 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
   loadInitialOrders() {
     this.loading = true;
     this.commandeService.getInitialOrders().subscribe({
-        next: (orders: any[]) => {
+        next: (orders) => {
             this.commandes = orders;
             this.loading = false;
         },

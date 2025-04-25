@@ -6,6 +6,9 @@
     <router-outlet></router-outlet>
 </div>-->
 <div class="Layout">
+    <div *ngFor="let notif of notifications" class="notification-item">
+        {{ notif.message }}
+    </div>
     <div class="navbar">
         <div class="navbar-top">
             <button (click)="NavOpen = !NavOpen" class="toggle-button">

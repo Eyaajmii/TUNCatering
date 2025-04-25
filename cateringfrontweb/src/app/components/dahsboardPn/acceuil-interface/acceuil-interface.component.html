@@ -1,4 +1,7 @@
-    <div >
+<div>
+    <div *ngFor="let notif of notifications" class="notification-item">
+        {{ notif.message }}
+    </div>
         <nav class="navbar">
             <a href="" class="navbar-brand p-0">
             <img src="logocatering.png" alt="Logo" class="logo"> 
