@@ -6,142 +6,241 @@ const commande = require("../controllers/commandeController");
 
 const manager = new NlpManager({ languages: ["fr"], forceNER: true });
 
+// ========== ENTITÉS NLP ==========
+// Entité pour extraire le numéro de vol
+manager.addRegexEntity("numVol", "fr", /vol\s*(\w+)/i);
+
+
+// ========== DOCUMENTS D'ENTRAÎNEMENT ==========
+manager.addDocument("fr", "bonjour", "greeting");
+manager.addDocument("fr", "salut", "greeting");
+manager.addDocument("fr", "je veux commander des plats", "Commande.Meal");
+manager.addDocument("fr", "je voudrais un plat", "Commande.Meal");
+manager.addDocument("fr", "commander un menu", "Commande.Menu");
+manager.addDocument("fr", "choisir un menu", "Commande.Menu");
+manager.addDocument("fr", "quels sont les menus disponibles ?", "Menu");
+manager.addDocument("fr", "que me conseillez-vous ?", "Recommandation");
+
+// ========== RÉPONSES PAR DÉFAUT ==========
+manager.addAnswer("fr", "greeting", "Bonjour ! Comment puis-je vous aider ?");
+manager.addAnswer(
+  "fr",
+  "Commande.Meal",
+  "Quels plats souhaitez-vous commander ?"
+);
+manager.addAnswer(
+  "fr",
+  "Commande.Menu",
+  "Quel menu souhaitez-vous commander ?"
+);
+manager.addAnswer("fr", "Menu", "Voici les menus disponibles :");
+
+// Sessions utilisateur
+const userSessions = new Map();
+
+// Entraînement du modèle NLP
 (async () => {
-  await manager.load("model.nlp");
-  console.log("Chatbot model loaded successfully!");
+  await manager.train();
+  await updateMealEntities(); // Ajoute les plats en entité
+  await updateMenuEntities(); // Ajoute les menus en entité
+  manager.save("model.nlp");
+  console.log("Modèle NLP entraîné et prêt !");
 })();
 
-// Temporary session storage
-const userSessions = {}; // Example: userSessions["uuid"] = { plats: [], vol: "", matricule: "", step: null }
+// ========== AJOUT DES ENTITÉS ==========
+
+async function updateMealEntities() {
+  try {
+    const meals = await Meal.getAllMeals();
+    meals.forEach((meal) => {
+      manager.addNamedEntityText(
+        "meal",
+        meal.nom.toLowerCase(),
+        ["fr"],
+        [meal.nom, meal.nom.toLowerCase()]
+      );
+    });
+  } catch (err) {
+    console.error("Erreur mise à jour des plats:", err);
+  }
+}
+
+async function updateMenuEntities() {
+  try {
+    const menus = await Menu.getAllMenu();
+    menus.forEach((menu) => {
+      manager.addNamedEntityText(
+        "menu",
+        menu.nom.toLowerCase(),
+        ["fr"],
+        [menu.nom, menu.nom.toLowerCase()]
+      );
+    });
+  } catch (err) {
+    console.error("Erreur mise à jour des menus:", err);
+  }
+}
+
+// Extraction d'informations du message
+async function extractFlightNumber(message) {
+  const response = await manager.process("fr", message);
+  return response.entities
+    .find((e) => e.entity === "numVol")
+    ?.sourceText?.match(/\d+/)?.[0];
+}
 
 async function extractMeals(message) {
-  const mealExtract = message
-    .toLowerCase()
-    .split(/[\s,;.]+/)
-    .filter(Boolean);
-  const meals = await Meal.getAllMeals();
-  const mealsFound = [];
-
-  for (const m of meals) {
-    const name = m.nom.toLowerCase();
-    manager.addNamedEntityText("meal", name, ["fr"], [name]);
-    if (mealExtract.some((e) => name.includes(e))) {
-      mealsFound.push(m.nom);
-    }
-  }
-  return [...new Set(mealsFound)];
+  const response = await manager.process("fr", message);
+  return response.entities
+    .filter((e) => e.entity === "meal")
+    .map((e) => e.sourceText);
 }
 
+// ========== MÉTHODE PRINCIPALE ==========
 exports.chatbotMessage = async (req, res) => {
   try {
-    const { message, sessionId } = req.body;
-    console.log(`Received message: ${message} from session: ${sessionId}`);
-    const response = await manager.process("fr", message);
-    const intent = response.intent;
+    const { message } = req.body;
+    const matricule = req.user.Matricule;
 
-    if (!userSessions[sessionId]) {
-      userSessions[sessionId] = {
+    if (!userSessions.has(matricule)) {
+      userSessions.set(matricule, {
         plats: [],
-        vol: "",
-        matricule: "",
-        step: null,
-      };
+        vol: null,
+        step: "init",
+        lastActivity: Date.now(),
+      });
     }
 
-    const session = userSessions[sessionId];
-    let reply = "Je n'ai pas compris. Pouvez-vous reformuler?";
+    const session = userSessions.get(matricule);
+    session.lastActivity = Date.now();
 
-    switch (intent) {
-      case "greeting":
-        reply =
-          response.answer || "Bonjour, comment puis-je vous aider aujourd'hui?";
-        break;
+    const response = await manager.process("fr", message);
+    let reply =
+      response.answer || "Je n'ai pas compris. Pouvez-vous reformuler ?";
 
-      case "Recommandation":
-        const recommandations = await Recommandation.getMenuJour();
-        reply =
-          "Voici le menu du jour recommandé : " +
-          recommandations.map((m) => m.nom).join(", ");
-        break;
-
-      case "Commande.Meal":
-        if (session.step === "awaitingVol") {
-          session.vol = message;
-          session.step = "awaitingMatricule";
-          reply = "Merci. Quel est votre matricule ?";
-        } else if (session.step === "awaitingMatricule") {
-          session.matricule = message;
-          try {
-            await commande.RequestCommandeMeal({
-              numeroVol: session.vol,
-              matriculePNC: session.matricule,
-              plats: session.plats,
-            });
-            reply = `Votre commande a été enregistrée pour le vol ${session.vol}. Merci !`;
-            delete userSessions[sessionId];
-          } catch (error) {
-            console.error("Erreur commande:", error.message);
-            reply =
-              "Une erreur s'est produite lors de l'enregistrement de la commande.";
-          }
+    switch (session.step) {
+      case "awaitingVol": {
+        const vol = await extractFlightNumber(message);
+        if (vol) {
+          session.vol = vol;
+          session.step =
+            response.intent === "Commande.Meal"
+              ? "selectingMeals"
+              : "selectingMenu";
+          reply =
+            response.intent === "Commande.Meal"
+              ? "Merci. Maintenant, quels plats souhaitez-vous commander ? (3 plats requis)"
+              : "Quel menu souhaitez-vous commander ?";
         } else {
-          const plats = await extractMeals(message);
-          if (plats.length === 0) {
-            reply =
-              "Aucun plat trouvé. Pouvez-vous reformuler les noms des plats ?";
-          } else if (plats.length < 3) {
-            reply = `J'ai trouvé ${plats.length} plat(s) : ${plats.join(
-              ", "
-            )}. Veuillez choisir exactement trois plats.`;
-          } else if (plats.length > 3) {
-            reply = `Trop de plats mentionnés. Veuillez choisir exactement trois.`;
-          } else {
-            session.plats = plats;
-            session.step = "awaitingVol";
-            reply = `Parfait, vous avez choisi : ${plats.join(
-              ", "
-            )}. Quel est votre numéro de vol ?`;
-          }
+          reply = "Numéro de vol invalide. Format attendu : Vol AB123";
         }
         break;
-
-      case "Menu":
-        const menus = await Menu.getAllMenu();
-        reply =
-          "Voici les menus disponibles : " + menus.map((m) => m.nom).join(", ");
-        break;
-
-      case "Meal":
-        const allMeals = await Meal.getAllMeals();
-        reply =
-          "Voici les plats disponibles : " +
-          allMeals.map((m) => m.nom).join(", ");
-        break;
+      }
 
       default:
-        if (response.answer) {
-          reply = response.answer;
+        switch (response.intent) {
+          case "greeting":
+            reply = "Bonjour ! Comment puis-je vous aider aujourd'hui ?";
+            break;
+
+          case "Recommandation": {
+            const recommandations = await Recommandation.HistoriqueEtCarnet(
+              matricule
+            );
+            reply =
+              recommandations.length > 0
+                ? `Voici mes suggestions : ${recommandations
+                    .slice(0, 3)
+                    .map((r) => r.nom)
+                    .join(", ")}`
+                : `Je recommande notre menu du jour : ${
+                    (await Menu.getMenuJour()).nom
+                  }`;
+            break;
+          }
+
+          case "Commande.Meal": {
+            if (!session.vol) {
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: Vol AB123)";
+              break;
+            }
+
+            const plats = await extractMeals(message);
+            if (plats.length === 3) {
+              try {
+                await commande.RequestCommandeMeal(
+                  session.vol,
+                  plats[0],
+                  plats[1],
+                  plats[2],
+                  null,
+                  null,
+                  matricule
+                );
+                reply = `Commande enregistrée pour le vol ${
+                  session.vol
+                } : ${plats.join(", ")}`;
+                userSessions.delete(matricule);
+              } catch (error) {
+                reply = `Erreur : ${error.message}`;
+              }
+            } else {
+              reply =
+                "Veuillez sélectionner exactement 3 plats (Entrée, Plat principal, Dessert)";
+            }
+            break;
+          }
+
+          case "Commande.Menu": {
+            if (!session.vol) {
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: Vol AB123)";
+              break;
+            }
+
+            const menu = response.entities.find(
+              (e) => e.entity === "menu"
+            )?.sourceText;
+            if (menu) {
+              try {
+                await commande.RequestCommandeMenu(
+                  session.vol,
+                  menu,
+                  matricule
+                );
+                reply = `Menu "${menu}" commandé pour le vol ${session.vol} !`;
+                userSessions.delete(matricule);
+              } catch (error) {
+                reply = `Erreur : ${error.message}`;
+              }
+            } else {
+              reply = "Quel menu souhaitez-vous commander ?";
+            }
+            break;
+          }
+
+          case "Menu": {
+            const menus = await Menu.getAllMenu();
+            reply = `Menus disponibles : ${menus.map((m) => m.nom).join(", ")}`;
+            break;
+          }
         }
     }
 
-    console.log(`Chatbot reply: ${reply}`);
     res.json({ reply });
   } catch (err) {
-    console.error("Error in chatbotMessage:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Erreur chatbot:", err);
+    res.status(500).json({ error: "Erreur interne du serveur" });
   }
 };
-async function updateMealEntities() {
-  const meals = await Meal.getAllMeals(); 
-  for (const meal of meals) {
-    manager.addNamedEntityText(
-      "meal",
-      meal.nom.toLowerCase(),
-      ["fr"],
-      [meal.nom.toLowerCase()]
-    );
-  }
-  await manager.train();
-  manager.save();
-}
-updateMealEntities();
+
+// Nettoyage des sessions inactives
+setInterval(() => {
+  const now = Date.now();
+  userSessions.forEach((session, matricule) => {
+    if (now - session.lastActivity > 3600000) {
+      userSessions.delete(matricule);
+    }
+  });
+}, 60000);

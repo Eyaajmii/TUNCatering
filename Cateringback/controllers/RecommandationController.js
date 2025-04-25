@@ -22,15 +22,17 @@ class RecommandationController {
     }
   }
   //get recommandation from health record and historique of orders
-  static async HistoriqueEtCarnet(MatriculePn) {
+  static async HistoriqueEtCarnet(Matricule) {
     try {
-        if(!MatriculePn){
-            console.log("MatriculePn pas trouvé!!!");
-            return null;
+        if (!Matricule) {
+          console.log("MatriculePn pas trouvé!!!");
+          return null;
         }
-        const cmds = await commande.find({ MatriculePn: MatriculePn }).populate("plats");
+        const cmds = await commande
+          .find({ MatriculePn: Matricule })
+          .populate("plats");
         const platsCommandes=cmds.flatMap(commande=>commande.plats);
-        const carnet = await carnet.findOne({ MatriculePn: MatriculePn});
+        const carnet = await carnet.findOne({ MatriculePn: Matricule });
         if (!carnet) {
             console.log("Aucun carnet trouvé");
             return null;

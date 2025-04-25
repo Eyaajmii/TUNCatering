@@ -62,7 +62,7 @@ app.use("/api/meal", mealRoutes);
 app.use("/api/menu", menuRoute);
 app.use("/api/vol", volRoute);
 app.use("/api/carnetsante", CarnetSanteRoute);
-app.use("/api/chat", chatRoute);
+app.use("/api/chatbot", chatRoute);
 app.use("/api/bonLivraison", bonLivraisonRouter);
 app.use("/api/auth",authRouter);
 app.use("/api/prelevement", prelevementRoute);

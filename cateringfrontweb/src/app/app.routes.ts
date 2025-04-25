@@ -35,6 +35,7 @@ import { AllbonslivraisonsComponent } from './components/DashTunisairDirCatering
 import { CreerPrelevemntComponent } from './components/DashTunisairPersonnel/creer-prelevemnt/creer-prelevemnt.component';
 import { ConsultfactureComponent } from './components/DashTunisairPersonnel/consultfacture/consultfacture.component';
 import { TousPrelevementsComponent } from './components/DashTunisairPersonnel/tous-prelevements/tous-prelevements.component';
+import { ChatbotComponent } from './components/dahsboardPn/chatbot/chatbot.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -47,7 +48,8 @@ export const routes: Routes = [
         {path:'reclamation',title:'Reclamation',component:ReclamationComponent},
         {path:'MesReclamations',title:'Mes réclamations',component:ConsulterReclamationComponent},
         {path:'reponse/:id',title:'Reponse reclamation',component:ReponsereclamationComponent},
-        {path:'CarnetSante',title:'Carnet de santé',component:AjoutCarnetComponent}
+        {path:'CarnetSante',title:'Carnet de santé',component:AjoutCarnetComponent},
+        {path:'chatbot',title:'ChatBot',component:ChatbotComponent},
     ]},
     //Dashboard admin tunisie catering
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent,children:[
