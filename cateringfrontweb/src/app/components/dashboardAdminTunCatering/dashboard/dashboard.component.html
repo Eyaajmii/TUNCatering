@@ -1,72 +1,101 @@
-<!--<div class="Layout">
-    <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
-    <div class="layout-left">
-        <app-navbar-items [status]="NavOpen"></app-navbar-items>
-    </div>
-    <router-outlet></router-outlet>
-</div>-->
-<div class="Layout">
+<div class="layout">
+    <!-- Notifications -->
     <div *ngFor="let notif of notifications" class="notification-item">
         {{ notif.message }}
-      </div>
-    <div class="navbar">
-        <div class="navbar-top">
-            <button (click)="NavOpen = !NavOpen" class="toggle-button">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <img src="logocatering.png" alt="Logo" class="logo"> 
-        </div>
     </div>
 
-    <div class="layout-content">
-        <div class="layout-left">
-            <div class="sidebar" [ngClass]="NavOpen ? 'genisSideBar' : 'darSideBar'">
-                <div class="user-info">
-                    <div class="name-role">
-                        <div>WELCOME!</div>
-                    </div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-top">
+            <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-right"  [class.sidebar-closed]="!NavOpen" >
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
                 </div>
-
-                <div class="section-title">Navigation</div>
-
-                <div class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</div>
-
-                <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Commande</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/DashAdmin/TousCommandes">Consulter les commandes</div>
+                <div class="user-profile">
+                    <img src="./assets/img/theme/team-1-800x800.jpg" alt="Profile">
                 </div>
-
-                <div class="menu-item open"><i class="fa-solid fa-utensils"></i><span>Plat</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/DashAdmin/TousPlats">Consulter les plats</div>
-                    <div class="menu-item" routerLink="/DashAdmin/ajoutplat">Ajouter un plat</div>
-                    <div class="menu-item">Modifier un plat</div>
-                    <div class="menu-item">Supprimer un plat</div>
-                </div>
-
-                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Menu</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/DashAdmin/TousMenu">Consulter les menus</div>
-                    <div class="menu-item" routerLink="/DashAdmin/ajoutmenu">Ajouter un menu</div>
-                    <div class="menu-item">Modifier un menu</div>
-                    <div class="menu-item">Supprimer un menu</div>
-                </div>
-
-                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Bon de livraison</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/DashAdmin/bonslivraison"> Consulter les bons de livraison</div>
-                    <div class="menu-item" routerLink="/DashAdmin/CreateBonLivraison">Ajouter un bon de livraison</div>
-                </div>
-                <div class="menu-item open"><i class="fa-solid fa-clipboard-list"></i><span>Facture</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/DashAdmin/TousFactures">Consulter les factures</div>
-                    <div class="menu-item" routerLink="/DashAdmin/createFacture">Ajouter une facture</div>
-                  </div>
             </div>
-        </div> 
-        <div class="main-content">
-            <router-outlet></router-outlet>             
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="layout-content">
+        <!-- Sidebar -->
+        <div class="sidebar" [class.collapsed]="!NavOpen" >
+            <div class="sidebar-header">
+                <img src="logocatering.png" alt="Logo" class="logo">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/dash" (click)="selectItem('Dashboard')">
+                    <i class="fas fa-home"></i> Dashboard
+                </li>
+                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/TousCommandes" (click)="selectItem('Commandes')">
+                    <i class="fas fa-box"></i> Commandes
+                </li>
+               <!--Plat-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                    <i class="fas fa-utensils"></i>
+                    Plat
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/DashAdmin/TousPlats" (click)="selectItem('Consulter les plats')">Consulter </a>
+                    </li>
+                    <li>
+                        <a routerLink="/DashAdmin/ajoutplat">Ajouter</a>
+                    </li>
+                </div>
+                <!--Menu-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                   <i class="fas fa-list"></i>
+                   Menu
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/DashAdmin/TousMenu">Consulter </a>
+                    </li>
+                    <li>
+                        <a routerLink="/DashAdmin/ajoutmenu">Ajouter</a>
+                    </li>
+                </div>
+                <!--livraison-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                <i class="fas fa-truck"></i>Livraison
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/DashAdmin/bonslivraison">Consulter </a>
+                    </li>
+                    <li>
+                        <a routerLink="/DashAdmin/CreateBonLivraison">Ajouter</a>
+                    </li>
+                </div>
+                <!--facture-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                <i class="fas fa-file-invoice"></i>Facture
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/DashAdmin/TousFactures">Consulter </a>
+                    </li>
+                    <li>
+                        <a routerLink="/DashAdmin/createFacture">Ajouter</a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="main-content" [class.sidebar-collapsed]="!NavOpen">
+            <!--<div  >{{ selectedItem }}</div>-->
+           <router-outlet></router-outlet>
         </div>
     </div>
 </div>
-

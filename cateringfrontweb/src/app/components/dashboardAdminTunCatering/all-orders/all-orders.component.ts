@@ -39,7 +39,7 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
 
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'traité', display: 'Traité', class: 'traite' },
+    { value: 'prêt', display: 'prêt', class: 'pret' },
     { value: 'annulé', display: 'Annulé', class: 'annule' },
     { value: 'en retard', display: 'En retard', class: 'en-retard' },
     { value: 'livré', display: 'Livré', class: 'livre' }
@@ -143,9 +143,10 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
   }
 
   getStatusClass(status: string): string {
-    const normalized = status.toLowerCase().replace(/\s+/g, '-');
-    return `status-${normalized}`;
+    const found = this.availableStatuses.find(s => s.value === status);
+    return found ? 'status-' + found.class : '';
   }
+  
 
   changerStatut(commandeId: string, nouveauStatut: string) {
     if (!this.availableStatuses.some(s => s.value === nouveauStatut)) {

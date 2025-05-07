@@ -5,8 +5,7 @@ import { AcceuilInterfaceComponent } from './components/dahsboardPn/acceuil-inte
 import { CommandeMenuComponent } from './components/dahsboardPn/commande-menu/commande-menu.component';
 import { PanierPlatsComponent } from './components/dahsboardPn/panier-plats/panier-plats.component';
 import { DashboardComponent } from './components/dashboardAdminTunCatering/dashboard/dashboard.component';
-import { NavbarItemsComponent } from './components/dashboardAdminTunCatering/navbar-items/navbar-items.component';
-import { NavbarComponent } from './components/dashboardAdminTunCatering/navbar/navbar.component';
+
 import { AllOrdersComponent } from './components/dashboardAdminTunCatering/all-orders/all-orders.component';
 import { AllMealsComponent } from './components/dashboardAdminTunCatering/all-meals/all-meals.component';
 import { AllMenusComponent } from './components/dashboardAdminTunCatering/all-menus/all-menus.component';

@@ -86,10 +86,7 @@ class CommandeController {
   //Orders for tunisair direction
   static async RequestCommande(numVol, nom, MatriculeDirTunCater, nbrCmd) {
     try {
-      if (typeof numVol !== "number") {
-        throw new Error("numVol must be a number");
-      }
-
+    
       const vol = await flight.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
@@ -161,10 +158,6 @@ class CommandeController {
   // Order Menu
   static async RequestCommandeMenu(numVol, nom, MatriculePn) {
     try {
-      if (typeof numVol !== "number") {
-        throw new Error("numVol must be a number");
-      }
-
       const vol = await flight.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
@@ -182,7 +175,7 @@ class CommandeController {
         throw new Error("Only 2 meals are allowed per PN for flights > 6h");
       }
       if (dureeVol <= 6 && cmdExist >= 1) {
-        throw new Error("Only 1 meal is allowed per PN for flights ≤ 6h");
+        throw new Error("Un seul repas est autorisé pour les vols de ≤6h.");
       }
 
       const menu = await Menu.findOne({ nom: nom });
@@ -245,11 +238,7 @@ class CommandeController {
     MatriculePn
   ) {
     try {
-      if (typeof numVol !== "number") {
-        throw new Error("numVol must be a number");
-      }
-
-      const vol = await flight.findOne({ numVol });
+      const vol = await flight.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
       }

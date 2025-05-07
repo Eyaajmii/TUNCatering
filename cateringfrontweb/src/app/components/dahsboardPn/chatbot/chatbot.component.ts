@@ -21,7 +21,6 @@ export class ChatbotComponent {
 
     this.messages.push({ sender: 'Vous', text: input });
     this.userInput = '';
-
     this.chatbotService.EnvoyerMessage(input).subscribe(response => {
       this.messages.push({ sender: 'Bot', text: response.reply });
     });

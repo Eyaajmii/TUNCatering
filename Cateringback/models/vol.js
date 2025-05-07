@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const volSchema = new mongoose.Schema({
     numVol:{
-        type:Number,
+        type:String,
         required:true,
         unique:true
     },

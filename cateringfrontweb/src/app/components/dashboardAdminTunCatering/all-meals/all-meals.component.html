@@ -5,54 +5,50 @@
   </div>
   </div>
   <p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Consulter les plats</p>-->
-<div class="limiter">
-    <div class="container-table100">
-        <div class="wrap-table100">
-            <div class="table100">
-                <table>
-                    <thead>
-                        <tr>
-                            <th colspan="7" style="text-align: center;">
-                                <h2>Les plats</h2>
-                            </th>
-                        </tr>
-                        <tr class="table100-head">
-                            <th class="column1">Nom:</th>
-                            <th class="column2">Description:</th>
-                            <th class="column3">Type plat:</th>
-                            <th class="column4">prix:</th>
-                            <th class="column5">Quantité:</th>
-                            <th class="column6">Categorie</th>
-                            <th class="column7">Disponible</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let p of plats">
-                        <td>
-                            {{p.nom}}
-                        </td>
-                        <td>
-                            {{p.description}}
-                        </td>
-                        <td>
-                            {{p.typePlat}}
-                        </td>
-                        <td>
-                            {{p.prix| currency:'TND':'symbol':'1.3-3'}}
-                        </td>
-                        <td>
-                            {{p.quantite}}
-                        </td>
-                        <td>
-                            {{p.Categorie}}
-                        </td>
-                        <td>
-                            <input type="checkbox" [checked]="p.Disponibilite" disabled>
-                        </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<div class="content">
+    <div class="container">
+      <div class="card ">
+        <div class="card-header bg-white border-bottom-0 ">
+          <h3 class="mb-0 fw-bold">LISTE DES PLATS</h3>
         </div>
+      <div class="table-responsive">
+        <table class="table table-striped custom-table">
+          <thead class="thead">
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Description</th>
+                <th scope="col">Type plat</th>
+                <th scope="col">prix</th>
+                <th scope="col">Quantité</th>
+                <th scope="col">Categorie</th>
+                <th scope="col">Disponible</th>
+              
+            </tr>
+          </thead>
+          <tbody >
+            <tr *ngFor="let p of plats">
+              <td class="fw-semibold text-primary">
+                {{p.nom}}
+              </td>
+              <td>{{p.description}}</td>
+              <td>
+                {{p.typePlat}}
+              </td>            
+            
+              <td>
+               {{p.prix}}
+              </td>
+              <td>{{p.quantite}}</td>
+              <td>
+                {{p.Categorie}}
+              </td> 
+              <td>
+                <input type="checkbox" [checked]="p.Disponibilite" disabled>
+              </td>                     
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-</div>
+  </div>
+  

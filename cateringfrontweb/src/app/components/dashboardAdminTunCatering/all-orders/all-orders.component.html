@@ -1,15 +1,5 @@
 <div class="content">
   <div class="container">
-    <h2 class="mb-5">Les commandes</h2>
-
-    <div class="connection-status" [class.connected]="connectionStatus" [class.disconnected]="!connectionStatus">
-      {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}
-    </div>
-
-    <div *ngIf="error" class="alert alert-danger">
-      {{ error }}
-    </div>
-
     <div *ngIf="loading" class="loading-indicator">
       Chargement des commandes...
     </div>
@@ -22,22 +12,27 @@
         </option>
       </select>
     </div>
-
+    <div class="card ">
+      <div class="card-header bg-white border-bottom-0 ">
+        <h3 class="mb-0 fw-bold">LISTE DES COMMANDES</h3>
+      </div>
     <div class="table-responsive">
       <table class="table table-striped custom-table">
-        <thead>
+        <thead class="thead">
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Numéro commande</th>
             <th scope="col">Vol</th>
             <th scope="col">Matricule </th>
-            <th scope="col">Menu/Plats</th>
-            <th scope="col">Nombre de commande</th>
+            <th scope="col">Commande</th>
+            <th scope="col">Nombre</th>
             <th scope="col">Statut</th>
           </tr>
         </thead>
         <tbody *ngIf="!loading && !error">
           <tr *ngFor="let commande of filteredCommands">
-            <td>#{{ formatId(commande._id) }}</td>
+            <td class="fw-semibold text-primary">
+              #{{ formatId(commande._id) }}
+            </td>
             <td>{{ commande.vol?.numVol }}</td>
             <td>
               <div *ngIf="!commande.MatriculeDirTunCater?.Matricule">
@@ -61,12 +56,16 @@
             </td>
             <td>{{ commande.NombreCommande }}</td>
             <td>
-              <select [(ngModel)]="commande.Statut" (change)="changerStatut(commande._id, commande.Statut)" class="form-control">
-                <option *ngFor="let status of availableStatuses" [value]="status.value">
+              <select
+                [(ngModel)]="commande.Statut"  [disabled]="commande.Statut === 'annulé'"
+                [ngClass]="getStatusClass(commande.Statut)"
+                (change)="changerStatut(commande._id, commande.Statut)"
+                class="form-control">
+                <option *ngFor="let status of availableStatuses" [value]="status.value" [disabled]="status.value=== 'annulé'">
                   {{ status.display }}
                 </option>
               </select>
-            </td>
+            </td>                      
           </tr>
         </tbody>
       </table>

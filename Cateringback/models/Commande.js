@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Liste des statuts valides (version normalisée)
 const validStatuses = [
   "en attente",
-  "traité",
+  "prêt",
   "annulé",
   "en retard",
   "livré"
@@ -37,11 +37,9 @@ const commandeSchema = new mongoose.Schema({
   },
   MatriculePn: {
     type: String,
-    default: null,
   },
   MatriculeDirTunCater: {
     type: String,
-    default: null,
   },
   vol: {
     type: mongoose.Schema.Types.ObjectId,

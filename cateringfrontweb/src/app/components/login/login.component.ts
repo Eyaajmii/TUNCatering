@@ -14,6 +14,7 @@ export class LoginComponent {
   username='';
   password='';
   Matricule='';
+  showMatricule = false;
   error='';
   constructor(private router: Router,private authService:AuthService) { }
   onSubmit(){

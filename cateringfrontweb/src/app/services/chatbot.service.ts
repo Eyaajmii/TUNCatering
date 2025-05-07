@@ -14,6 +14,6 @@ export class ChatbotService {
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-    return this.http.post(`${this.ChatbotURL}/message`, message, {headers})
+    return this.http.post(`${this.ChatbotURL}/message`, {message}, {headers})
   }
 }

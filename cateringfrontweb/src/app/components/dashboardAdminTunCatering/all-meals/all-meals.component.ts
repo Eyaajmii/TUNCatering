@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Plat, PlatServiceService } from '../../../services/plat-service.service';
 import { CommonModule } from '@angular/common';
-import { NavbarItemsComponent } from '../navbar-items/navbar-items.component';
-import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-all-meals',

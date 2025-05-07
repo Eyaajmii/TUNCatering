@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const upload = multer();
 const CommandeController = require("../controllers/commandeController");
 const { authenticateToken } = require("../middlware/auth");
 
@@ -35,27 +34,26 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeAffrete", authenticateToken,upload.none(), async (req, res) => {
+  router.post("/addCommandeAffrete", authenticateToken, async (req, res) => {
     try {
-      const numvol = parseInt(req.body.numVol);
-      const { nom,nbrCmd } = req.body;
+      //const numvol = parseInt(req.body.numVol);
+      const { numVol, nom, nbrCmd } = req.body;
       const MatriculeDirTunCater = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommande(
-        numvol,
+        numVol,
         nom,
         MatriculeDirTunCater,
-        nbrCmd,
-        
+        nbrCmd
       );
       res.status(200).json(newcommande);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeMenu", authenticateToken,upload.none(), async (req, res) => {
+  router.post("/addCommandeMenu", authenticateToken, async (req, res) => {
     try {
-      const numVol = parseInt(req.body.numVol);
-      const { nom } = req.body;
+      //const numVol = parseInt(req.body.numVol);
+      const { nom, numVol } = req.body;
        const MatriculePn = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
@@ -73,10 +71,10 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(error.message);
     }
   });
-  router.post("/addCommandePlat", authenticateToken,upload.none(), async (req, res) => {
+  router.post("/addCommandePlat", authenticateToken, async (req, res) => {
     try {
-      const numVol = parseInt(req.body.numVol);
       const {
+        numVol,
         nomEntree,
         nomPlatPrincipal,
         nomDessert,
