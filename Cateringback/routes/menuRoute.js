@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/Menu/:id", async (req, res) => {
   try {
     const menu = await menuController.getMenuDetail(req.params.id);
     if (!menu) {

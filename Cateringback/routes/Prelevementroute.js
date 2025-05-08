@@ -22,4 +22,12 @@ router.get("/tousPrelvement",async(req,res)=>{
         res.status(500).json({message: err.message});
     }
 })
+router.put("/annule/:id",async(req,res)=>{
+    try{
+        await prelevementcontroller.AnnulerPrelevement(req.params.id);
+        res.status(200).json({ message: "Prélèvement annulé avec succès." });
+    }catch(err){
+        res.status(500).json({ message: err.message });
+    }
+})
 module.exports=router;

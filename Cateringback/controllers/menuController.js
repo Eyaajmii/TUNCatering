@@ -67,11 +67,15 @@ class menuController {
   //return detail menu by id
   static async getMenuDetail(id) {
     try {
-      return Menu.findById(id)
+      const menu= await Menu.findById(id)
         .populate("PlatsEntree", "nom description")
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
-        .populate("Boissons","nom description")
+        .populate("Boissons","nom description");
+      if(!menu){
+        throw new Error("Aucun menu trouvé!");
+      }
+      return menu;
     } catch (err) {
       console.error(err);
     }

@@ -9,7 +9,7 @@ router.get("/:id", bonLivraisonController.getBonLivraisonById);
 router.get("/vol/:volId", bonLivraisonController.getBonByVolId);
 router.put("/:id/statut", bonLivraisonController.updateStatutBonLivraison);
 router.put("/:id/conformite", bonLivraisonController.updateConformite);
-router.delete("/:id", bonLivraisonController.deleteBonLivraison);
+router.put("/modifier/:id", bonLivraisonController.updateBonLivraison);
 router.put("/scan/:id", bonLivraisonController.scanBonLivraison);
 router.get("/pdf/:numeroBon", async (req, res) => {
   try {

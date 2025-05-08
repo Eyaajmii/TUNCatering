@@ -30,7 +30,19 @@ class CarnetSanteControlelr {
     try{
       return await CarnetSante.findByIdAndUpdate(id, data);
     }catch(err){
-      console.log(err);
+      throw err;
+    }
+  }
+  static async supprimerCarnet(id){
+    try{
+      const carnet = await CarnetSante.findById(id);
+      if(!carnet){
+        throw new Error("Aucun carnet trouvé ! ");
+      }
+      await CarnetSante.findByIdAndDelete(id);
+      return { message: "Carnet supprimé avec succès." };
+    }catch(err){
+      throw err;
     }
   }
 }

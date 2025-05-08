@@ -29,13 +29,21 @@ router.get("/Carnet",async(req,res)=>{
         console.log(err);
     }
 })
-router.post('/updateCarnet/:id',async(req,res)=>{
+router.put('/updateCarnet/:id',async(req,res)=>{
     try{
         const carnetUpdate = await CarnetSanteController.modifCarnet(
           req.params.id,
           req.body
         );
         res.status(200).json({message:"Carnet modifié avec succès",carnetUpdate});
+    }catch(err){
+        res.status(500).json({message:"Erreur lors de la modification du carnet",err});
+    }
+})
+router.delete("/:id",async(req,res)=>{
+  try{
+        const carnet = await CarnetSanteController.supprimerCarnet(req.params.id);
+        res.status(200).json({ message: "Carnet modifié avec succès", carnet });
     }catch(err){
         res.status(500).json({message:"Erreur lors de la modification du carnet",err});
     }

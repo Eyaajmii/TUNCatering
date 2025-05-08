@@ -15,6 +15,10 @@ const prelevementSchem=new mongoose.Schema({
     montantTotal:{
         type: Number, 
         required:true
+    },
+    annulation: { 
+        type: Boolean,
+        default: false
     }
 })
 module.exports = mongoose.model("Prelevement", prelevementSchem);

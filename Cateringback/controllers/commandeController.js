@@ -68,7 +68,7 @@ class CommandeController {
     }
   }
 
-  // Return order by ID
+  // Return order by ID==detail
   static async getCommandByID(id) {
     try {
       const cmd = await commande
@@ -408,7 +408,7 @@ class CommandeController {
       throw new Error("Error creating meal order: " + err.message);
     }
   }
-
+  //for tunisie catering , for tunisair if fligth canceled 
   static async updateCommandeStatus(id, newStatus) {
     try {
       const updatedCommande = await commande.findByIdAndUpdate(
@@ -441,22 +441,21 @@ class CommandeController {
     }
   }
 
-  // Cancel an order
-  static async cancelCommandeRequest(id) {
-    try {
-      const cancelCommande = await commande.findById(id);
-      if (!cancelCommande) {
+  static async updateCommande(id,data){//ici peut modifier data and annuler cmd only if status=en attente
+    try{
+      const cmd=await commande.findById(id);
+      if (!cmd) {
         throw new Error("Command request not found");
       }
-      if (cancelCommande.Statut !== "En attente") {
+      if (cmd.Statut !== "En attente") {
         throw new Error(
           "Command request cannot be canceled, it has already been processed"
         );
       }
-      await commande.findByIdAndDelete(id);
-      return { message: "Command request canceled successfully" };
-    } catch (error) {
-      throw new Error("Error canceling command request: " + error.message);
+      const cmdUpdate=await commande.findByIdAndUpdate(id,data,{new:true});
+      return cmdUpdate;
+    }catch(err){
+      throw err
     }
   }
 }

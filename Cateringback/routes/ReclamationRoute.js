@@ -73,6 +73,14 @@ router.get('/reclamations',async(req,res)=>{
         res.status(500).json({message:err.message});
     }
 })
+router.put("/annuler/:id", async (req, res) => {
+  try {
+    const rec = await reclamationController.AnnuleReclamation(req.params.id);
+    res.status(200).json(rec);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 return router;
 }
 

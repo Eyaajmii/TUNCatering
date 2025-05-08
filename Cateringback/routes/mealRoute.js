@@ -14,7 +14,7 @@ router.get("/",async(req,res)=>{
 });
 router.post("/add", authenticateToken,upload.single("image"), mealController.createMeal);
 
-router.get("/:id",async(req,res)=>{
+router.get("/Plat/:id",async(req,res)=>{
     try{
         const meal = await mealController.getMealById(req.params.id);
         res.status(200).json(meal);

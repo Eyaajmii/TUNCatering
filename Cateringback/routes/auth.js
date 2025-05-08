@@ -31,4 +31,16 @@ router.post("/authentification", async(req, res)=>{
       res.status(400).send(err.message);
     }
 });
+router.post("/logout", (req, res) => {
+  authcontroller.logout(req, res);
+});
+router.put('/update/:userId', async (req, res) => {
+    const newUserInfo = req.body;
+    try {
+        const updatedUser = await authcontroller.updateUserInfo(req.params.userId, newUserInfo);
+        res.status(200).json({ message: "Informations mises à jour avec succès", user: updatedUser });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 module.exports = router;

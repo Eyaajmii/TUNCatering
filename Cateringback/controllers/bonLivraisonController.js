@@ -177,11 +177,10 @@ exports.getBonLivraisonById = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
-// Dans votre contrôleur scanBonLivraison
 exports.scanBonLivraison = async (req, res) => {
   try {
     const { id } = req.params;
-    const { qrData } = req.body; // Ajoutez cette ligne
+    const { qrData } = req.body; 
 
     const bonLivraison = await BonLivraison.findById(id);
 
@@ -208,7 +207,7 @@ exports.scanBonLivraison = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-exports.updateConformite = async (req, res) => {
+exports.updateConformite = async (req, res) => {// averifier par wajih snn on annule
   try {
     const { id } = req.params;
     const { conformite } = req.body;
@@ -249,14 +248,11 @@ exports.updateStatutBonLivraison = async (req, res) => {
   try {
     const { id } = req.params;
     const { statut } = req.body;
-
-    if (!["En attente", "En retard", "Annulé", "Livré"].includes(statut)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Statut invalide" });
+    const bn = await BonLivraison.findById(id);
+     if (bn.Statut !== "En attente") {
+      return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être annulé que s'il est en attente" });
     }
-
-    // Déduire la conformité automatiquement
+    //conformité automatiquement
     let conformite = "En attente";
     if (statut === "Livré") {
       conformite = "Confirmé";
@@ -286,25 +282,22 @@ exports.updateStatutBonLivraison = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
-exports.deleteBonLivraison = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const bonLivraison = await BonLivraison.findByIdAndDelete(id);
-
-    if (!bonLivraison) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Bon de livraison introuvable." });
+//par tunisie catering
+exports.updateBonLivraison=async(req,res)=>{
+  try{
+    const{id}=req.params;
+    const{data}=req.body;
+    const bn=await BonLivraison.findById(id);
+    if(!bn){
+      return res.status(404).json({ success: false, message: "Bon de livraison non trouvé" })
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Bon de livraison supprimé avec succès",
-    });
-  } catch (error) {
-    console.error("Erreur lors de la suppression du bon de livraison :", error);
-    res.status(500).json({ success: false, message: "Erreur serveur" });
+     if (bn.Statut !== "En attente") {
+      return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être annulé que s'il est en attente" });
+    }
+    await BonLivraison.findByIdAndUpdate(id,data,{new:true});
+    res.status(200).json({ success: true, message: "Bon de livraison mis à jour avec succès" });
+  }catch(err){
+    res.status(500).json({ success: false, message: "Erreur" });
   }
 };
 exports.getAllBonsLivraisons = async (req, res) => {

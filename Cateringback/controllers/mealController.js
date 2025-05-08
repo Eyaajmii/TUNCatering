@@ -72,7 +72,11 @@ class mealController {
   //return meal by id
   static async getMealById(id) {
     try {
-      return await plat.findById(id);
+      const plat= await plat.findById(id);
+      if(!plat){
+        throw new Error("Aucun plat trouvé ! ")
+      }
+      return plat;
     } catch (error) {
       console.log(error);
     }

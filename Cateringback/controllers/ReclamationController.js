@@ -85,5 +85,31 @@ class reclamationController {
       throw new Error("Error retrieving reclamation count: " + err.message);
     }
   }
+  static async AnnuleReclamation(id){
+    try {
+      const rec = await reclamation.findById(id);
+      if(rec.Statut!=="en attente"){
+        throw new Error("Il faut annulé la réclamation si statut est en attente")
+      }
+      rec.Statut = "annulée";
+      await rec.save();
+
+      return { message: "Réclamation annulée avec succès", rec };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }
+  static async ModifReclamation(id,data){
+    try{
+      const rec = await reclamation.findById(id);
+      if(rec.Statut!=="en attente"){
+        throw new Error("Vous ne pouvez modifier la réclamation que si elle est en attente");
+      }
+      const updatereclamtion=await reclamation.findByIdAndUpdate(id,data,{new:true});
+      return { message: "Réclamation modifiée avec succès", updatereclamtion };
+    }catch(err){
+      throw err;
+    }
+  }
 }
 module.exports = reclamationController;

@@ -23,7 +23,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     }
   });
 
-  router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);
+  router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);//a supprimé apres verification avec wajih
 
   router.get("/Orders", authenticateToken ,async (req, res) => {
     try {
@@ -115,14 +115,14 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/total", async (req, res) => {
     try {
-      const total = await CommandeController.getTotalCommandes();
+      const total = await CommandeController.getTotalCommand();
       res.status(200).json(total);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
 
-  router.get("/:id", async (req, res) => {
+  router.get("/Commande/:id", async (req, res) => {
     try {
       const commande = await CommandeController.getCommandByID(req.params.id);
       res.status(200).json(commande);
@@ -165,15 +165,14 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       }
     }
   });
-
-  router.delete("/:id", async (req, res) => {
-    try {
-      await CommandeController.deleteCommande(req.params.id);
-      res.status(200).send("Commande deleted successfully");
-    } catch (err) {
+  router.put("/ModifierMaCommande/:id",async(req,res)=>{
+    try{
+      const {data}=req.body;
+      const updatcmd = await CommandeController.updateCommande(req.params.id,data);
+      res.status(200).json(updatcmd);
+    }catch(err){
       res.status(500).send(err.message);
     }
-  });
-
+  })
   return router;
 };

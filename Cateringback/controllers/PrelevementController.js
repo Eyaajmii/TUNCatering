@@ -60,6 +60,18 @@ class PrelevementController {
       throw err;
     }
   }
+  static async AnnulerPrelevement(id){
+    try{
+      const preleve = await prelevement.findById(id);
+      if(!preleve){
+        throw new Error("Aucun prelevement trouvé ! ");
+      }
+      preleve.annulation=true;
+      await preleve.save();
+    }catch(err){
+      throw err;
+    }
+  }
 }
 
 module.exports = PrelevementController;

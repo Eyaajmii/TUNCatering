@@ -109,9 +109,13 @@ class FactureController {
       console.error("Erreur dans TousLesFacture");
     }
   }
-  //Tunisiar update status
+  //Tunisiar update status and catering annule facture
   static async updateFactureStatus(id,newStatus){
     try{
+      const facture = await Facture.findById(id);
+      if (facture.Statut!== "En attente") {
+        throw new Error("Seules les factures en attente peuvent être annulées");
+      }
       const updateFact = await Facture.findByIdAndUpdate(id, { Statut :newStatus},{new:true,runValidators:true});
       if(!updateFact){
         throw new Error("Aucune facture trouvé! ");
