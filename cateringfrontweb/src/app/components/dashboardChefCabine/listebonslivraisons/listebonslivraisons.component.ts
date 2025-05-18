@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './listebonslivraisons.component.html',
   styleUrl: './listebonslivraisons.component.css'
 })
-export class ListebonslivraisonsComponent implements OnInit, OnDestroy {
+export class ListebonslivraisonsComponent implements OnInit {
   bonsLivraison: any[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
@@ -21,23 +21,9 @@ export class ListebonslivraisonsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadBonsLivraison();
-    this.realTimeSub = this.bonLivraisonService.getBonsLivraisonRealTime().subscribe({
-      next: (updatedBonsLivraison) => {
-        this.bonsLivraison = updatedBonsLivraison;
-      },
-      error: (err) => {
-        console.error('Erreur de connexion en temps réel:', err);
-        this.errorMessage = 'Problème de connexion en temps réel';
-      }
-    });
+    
   }
 
-  ngOnDestroy(): void {
-    this.realTimeSub.unsubscribe();
-    this.bonLivraisonService.disconnectSocket();
-  }
-
-  // ... rest of your component methods remain the same ...
   loadBonsLivraison(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -91,7 +77,7 @@ export class ListebonslivraisonsComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           if (response && response.success) {
             this.successMessage = 'Statut du bon de livraison mis à jour avec succès';
-            this.loadBonsLivraison(); // Rafraîchir la liste
+            this.loadBonsLivraison(); 
           } else {
             this.errorMessage = response.message || 'Erreur lors de la mise à jour du statut';
           }

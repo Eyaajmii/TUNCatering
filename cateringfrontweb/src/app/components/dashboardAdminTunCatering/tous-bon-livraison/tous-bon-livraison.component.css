@@ -1,16 +1,20 @@
 .container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin-left:15%;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+  h3{
+    font-family: inherit;
+    font-weight: bold;
+      line-height: 1.5;
+      margin-bottom: .5rem;
+      color: #32325d;
+      font-size: 1.0625rem;
+      font-family: Open Sans,sans-serif;
   }
   
   .spinner-border {
@@ -22,7 +26,10 @@
   .alert {
     margin-top: 20px;
   }
-  
+  thead th {
+    background-color: #871376 !important; 
+    color: white; 
+  }
   .card {
     margin-top: 20px;
   }
@@ -42,7 +49,6 @@
   
   .table th {
     background-color: #f2f2f2;
-    color: #333;
     font-weight: bold;
   }
   

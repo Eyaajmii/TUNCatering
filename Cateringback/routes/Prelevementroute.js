@@ -23,11 +23,15 @@ router.get("/tousPrelvement",async(req,res)=>{
     }
 })
 router.put("/annule/:id",async(req,res)=>{
-    try{
-        await prelevementcontroller.AnnulerPrelevement(req.params.id);
-        res.status(200).json({ message: "Prélèvement annulé avec succès." });
-    }catch(err){
-        res.status(500).json({ message: err.message });
+    try {
+      await prelevementcontroller.AnnulerPrelevement(req.params.id);
+      res.status(200).json({ message: "Prélèvement annulé avec succès." });
+    }catch (err) {
+      if (err.message === "Prélevement not found") {
+        return res.status(404).send("Prélevement introuvable.");
+      }
+      console.error("Erreur interne:", err);
+      res.status(500).send("Erreur interne du serveur.");
     }
 })
 module.exports=router;

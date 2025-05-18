@@ -1168,38 +1168,38 @@
           "type": "enum",
           "rules": [
             {
-              "option": "brika",
+              "option": "salade méchouia ",
               "texts": [
-                "Brika",
-                "brika"
+                "Salade Méchouia ",
+                "salade méchouia "
               ]
             },
             {
-              "option": "chorba",
+              "option": "brick à l'œuf",
               "texts": [
-                "Chorba",
-                "chorba"
+                "Brick à l'œuf",
+                "brick à l'œuf"
               ]
             },
             {
-              "option": "couscous",
+              "option": "couscous royal",
               "texts": [
-                "Couscous",
-                "couscous"
+                "Couscous royal",
+                "couscous royal"
               ]
             },
             {
-              "option": "ejja",
+              "option": "makrouna",
               "texts": [
-                "Ejja",
-                "ejja"
+                "Makrouna",
+                "makrouna"
               ]
             },
             {
-              "option": "gateau",
+              "option": "makroud",
               "texts": [
-                "Gateau",
-                "gateau"
+                "Makroud",
+                "makroud"
               ]
             },
             {
@@ -1210,45 +1210,24 @@
               ]
             },
             {
-              "option": "coca cola",
+              "option": "eau minérale.",
               "texts": [
-                "Coca cola",
-                "coca cola"
+                "Eau minérale.",
+                "eau minérale."
               ]
             },
             {
-              "option": "petit déjuner",
+              "option": "café turc.",
               "texts": [
-                "Petit déjuner",
-                "petit déjuner"
+                "Café turc.",
+                "café turc."
               ]
             },
             {
-              "option": "couscous au poulet",
+              "option": "petit déjeuner classique",
               "texts": [
-                "Couscous au poulet",
-                "couscous au poulet"
-              ]
-            },
-            {
-              "option": "aaaa",
-              "texts": [
-                "aaaa",
-                "aaaa"
-              ]
-            },
-            {
-              "option": "ahahah",
-              "texts": [
-                "ahahah",
-                "ahahah"
-              ]
-            },
-            {
-              "option": "ccccc",
-              "texts": [
-                "ccccc",
-                "ccccc"
+                "Petit déjeuner classique",
+                "petit déjeuner classique"
               ]
             }
           ]
@@ -1273,33 +1252,6 @@
                 "menu 2",
                 "Menu2",
                 "menu2"
-              ]
-            },
-            {
-              "option": "menu3",
-              "texts": [
-                "Menu 3",
-                "menu 3",
-                "Menu3",
-                "menu3"
-              ]
-            },
-            {
-              "option": "menu5",
-              "texts": [
-                "Menu 5",
-                "menu 5",
-                "Menu5",
-                "menu5"
-              ]
-            },
-            {
-              "option": "meeeenu",
-              "texts": [
-                "meeeenu",
-                "meeeenu",
-                "meeeenu",
-                "meeeenu"
               ]
             }
           ]

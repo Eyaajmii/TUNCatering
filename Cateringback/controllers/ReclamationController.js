@@ -3,34 +3,6 @@ const notification = require("../models/NotificationModel");
 
 class reclamationController {
   //pn
-  static async creerReclamation(Objet, MessageEnvoye, MatriculePn) {
-    try {
-      const newReclamation = await reclamation.create({
-        Objet,
-        MessageEnvoye,
-        MessageReponse:null,
-        MatriculePn,
-        MatriculeDirTunCater:null,
-        dateSoumission: Date.now(),
-        Statut: "en attente",
-      });
-      const notifcreer=await notification.create({
-        message: `Nouvelle réclamation créée pour le personnel navigant ${MatriculePn}`,
-        user: MatriculePn,
-        notificationType: "reclamation",
-      });
-      global.io.emit("newNotification", {
-        _id: notifcreer._id,
-        message: notifcreer.message,
-        createdAt: notifcreer.createdAt,
-        user: notifcreer.user,
-        notificationType: notifcreer.notificationType,
-      });
-      return newReclamation;
-    } catch (err) {
-      throw err;
-    }
-  }
   static async MesReclamations(MatriculePn) {
     try {
       const Mesreclamations = await reclamation.find({

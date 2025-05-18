@@ -9,7 +9,7 @@ import { BonLivraisonService } from '../../../services/bon-livraison.service';
   templateUrl: './allbonslivraisons.component.html',
   styleUrl: './allbonslivraisons.component.css'
 })
-export class AllbonslivraisonsComponent implements OnInit, OnDestroy {
+export class AllbonslivraisonsComponent implements OnInit {
   bonsLivraison: any[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
@@ -19,15 +19,8 @@ export class AllbonslivraisonsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadBonsLivraison();
-    this.bonLivraisonService.getBonsLivraisonRealTime().subscribe(updatedBonsLivraison => {
-      this.bonsLivraison = updatedBonsLivraison;
-    });
   }
 
-  ngOnDestroy(): void {
-    // Déconnectez-vous du socket lors de la destruction du composant
-    this.bonLivraisonService.disconnectSocket();
-  }
 
   loadBonsLivraison(): void {
     this.isLoading = true;
@@ -78,11 +71,11 @@ export class AllbonslivraisonsComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       this.errorMessage = '';
 
-      this.bonLivraisonService.cancelBonLivraison(bonId).subscribe({
+      this.bonLivraisonService.annulerBonLivraison(bonId).subscribe({
         next: (response: any) => {
           if (response && response.success) {
             this.successMessage = 'Bon de livraison annulé avec succès';
-            this.loadBonsLivraison(); // Rafraîchir la liste
+            this.loadBonsLivraison();
           } else {
             this.errorMessage = response.message || 'Erreur lors de l\'annulation du bon';
           }

@@ -35,10 +35,7 @@ const commandeSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  MatriculePn: {
-    type: String,
-  },
-  MatriculeDirTunCater: {
+  Matricule: {
     type: String,
   },
   vol: {

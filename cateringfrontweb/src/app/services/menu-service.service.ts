@@ -58,4 +58,13 @@ export class MenuServiceService {
   TousMenu():Observable<Menu[]>{
     return this.http.get<Menu[]>(`${menuURL}/`);
   }
+  modifierMenu(id:string,menu:Menu):Observable<Menu>{
+    return this.http.put<Menu>(`${menuURL}/updateMenu/${id}`, menu);
+  }
+  supprimerMenu(id:string):Observable<void>{
+    return this.http.delete<void>(`${menuURL}/${id}`);
+  }
+  getMenubyId(id:string):Observable<Menu>{
+    return this.http.get<Menu>(`${menuURL}/Menu/${id}`);
+  }
 }

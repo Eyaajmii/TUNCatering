@@ -34,7 +34,7 @@ export class PlatServiceService {
   }
   //donner un plat specifique
   getPlatById(id:string):Observable<Plat>{
-    return this.http.get<Plat>(`${URL}/${id}`);
+    return this.http.get<Plat>(`${URL}/Plat/${id}`);
   }
   //mise a jour plat
   updatePlat(id:string,meal:Plat):Observable<Plat>{

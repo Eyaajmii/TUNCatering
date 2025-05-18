@@ -21,7 +21,7 @@ export class ReclamationServiceService {
       this.initializeWebSocket(); 
     }
   }
-  AjouterReclamation(data:any):Observable<any>{
+  AjouterReclamation(data:FormData):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
@@ -132,7 +132,7 @@ export class ReclamationServiceService {
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
-  });
+    });
     return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{newStatut:newStatut,MessageReponse:MessageReponse},{headers}).pipe(
       tap(updatedreclamation=>{
         if (this.socket$ && !this.socket$.closed) {  

@@ -27,8 +27,8 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/Orders", authenticateToken ,async (req, res) => {
     try {
-      const  MatriculePn  = req.user.Matricule;
-      const orders = await CommandeController.getMyOrders(MatriculePn);
+      const Matricule = req.user.Matricule;
+      const orders = await CommandeController.getMyOrders(Matricule);
       res.status(200).json(orders);
     } catch (err) {
       res.status(500).send(err.message);
@@ -38,11 +38,11 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     try {
       //const numvol = parseInt(req.body.numVol);
       const { numVol, nom, nbrCmd } = req.body;
-      const MatriculeDirTunCater = req.user.Matricule;
+      const Matricule = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommande(
-        numVol,
+        numVol.trim(),
         nom,
-        MatriculeDirTunCater,
+        Matricule,
         nbrCmd
       );
       res.status(200).json(newcommande);
@@ -54,11 +54,11 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     try {
       //const numVol = parseInt(req.body.numVol);
       const { nom, numVol } = req.body;
-       const MatriculePn = req.user.Matricule;
+       const Matricule = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
         nom,
-        MatriculePn,
+        Matricule
       );
       broadcastNewOrder({
         ...newcommande._doc,
@@ -79,10 +79,9 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
-        nomsPetitdejuner,
-        MatriculeDirTunCater,
+        nomsPetitdejuner
       } = req.body;
-       const MatriculePn = req.user.Matricule;
+       const Matricule = req.user.Matricule;
       const newCommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,
@@ -90,8 +89,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomDessert,
         nomBoissons,
         nomsPetitdejuner,
-        MatriculePn,
-        MatriculeDirTunCater
+        Matricule
       );
 
       // Broadcast new order to all connected admin clients
@@ -167,9 +165,16 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
   });
   router.put("/ModifierMaCommande/:id",async(req,res)=>{
     try{
-      const {data}=req.body;
-      const updatcmd = await CommandeController.updateCommande(req.params.id,data);
+      const updatcmd = await CommandeController.updateCommande(req.params.id,req.body);
       res.status(200).json(updatcmd);
+    }catch(err){
+      res.status(500).send(err.message);
+    }
+  })
+  router.put("/:id",async(req,res)=>{
+    try{
+      const annulCmsd = await CommandeController.annulCmd(req.params.id);
+      res.status(200).json(annulCmsd);
     }catch(err){
       res.status(500).send(err.message);
     }

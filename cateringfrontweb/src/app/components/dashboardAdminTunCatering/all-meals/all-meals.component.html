@@ -7,14 +7,18 @@
   <p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Consulter les plats</p>-->
 <div class="content">
     <div class="container">
+      <div *ngIf="PlatFiltre" class="mb-3">
+        <button (click)="retour()">Retour a la liste des menus</button>
+      </div>
       <div class="card ">
         <div class="card-header bg-white border-bottom-0 ">
           <h3 class="mb-0 fw-bold">LISTE DES PLATS</h3>
         </div>
-      <div class="table-responsive">
+       <div class="table-responsive">
         <table class="table table-striped custom-table">
           <thead class="thead">
             <tr>
+              <th scope="col"><i class="fa-regular fa-image" style="color: #ffffff;"></i></th>
                 <th scope="col">Nom</th>
                 <th scope="col">Description</th>
                 <th scope="col">Type plat</th>
@@ -22,11 +26,14 @@
                 <th scope="col">Quantité</th>
                 <th scope="col">Categorie</th>
                 <th scope="col">Disponible</th>
-              
+                <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody >
-            <tr *ngFor="let p of plats">
+            <tr *ngFor="let p of (PlatFiltre ? [PlatFiltre] : plats)">
+              <td>
+                <img class="plat-image" [src]="'http://localhost:5000/uploads/' + p.image" alt="{{p.nom}}">
+              </td>
               <td class="fw-semibold text-primary">
                 {{p.nom}}
               </td>
@@ -44,7 +51,11 @@
               </td> 
               <td>
                 <input type="checkbox" [checked]="p.Disponibilite" disabled>
-              </td>                     
+              </td>  
+              <td>
+                <button class="btn btn-warning btn-sm" (click)="modifier(p._id)" >Modifier</button>
+                <button class="btn btn-danger btn-sm" (click)="supprimer(p._id)">Supprimer</button>
+              </td>                   
             </tr>
           </tbody>
         </table>

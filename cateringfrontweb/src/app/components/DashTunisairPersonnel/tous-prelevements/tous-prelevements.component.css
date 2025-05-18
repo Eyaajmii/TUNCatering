@@ -1,0 +1,44 @@
+/* Global Styles */
+.content {
+    padding: 20px;
+  }
+  
+  .container {
+    width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .mb-5 {
+    margin-bottom: 30px;
+  }
+  h3{
+    font-family: inherit;
+      
+      line-height: 1.5;
+      margin-bottom: .5rem;
+      color: #32325d;
+      font-size: 1.0625rem;
+      font-family: Open Sans,sans-serif;
+  }
+  .custom-table thead th {
+    background-color: #599be7 !important; 
+    color: white; 
+  }
+
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    position: relative;
+  }
+    
+  .table th,
+  .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  
+
+  

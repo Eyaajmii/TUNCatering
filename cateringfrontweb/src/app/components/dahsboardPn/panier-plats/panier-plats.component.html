@@ -13,8 +13,13 @@
       </li>
     </ul>
     <form [formGroup]="commandeFrom" (ngSubmit)="onSubmit()">
-      <label for="numVol">Numéro de vol :</label>
-      <input type="text" id="numVol" formControlName="numVol" class="form-control" required>
+      <div class="form-group"> 
+        <label>Numero de vol </label>
+        <div *ngIf="vols.length === 0">Chargement des vols...</div>
+           <select formControlName="numVol">
+            <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
+           </select>
+    </div>
       <button type="submit" class="btn btn-success">Valider la commande</button>
     </form>
   </div>

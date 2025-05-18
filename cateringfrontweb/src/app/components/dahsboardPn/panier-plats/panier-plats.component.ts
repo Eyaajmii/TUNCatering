@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './panier-plats.component.css'
 })
 export class PanierPlatsComponent implements OnInit {
+  vols:any[]=[];
   PEntree:string="";
   PPrincipal:string="";
   PDessert:string="";
@@ -20,7 +21,7 @@ export class PanierPlatsComponent implements OnInit {
   commandeFrom:FormGroup;
   constructor(private fb:FormBuilder,private CmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
-      'numVol':['',[Validators.required,Validators.pattern(/^\d{3}$/)]],
+      'numVol':[''],
     })
   }
   ngOnInit(): void {
@@ -31,18 +32,25 @@ export class PanierPlatsComponent implements OnInit {
       this.PBoisson=p['Boissons']||"";
       this.PDej = p['PetitDej'] ? p['PetitDej'].split(',') : [];
     })
+    this.CmdService.getVols().subscribe(vols => {
+      console.log(vols);
+      this.vols = vols.map(vol => ({
+          ...vol,
+          numVol: vol.numVol.trim()
+        }));
+    });
   }
   onSubmit():void{
     if (this.commandeFrom.valid){
-      const numVol = parseInt(this.commandeFrom.value.numVol);
-      const data=new FormData();
-      data.append('nomEntree',this.PEntree);
-      data.append('nomPlatPrincipal',this.PPrincipal);
-      data.append('nomDessert',this.PDessert);
-      data.append('nomBoissons',this.PBoisson);
-      data.append('numVol',numVol.toString());
-      if (this.PDej.length > 0) {
-        this.PDej.forEach(p => data.append('nomsPetitdejuner', p));
+      const data:any={
+        nomEntree:this.PEntree,
+        nomPlatPrincipal:this.PPrincipal,
+        nomDessert:this.PDessert,
+        nomBoissons:this.PBoisson,
+        numVol:this.commandeFrom.value.numVol
+      }
+      if (this.PDej && this.PDej.length > 0) {
+        data.nomsPetitdejuner = this.PDej;
       }
       this.CmdService.CommanderPlats(data).subscribe({
         next: res => {

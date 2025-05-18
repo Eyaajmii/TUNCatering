@@ -5,19 +5,23 @@ import { CommonModule } from '@angular/common';
 import { Router} from '@angular/router';
 import { ChatbotService } from '../../../services/chatbot.service';
 import { FormsModule } from '@angular/forms';
-
+import { CarouselModule } from 'primeng/carousel';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-home',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,CarouselModule,ButtonModule,
+    TagModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent {
   //chat
+  isChatOpen = false;
   userInput = '';
   messages: { sender: string, text: string ,timestamp: string}[] = [];
   //Pageacceuil
-  activetab:string='entree';
+ // activetab:string='entree';
   menus:Menu[]=[];
   plats:Plat[]=[];
   PlatsEntree:Plat[]=[];
@@ -107,6 +111,9 @@ export class HomeComponent implements OnInit{
   }
 
   //chatbot
+  toggleChat() {
+    this.isChatOpen = !this.isChatOpen;
+  }
   send(): void {
     const input = this.userInput.trim();
     if (!input) return;
@@ -116,5 +123,22 @@ export class HomeComponent implements OnInit{
       this.messages.push({ sender: 'Bot', text: response.reply ,timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })});
     });
   }
-  
+  responsiveOptions: any[] = [
+    {
+      breakpoint: '1024px',
+      numVisible: 3,
+      numScroll: 3
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 2,
+      numScroll: 2
+    },
+    {
+      breakpoint: '560px',
+      numVisible: 1,
+      numScroll: 1
+    }
+  ];
+
 }

@@ -1,53 +1,75 @@
-<!--<div class="Layout">
-    <app-navbar (togglesidebar)="NavOpen=!NavOpen"></app-navbar>
-    <div class="layout-left">
-        <app-navbar-items [status]="NavOpen"></app-navbar-items>
-    </div>
-    <router-outlet></router-outlet>
-</div>-->
-<div class="Layout">
+<div class="layout">
+    <!-- Notifications -->
     <div *ngFor="let notif of notifications" class="notification-item">
         {{ notif.message }}
     </div>
-    <div class="navbar">
+
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="navbar-top">
-            <button (click)="NavOpen = !NavOpen" class="toggle-button">
-                <i class="fa-solid fa-bars"></i>
+            <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
+                <i class="fas fa-bars"></i>
             </button>
-            <img src="logotun.png" alt="Logo" class="logo"> 
-            <img src="logocatering.png" alt="Logo" class="logoo"> 
-        </div>
-    </div>
-
-    <div class="layout-content">
-        <div class="layout-left">
-            <div class="sidebar" [ngClass]="NavOpen ? 'genisSideBar' : 'darSideBar'">
-                <div class="user-info">
-                    <div class="name-role">
-                        <div>WELCOME!</div>
-                    </div>
+            <div class="nav-right"  [class.sidebar-closed]="!NavOpen" >
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
                 </div>
-
-                <div class="section-title">Navigation</div>
-
-                <div class="menu-item"><i class="fa-solid fa-house"></i> Dashboard</div>
-
-                <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Commande</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/TunisairCatering/TousCommande">Consulter les commandes</div>
-                    <div class="menu-item" routerLink="/TunisairCatering/CommandeAffretes">Commande Affrétés</div>
-                </div>
-                <div class="menu-item open"><i class="fa-solid fa-box"></i><span>Autre options</span></div>
-                <div class="submenu">
-                    <div class="menu-item" routerLink="/TunisairCatering/ControleFacture">Controller les factures</div>
-                    <div class="menu-item" routerLink="/TunisairCatering/TousReclamations">Consulter les réclamations</div>
-                    <div class="menu-item" routerLink="/TunisairCatering/TousBonsLivraion">Consulter les bons de livraisons</div>
+                <div class="user-profile">
+                    <img src="./assets/img/theme/team-1-800x800.jpg" alt="Profile">
                 </div>
             </div>
         </div>
-        <div class="main-content">
-            <router-outlet></router-outlet>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="layout-content">
+        <!-- Sidebar -->
+        <div class="sidebar" [class.collapsed]="!NavOpen" >
+            <div class="sidebar-header">
+                <img src="logocatering.png" alt="Logo" class="logo">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/dash" (click)="selectItem('Dashboard')">
+                    <i class="fas fa-home"></i> Dashboard
+                </li>
+               <!--Commande-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                    <i class="fas fa-utensils"></i>
+                    Commandes
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/TunisairCatering/TousCommande" (click)="selectItem('Commandes')">Consulter les commandes</a>
+                    </li>
+                    <li>
+                        <a routerLink="/TunisairCatering/CommandeAffretes" (click)="selectItem('affrete')">Commande Affrétés</a>
+                    </li>
+                </div>
+                <!--Autre options-->
+                <button class="dropdown-btn nav-item"  routerLinkActive="active">
+                   <i class="fa-solid fa-box"></i>
+                   Autre options
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="dropdown-container">
+                    <li>
+                        <a routerLink="/TunisairCatering/TousBonsLivraion" (click)="selectItem('bn')">Bons de livraison</a>
+                    </li>
+                    <li>
+                        <a routerLink="/TunisairCatering/ControleFacture" (click)="selectItem('facture')">Factures</a>
+                    </li>
+                    <li>
+                        <a routerLink="/TunisairCatering/TousReclamations" (click)="selectItem('reclamation')">Réclamations</a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="main-content" [class.sidebar-collapsed]="!NavOpen">
+            <!--<div  >{{ selectedItem }}</div>-->
+           <router-outlet></router-outlet>
         </div>
     </div>
 </div>
-

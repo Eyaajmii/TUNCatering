@@ -1,1 +1,50 @@
-<p>consultfacture works!</p>
+<div class="container">
+    <h3>LISTE DES FACTURES</h3>
+    <div *ngIf="isLoading" class="text-center mt-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div *ngIf="factures.length > 0" class="card mt-3">
+      <div class="card-header">Factures enregistrés</div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Date</th>
+              <th>Nombre des bons </th>
+              <th>Montant total</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of factures" [class.table-secondary]="f.Statut === 'annulé'">
+              <td class="fw-semibold text-primary">{{ f.numeroFacture }}</td>
+              <td>{{ f.DateFacture | date:'shortDate' }}</td>
+              <td>{{ f.BonsLivraison?.length || 0 }}</td>
+              <td>
+                {{ f.montantTotal | currency:'TND':'symbol':'1.3-3'}}
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getStatusBadgeClass(f.Statut)">
+                  {{ f.Statut }}
+                </span>
+              </td>
+              <td>
+                <button 
+                  class="btn btn-sm btn-primary me-2"
+                  [disabled]="isLoading">
+                  <i class="bi bi-download"></i> PDF
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="!isLoading && factures.length === 0 && !errorMessage" class="alert alert-info mt-3">
+      Aucun bon de livraison trouvé.
+    </div>
+  </div>

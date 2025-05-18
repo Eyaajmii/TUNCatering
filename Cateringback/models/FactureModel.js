@@ -37,8 +37,7 @@ const FactureSchema = new mongoose.Schema(
     montantParVol: [
       {
         vol: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "vol",
+          type:String,
         },
         montant: Number,
       },

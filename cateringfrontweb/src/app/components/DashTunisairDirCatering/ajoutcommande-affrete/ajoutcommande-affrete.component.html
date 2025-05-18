@@ -1,0 +1,27 @@
+<div class="form-container">
+    <h5>COMMANDE DES AFFRETES</h5>
+  <form [formGroup]="form" (submit)="onSubmit()">
+    <div clas="form-group"> 
+    <label>Nom du menu: </label>
+    <div *ngIf="menus.length === 0">Chargement des menus...</div>
+       <select formControlName="nom">
+        <option *ngFor="let menu of menus" [value]="menu.nom">{{ menu.nom }}</option>
+       </select>
+    </div>
+    <div clas="form-group"> 
+      <label> Nombre des personnels: </label>  
+      <input id="nbrCmd" formControlName="nbrCmd" name="nbrCmd" type="number" min="1" required />
+    </div>
+    <div clas="form-group"> 
+      <label>N° vol </label>
+      <div *ngIf="vols.length === 0">Chargement des vols...</div>
+         <select formControlName="numVol">
+          <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
+         </select>
+  </div>
+  
+    <button type="submit" class="btn-submit">COMMANDER</button>
+    <button class="btn btn-secondary ms-2" (click)="retour()" type="button">Annuler</button>
+  </form>
+  </div>
+  

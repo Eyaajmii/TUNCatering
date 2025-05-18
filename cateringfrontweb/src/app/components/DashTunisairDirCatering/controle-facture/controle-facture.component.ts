@@ -9,7 +9,7 @@ export interface Facture {
   dateCreation?: Date;
   DateFacture: Date;
   Statut:string;
-  BonsLivraison: string[];
+  BonsLivraison?: string[];
   montantTotal: number;
   montantParVol: {
     vol: string; 
@@ -36,6 +36,7 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
     { value: 'confirmé', display: 'confirmé', class: 'confirmé' },
     { value: 'annulé', display: 'annulé', class: 'annule' },
   ];
+  
   private subscriptions: Subscription = new Subscription(); 
   constructor(private factureService:FactureService){}
   ngOnInit(): void {
@@ -138,5 +139,13 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
     const formattedTime = date.toLocaleTimeString('fr-FR', timeOptions);
   
     return `${formattedDate} à ${formattedTime}`;
+  }
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'En attente': return 'bg-warning';
+      case 'Annulé': return 'bg-danger';
+      case 'confirmé': return 'bg-success';
+      default: return 'bg-info';
+    }
   }
 }

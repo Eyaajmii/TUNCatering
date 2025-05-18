@@ -47,5 +47,23 @@ router.put("/updateStatusFacture/:id",async(req,res)=>{
         }
     }
 });
+router.put("/Annuler/:id", async (req, res) => {
+  try {
+    const update = await facturecontroller.AnnulerFacture(req.params.id);
+    res.status(200).json(update);
+  } catch (err) {
+    if (err.message === "facture not found") {
+      return res.status(404).send("Facture introuvable.");
+    }
+    if (
+      err.message === "Seules les factures en attente peuvent être annulées"
+    ) {
+      return res.status(400).send(err.message);
+    }
+    console.error("Erreur interne:", err);
+    res.status(500).send("Erreur interne du serveur.");
+  }
+});
+
 return router;
 }

@@ -123,20 +123,6 @@ router.put("/updateMenu/:id", async (req, res) => {
       .json({ message: "Erreur lors de la mise à jour du menu", error });
   }
 });
-
-router.get("/type/:typeMenu", async (req, res) => {
-  try {
-    const menus = await menuController.getMenuBytype(req.params.typeMenu);
-    res.status(200).json(menus);
-  } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de la récupération des menus par type",
-        error,
-      });
-  }
-});
 router.delete("/:id",async(req,res)=>{
     try{
         await menuController.cancelMenu(req.params.id);

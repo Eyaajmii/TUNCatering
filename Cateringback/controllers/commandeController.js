@@ -3,7 +3,7 @@ const Menu = require("../models/Menu");
 const plat = require("../models/Meal");
 const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
-const flight = require("../models/vol");
+const Vol = require("../models/vol");
 const notification = require("../models/NotificationModel");
 
 class CommandeController {
@@ -12,8 +12,7 @@ class CommandeController {
     try {
       const commandes = await commande
         .find()
-        .populate("MatriculePn", "Matricule nom")
-        .populate("MatriculeDirTunCater", "Matricule nom")
+        .populate("Matricule", "Matricule nom")
         .populate("menu", "nom")
         .populate("plats")
         .populate("vol", "numVol");
@@ -27,7 +26,7 @@ class CommandeController {
   //return orders by numvol
   static async getCommandesByNumVol(numVol) {
     try {
-      const vol = await flight.findOne({ numVol });
+      const vol = await Vol.findOne({ numVol });
 
       if (!vol) {
         throw new Error(`Aucun vol trouvé avec le numéro ${numVol}`);
@@ -36,7 +35,7 @@ class CommandeController {
         .find({ vol: vol._id })
         .populate({ path: "menu", select: "nom" })
         .populate({ path: "plats", select: "nom" })
-        .populate({ path: "MatriculePn", select: "nom prenom Matricule" });
+        .populate({ path: "Matricule", select: "nom prenom Matricule" });
 
       if (commandes.length === 0) {
         throw new Error(`Aucune commande trouvée pour le vol ${numVol}`);
@@ -50,9 +49,13 @@ class CommandeController {
   }
 
   //return personnelOrder by they matricule
-  static async getMyOrders(MatriculePn) {
+  static async getMyOrders(Matricule) {
     try {
-      const Myorders = await commande.find({ MatriculePn: MatriculePn }).populate('vol').populate('menu').populate('plats');
+      const Myorders = await commande
+        .find({ Matricule: Matricule })
+        .populate("vol")
+        .populate("menu")
+        .populate("plats");
       console.log("Commandes récupérées:", Myorders);
       return Myorders;
     } catch (err) {
@@ -73,7 +76,7 @@ class CommandeController {
     try {
       const cmd = await commande
         .findById(id)
-        .populate("MatriculePn", "Matricule dateVolDep numVol")
+        .populate("Matricule", "Matricule dateVolDep numVol")
         .populate("nomMenu", "nom");
       if (!cmd) {
         throw new Error("Commande not found");
@@ -84,10 +87,9 @@ class CommandeController {
     }
   }
   //Orders for tunisair direction
-  static async RequestCommande(numVol, nom, MatriculeDirTunCater, nbrCmd) {
+  static async RequestCommande(numVol, nom, Matricule, nbrCmd) {
     try {
-    
-      const vol = await flight.findOne({ numVol: numVol });
+      const vol = await Vol.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -111,7 +113,8 @@ class CommandeController {
       }
 
       const menuId = menu._id;
-      const date = new Date();
+      const now = new Date();
+      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
       const limitdate = new Date(vol.dateVolDep);
       if (date > limitdate) {
         throw new Error("Commande not allowed after the flight departure time");
@@ -133,12 +136,12 @@ class CommandeController {
         Statut: "En attente",
         NombreCommande: nbrCmd,
         montantsTotal: total,
-        MatriculeDirTunCater: MatriculeDirTunCater,
+        Matricule: Matricule,
       });
       await menucontroller.miseajourmenuCommande(nom);
       const notifcreer = await notification.create({
         message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: MatriculeDirTunCater,
+        user: Matricule,
         notificationType: "commande",
       });
       global.io.emit("newNotification", {
@@ -156,9 +159,9 @@ class CommandeController {
   }
 
   // Order Menu
-  static async RequestCommandeMenu(numVol, nom, MatriculePn) {
+  static async RequestCommandeMenu(numVol, nom, Matricule) {
     try {
-      const vol = await flight.findOne({ numVol: numVol });
+      const vol = await Vol.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -167,7 +170,7 @@ class CommandeController {
       const dureeVol = parseInt(vol.DureeVol);
       const cmdExist = await commande.countDocuments({
         vol: volId,
-        MatriculePn,
+        Matricule,
       });
 
       // Validate meal limits based on flight duration
@@ -184,7 +187,8 @@ class CommandeController {
       }
 
       const menuId = menu._id;
-      const date = new Date();
+      const now = new Date();
+      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
       const limitdate = new Date(vol.dateVolDep);
       if (date > limitdate) {
         throw new Error("Commande not allowed after the flight departure time");
@@ -206,12 +210,12 @@ class CommandeController {
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         montantsTotal: total,
-        MatriculePn: MatriculePn || undefined,
+        Matricule: Matricule || undefined,
       });
       await menucontroller.miseajourmenuCommande(nom);
       const notifcreer = await notification.create({
         message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: MatriculePn,
+        user: Matricule,
         notificationType: "commande",
       });
       global.io.emit("newNotification", {
@@ -235,10 +239,10 @@ class CommandeController {
     nomDessert = null,
     nomBoissons = null,
     nomsPetitdejuner = null,
-    MatriculePn
+    Matricule
   ) {
     try {
-      const vol = await flight.findOne({ numVol: numVol });
+      const vol = await Vol.findOne({ numVol: numVol });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -247,7 +251,7 @@ class CommandeController {
       const dureeVol = parseInt(vol.DureeVol);
       const cmdExist = await commande.countDocuments({
         vol: volId,
-        MatriculePn,
+        Matricule,
       });
 
       // Validate meal limits based on flight duration
@@ -317,17 +321,8 @@ class CommandeController {
       ) {
         throw new Error("One or more plats are unavailable");
       }
-
-      const categorie = Entree ? Entree.Categorie : null;
-      if (
-        (PlatPrincipal && PlatPrincipal.Categorie !== categorie) ||
-        (Dessert && Dessert.Categorie !== categorie) ||
-        (Boissons && Boissons.Categorie !== categorie)
-      ) {
-        throw new Error("All plats must belong to the same category");
-      }
-
-      const date = new Date();
+      const now = new Date();
+      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
       const limitdate = new Date(vol.dateVolDep);
       const deadline = new Date(limitdate);
 
@@ -371,7 +366,7 @@ class CommandeController {
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         montantsTotal: total,
-        MatriculePn: MatriculePn || undefined,
+        Matricule: Matricule || undefined,
       });
       if (Boissons) {
         await platcontroller.miseajourquantite(
@@ -380,7 +375,7 @@ class CommandeController {
           Dessert,
           Boissons
         );
-      }else if(Petitdejeuner.length>0){
+      } else if (Petitdejeuner.length > 0) {
         await platcontroller.miseajourqtePetitdejuner(Petitdejeuner);
       } else {
         await platcontroller.miseajourquantite(Entree, PlatPrincipal, Dessert);
@@ -389,7 +384,7 @@ class CommandeController {
       // Send notification
       const notifcreer = await notification.create({
         message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: MatriculePn,
+        user: Matricule,
         notificationType: "commande",
       });
 
@@ -408,7 +403,7 @@ class CommandeController {
       throw new Error("Error creating meal order: " + err.message);
     }
   }
-  //for tunisie catering , for tunisair if fligth canceled 
+  //for tunisie catering , for tunisair if fligth canceled
   static async updateCommandeStatus(id, newStatus) {
     try {
       const updatedCommande = await commande.findByIdAndUpdate(
@@ -423,10 +418,10 @@ class CommandeController {
       const notifcreer = await notification.create({
         message: `Statut de la commande mis à jour en ${newStatus}`,
         user:
-          updatedCommande.MatriculePn || updatedCommande.MatriculeDirTunCater,
+          updatedCommande.Matricule,
         notificationType: "commande",
       });
-      if (updatedCommande.MatriculePn) {
+      if (updatedCommande.Matricule) {
         global.io.emit("newNotification", {
           _id: notifcreer._id,
           message: notifcreer.message,
@@ -441,21 +436,79 @@ class CommandeController {
     }
   }
 
-  static async updateCommande(id,data){//ici peut modifier data and annuler cmd only if status=en attente
-    try{
-      const cmd=await commande.findById(id);
+  static async updateCommande(id, data) {
+    //ici peut modifier data  cmd only if status=en attente(controle statut sur html) et il faut respecter les delais
+    try {
+      const cmd = await commande.findById(id).populate("vol");
       if (!cmd) {
         throw new Error("Command request not found");
       }
-      if (cmd.Statut !== "En attente") {
+      const vol = cmd.vol;
+      if (!vol) {
+        throw new Error("Aucun vol associé à la commande");
+      }
+      const now = new Date();
+      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      const deadline = new Date(vol.dateVolDep);
+      const debutAutorise = new Date(deadline);
+      debutAutorise.setHours(deadline.getHours() - 4, 0, 0, 0);
+      const finAutorise = new Date(deadline);
+      finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
+      if (date < debutAutorise || date > finAutorise) {
         throw new Error(
-          "Command request cannot be canceled, it has already been processed"
+          `Modification autorisée uniquement entre ${debutAutorise.toLocaleTimeString(
+            [],
+            { hour: "2-digit", minute: "2-digit" }
+          )} et ${finAutorise.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })} avant le départ du vol`
         );
       }
-      const cmdUpdate=await commande.findByIdAndUpdate(id,data,{new:true});
+      const cmdUpdate = await commande.findByIdAndUpdate(id, data, {
+        new: true,
+      });
       return cmdUpdate;
-    }catch(err){
-      throw err
+    } catch (err) {
+      throw err;
+    }
+  }
+  //pn annule commande
+  static async annulCmd(id) {
+    try {
+      const cmd = await commande.findById(id).populate("vol");
+      if (!cmd) {
+        throw new Error("Command request not found");
+      }
+      if (cmd.Statut !== "en attente") {
+        throw new Error("Commande status est deja en processus");
+      }
+      const vol = cmd.vol;
+      if (!vol) {
+        throw new Error("Aucun vol associé à la commande");
+      }
+      const now = new Date();
+      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      const deadline = new Date(vol.dateVolDep);
+      const debutAutorise = new Date(deadline);
+      debutAutorise.setHours(deadline.getHours() - 4, 0, 0, 0);
+      const finAutorise = new Date(deadline);
+      finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
+      if (date < debutAutorise || date > finAutorise) {
+        throw new Error(
+          `Modification autorisée uniquement entre ${debutAutorise.toLocaleTimeString(
+            [],
+            { hour: "2-digit", minute: "2-digit" }
+          )} et ${finAutorise.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })} avant le départ du vol`
+        );
+      }
+      cmd.Statut = "annulé";
+      await cmd.save();
+    } catch (err) {
+      throw err;
     }
   }
 }

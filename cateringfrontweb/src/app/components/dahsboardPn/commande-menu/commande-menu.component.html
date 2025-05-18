@@ -2,7 +2,12 @@
 <form [formGroup]="commandeFrom"  (ngSubmit)="onSubmit()">
     <p>nom du menu </p>
     <input type="text" [value]="nom" disabled/>
-    <p>Numero de vol</p>
-    <input type="number" placeholder="Numero de vol" formControlName="numVol" />
+    <div clas="form-group"> 
+        <label>Numero de vol </label>
+        <div *ngIf="vols.length === 0">Chargement des vols...</div>
+           <select formControlName="numVol">
+            <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
+           </select>
+    </div>
     <button type="submit">Valider</button>
 </form>

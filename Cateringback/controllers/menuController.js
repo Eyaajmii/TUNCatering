@@ -30,17 +30,6 @@ class menuController {
       if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0||boissons[0]?.quantite<=0){
         throw new Error("Quantité insuffisante pour les plats choisis");
       }
-      // verification mm categorie
-      const categories = [
-        platsPrincipaux[0]?.Categorie,
-        platsEntrees[0]?.Categorie,
-        platsDesserts[0]?.Categorie,
-        boissons[0]?.Categorie,
-      ];
-
-      if (new Set(categories).size !== 1) {
-        throw new Error("Les plats doivent appartenir à la même catégorie.");
-      }
       const prixTotal =
         (platsPrincipaux[0]?.prix || 0) +
         (platsEntrees[0]?.prix || 0) +
@@ -96,18 +85,6 @@ class menuController {
         .populate("PlatsPrincipaux", "nom description")
         .populate("PlatsDessert", "nom description")
         .populate("Boissons", "nom description");
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  //return menu by type
-  static async getMenuBytype(typeMenu) {
-    try {
-      return Menu.find({ typeMenu })
-        .populate("PlatsEntree", "nom description")
-        .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description")
-        .populate("Boissons", "nom description")
     } catch (err) {
       console.error(err);
     }

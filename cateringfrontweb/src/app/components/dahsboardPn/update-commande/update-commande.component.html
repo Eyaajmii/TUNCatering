@@ -1,0 +1,61 @@
+<div class="container mt-4">
+    <h2>Modifier Commande</h2>
+    
+    <form [formGroup]="form" (ngSubmit)="updateCommande()">
+      <div class="mb-3">
+        <label class="form-label">Type de Commande</label>
+        <div>
+          <input type="radio" id="menu" name="typeCommande" [checked]="isMenu" (change)="isMenu = true"> 
+          <label for="menu">Menu</label>
+          <input type="radio" id="plats" name="typeCommande" [checked]="!isMenu" (change)="isMenu = false" class="ms-3">
+          <label for="plats">Plats Séparés</label>
+        </div>
+      </div>
+  
+      <div *ngIf="isMenu" class="mb-3">
+        <label for="menu" class="form-label">Menu</label>
+        <select id="menu" class="form-select" formControlName="menuId" required>
+          <option value="">-- Sélectionner un menu --</option>
+          <option *ngFor="let menu of menus" [value]="menu._id">{{ menu.nom }}</option>
+        </select>
+      </div>
+  
+      <div *ngIf="!isMenu">
+        <div class="mb-3">
+          <label for="entree" class="form-label">Entrée</label>
+          <select id="entree" class="form-select" formControlName="entreeId">
+            <option value="">-- Sélectionner une entrée --</option>
+            <option *ngFor="let plat of platsEntree" [value]="plat._id">{{ plat.nom }}</option>
+          </select>
+        </div>
+  
+        <div class="mb-3">
+          <label for="principal" class="form-label">Plat Principal</label>
+          <select id="principal" class="form-select" formControlName="principalId">
+            <option value="">-- Sélectionner un plat principal --</option>
+            <option *ngFor="let plat of platsPrincipal" [value]="plat._id">{{ plat.nom }}</option>
+          </select>
+        </div>
+  
+        <div class="mb-3">
+          <label for="dessert" class="form-label">Dessert</label>
+          <select id="dessert" class="form-select" formControlName="dessertId">
+            <option value="">-- Sélectionner un dessert --</option>
+            <option *ngFor="let plat of platsDessert" [value]="plat._id">{{ plat.nom }}</option>
+          </select>
+        </div>
+  
+        <div class="mb-3">
+          <label for="boisson" class="form-label">Boisson</label>
+          <select id="boisson" class="form-select" formControlName="boissonId">
+            <option value="">-- Sélectionner une boisson --</option>
+            <option *ngFor="let plat of boissons" [value]="plat._id">{{ plat.nom }}</option>
+          </select>
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Modifier Commande</button>
+      <button type="button" class="btn btn-secondary ms-2" (click)="retour()">Annuler</button>
+    </form>
+  </div>
+  

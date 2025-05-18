@@ -1,27 +1,46 @@
 const express = require("express");
 const router = express.Router();
+reclamation=require("../models/ReclamationModel");
+notification=require("../models/NotificationModel");
 const reclamationController=require("../controllers/ReclamationController");
 const { authenticateToken } = require("../middlware/auth");
+const upload = require("../middlware/upload");
 
 module.exports=function(broadcastNewReclamation,broadcastReclamationStatusUpdate){
-router.post("/creerReclamation", authenticateToken, async (req, res) => {
+router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),async(req,res)=> {
   try {
-    const { Objet, MessageEnvoye } = req.body;
-    const MatriculePn = req.user.Matricule;
-    const reclamation = await reclamationController.creerReclamation(
+    const { Objet, MessageEnvoye, imageUrl } = req.body;
+    const newReclamation = await reclamation.create({
       Objet,
       MessageEnvoye,
-      MatriculePn
-    );
-    broadcastNewReclamation({
-      ...reclamation._doc,
-      type: "Reclamation",
-      items: [{ reclamation, quantite: 1 }],
+      MessageReponse: null,
+      MatriculePn: req.user.Matricule,
+      MatriculeDirTunCater: null,
+      dateSoumission: Date.now(),
+      Statut: "en attente",
+      imageUrl: req.file ? req.file.filename : null,
     });
-    res
-      .status(201)
-      .json({ message: "Reclamation created successfully", reclamation });
+
+    const notifcreer = await notification.create({
+      message: `Nouvelle réclamation créée pour le personnel navigant ${req.user.Matricule}`,
+      user: req.user.Matricule,
+      notificationType: "reclamation",
+    });
+    global.io.emit("newNotification", {
+      _id: notifcreer._id,
+      message: notifcreer.message,
+      createdAt: notifcreer.createdAt,
+      user: notifcreer.user,
+      notificationType: notifcreer.notificationType,
+    });
+    broadcastNewReclamation({
+      ...newReclamation._doc,
+      type: "Reclamation",
+      items: [{ newReclamation, quantite: 1 }],
+    });
+    res.status(200).json(newReclamation);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });

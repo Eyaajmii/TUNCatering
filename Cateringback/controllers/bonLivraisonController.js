@@ -83,7 +83,16 @@ exports.createBonLivraison = async (req, res) => {
         message: `Aucun vol trouvé avec le numéro ${volId}`,
       });
     }
-
+    const existingBonLivraison = await BonLivraison.findOne({
+      vol: volId,
+      Statut: { $ne: "Annulé" },
+    });
+    if (existingBonLivraison) {
+      return res.status(400).json({
+        success: false,
+        message: "Un bon de livraison actif existe déjà pour ce vol",
+      });
+    }
     const commandesValides = await Promise.all(
       commandes.map((commandeId) => Commande.findById(commandeId))
     );
@@ -94,13 +103,26 @@ exports.createBonLivraison = async (req, res) => {
         message: "Une ou plusieurs commandes sont introuvables",
       });
     }
-
+    const hasEnAttenteOuRetard = commandesValides.some(
+      (c) => c.Statut === "en attente" || c.Statut === "en retard"
+    );
+    if (hasEnAttenteOuRetard) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Impossible de créer le bon de livraison : au moins une commande est en statut 'En attente' ou 'En retard'",
+      });
+    }
+    const commandesFiltrees = commandesValides
+      .filter((c) => c.Statut !== "annulé")
+      .map((c) => c._id);
     const newBonLivraison = new BonLivraison({
       numeroBon,
       vol: volId.toString(),
-      commandes,
-      Statut: "En attente", // Valeur par défaut
-      conformite: conformite || "Non vérifié", // Valeur par défaut
+      commandes: commandesFiltrees,
+      personnelLivraison: null,
+      Statut: "En attente",
+      conformite: conformite || "Non vérifié",
     });
     const qrData = `Bon de Livraison: ${numeroBon}`;
     const qrCodeImage = await QRCode.toDataURL(qrData);
@@ -168,7 +190,7 @@ exports.getBonLivraisonById = async (req, res) => {
         .json({ success: false, message: "Bon de livraison introuvable." });
     }
 
-    res.status(200).json({ success: true, data: bonLivraison });
+    res.status(200).json( bonLivraison );
   } catch (error) {
     console.error(
       "Erreur lors de la récupération du bon de livraison :",
@@ -199,6 +221,8 @@ exports.scanBonLivraison = async (req, res) => {
     }
 
     bonLivraison.Statut = "Livré";
+    bonLivraison.conformite = "Confirmé";
+    bonLivraison.personnelLivraison = req.user.Matricule;
     bonLivraison.dateLivraison = new Date();
     await bonLivraison.save();
 
@@ -207,53 +231,17 @@ exports.scanBonLivraison = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-exports.updateConformite = async (req, res) => {// averifier par wajih snn on annule
-  try {
-    const { id } = req.params;
-    const { conformite } = req.body;
-
-    if (
-      !["Confirmé", "Non confirmé", "Non vérifié", "En attente"].includes(
-        conformite
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Valeur de conformité invalide" });
-    }
-
-    const bonLivraison = await BonLivraison.findByIdAndUpdate(
-      id,
-      { conformite },
-      { new: true }
-    );
-
-    if (!bonLivraison) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Bon de livraison introuvable." });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Conformité mise à jour",
-      data: bonLivraison,
-    });
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour de la conformité :", error);
-    res.status(500).json({ success: false, message: "Erreur serveur" });
-  }
-};
 exports.updateStatutBonLivraison = async (req, res) => {
   try {
     const { id } = req.params;
     const { statut } = req.body;
+    const personnelLivraison = req.user.Matricule;
     const bn = await BonLivraison.findById(id);
      if (bn.Statut !== "En attente") {
       return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être annulé que s'il est en attente" });
     }
     //conformité automatiquement
-    let conformite = "En attente";
+    let conformite = "Non vérifié ";
     if (statut === "Livré") {
       conformite = "Confirmé";
     } else if (statut === "Annulé" || statut === "En retard") {
@@ -262,7 +250,7 @@ exports.updateStatutBonLivraison = async (req, res) => {
 
     const bonLivraison = await BonLivraison.findByIdAndUpdate(
       id,
-      { Statut: statut, conformite }, 
+      { Statut: statut, conformite ,personnelLivraison}, 
       { new: true }
     );
 
@@ -286,15 +274,14 @@ exports.updateStatutBonLivraison = async (req, res) => {
 exports.updateBonLivraison=async(req,res)=>{
   try{
     const{id}=req.params;
-    const{data}=req.body;
     const bn=await BonLivraison.findById(id);
     if(!bn){
       return res.status(404).json({ success: false, message: "Bon de livraison non trouvé" })
     }
      if (bn.Statut !== "En attente") {
-      return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être annulé que s'il est en attente" });
+      return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être modifié que s'il est en attente" });
     }
-    await BonLivraison.findByIdAndUpdate(id,data,{new:true});
+    await BonLivraison.findByIdAndUpdate(id, req.body, { new: true });
     res.status(200).json({ success: true, message: "Bon de livraison mis à jour avec succès" });
   }catch(err){
     res.status(500).json({ success: false, message: "Erreur" });
@@ -313,3 +300,37 @@ exports.getAllBonsLivraisons = async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
+exports.AnnulerBn=async(req,res)=>{
+  try {
+    const { id } = req.params;
+    const bn = await BonLivraison.findById(id);
+    if (!bn) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Bon de livraison non trouvé" });
+    }
+    if (bn.Statut !== "En attente") {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "Le bon de livraison ne peut être annulé que s'il est en attente",
+        });
+    }
+    bn.Statut = "Annulé";
+    bn.conformite = "Non confirmé";
+    await bn.save();
+  } catch (err) {
+    if (err.message === "bon livraison not found") {
+      return res.status(404).send("Facture introuvable.");
+    }
+    if (
+      err.message === "Seules les bons de livraison en attente peuvent être annulées"
+    ) {
+      return res.status(400).send(err.message);
+    }
+    console.error("Erreur interne:", err);
+    res.status(500).send("Erreur interne du serveur.");
+  }
+}

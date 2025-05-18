@@ -33,9 +33,7 @@ const bonLivraisonSchema = new mongoose.Schema(
       },
     ],
     personnelLivraison: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "personnelnavigant",
-      required: false,
+      type: String,
     },
 
     signatureResponsable: {
@@ -46,7 +44,7 @@ const bonLivraisonSchema = new mongoose.Schema(
     },
     conformite: {//conformite par tunisie catering
       type: String,
-      enum: ["Confirmé", "Non confirmé", "Non vérifié", "En attente"],
+      enum: ["Confirmé", "Non confirmé", "Non vérifié"],
       default: "Non vérifié",
     },
     qrCodeImage: {

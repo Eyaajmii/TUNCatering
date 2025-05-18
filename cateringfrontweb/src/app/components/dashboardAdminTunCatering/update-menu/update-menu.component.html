@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  <h3>Modifier le Menu</h3>
+  <form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Nom</label>
+      <input class="form-control" formControlName="nom">
+    </div>
+
+    <div class="form-group">
+      <label>Prix Total</label>
+      <input type="number" class="form-control" formControlName="prixtotal">
+    </div>
+
+    <div class="form-group">
+      <label>Entrée</label>
+      <select class="form-control" formControlName="PlatsEntree">
+        <option value="" disabled>-- Sélectionner --</option>
+        <option *ngFor="let plat of entrees" [value]="plat._id">{{plat.nom}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Plat Principal</label>
+      <select class="form-control" formControlName="PlatsPrincipaux">
+        <option value="" disabled>-- Sélectionner --</option>
+        <option *ngFor="let plat of principaux" [value]="plat._id">{{plat.nom}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Dessert</label>
+      <select class="form-control" formControlName="PlatsDessert">
+        <option value="" disabled>-- Sélectionner --</option>
+        <option *ngFor="let plat of desserts" [value]="plat._id">{{plat.nom}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Boisson</label>
+      <select class="form-control" formControlName="Boissons">
+        <option value="" disabled>-- Sélectionner --</option>
+        <option *ngFor="let plat of boissons" [value]="plat._id">{{plat.nom}}</option>
+      </select>
+    </div>
+
+    <div class="form-group form-check mt-3">
+      <input type="checkbox" class="form-check-input" formControlName="Disponible">
+      <label class="form-check-label">Disponible</label>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Mettre à jour</button>
+  </form>
+</div>

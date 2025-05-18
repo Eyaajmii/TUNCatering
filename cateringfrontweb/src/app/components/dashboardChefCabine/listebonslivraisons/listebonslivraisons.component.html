@@ -35,8 +35,7 @@
               <td>{{ bon.vol }}</td>
               <td>{{ bon.commandes?.length || 0 }}</td>
               <td>
-                {{ bon.personnelLivraison?.nom || 'Non assigné' }}
-                {{ bon.personnelLivraison?.prenom || '' }}
+                {{ bon.personnelLivraison || 'Non assigné' }}
               </td>
               <td>
                 <span class="badge" [ngClass]="getStatusBadgeClass(bon.Statut)">

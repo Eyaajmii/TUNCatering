@@ -24,6 +24,24 @@ class volController{
         }catch(error){
             console.log(error);
         }
+  }
+  static async VolsJours(){
+        try {
+        const Jour = new Date();
+        const prochainJour=new Date(Jour.getTime() + 48 * 60 * 60 * 1000);
+        const vols = await fligth
+          .find({
+            dateVolDep: {
+              $gte: Jour,
+              $lte: prochainJour,
+            },
+          })
+          .populate("numVol");
+        console.log("Vols des prochaines 48h",vols);
+        return vols;
+    } catch (error) {
+        throw error;
     }
+    };
 }
 module.exports=volController;

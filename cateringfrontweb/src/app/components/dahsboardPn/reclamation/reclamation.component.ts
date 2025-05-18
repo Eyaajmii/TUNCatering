@@ -10,18 +10,26 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class ReclamationComponent {
   reclamationForm: FormGroup;
+  selectedFile:File |null=null;
   constructor(private ReclamationService:ReclamationServiceService,private fb:FormBuilder){
     this.reclamationForm=this.fb.group({
       'Objet':[''],
       'MessageEnvoye':[''],
     })
   }
+  onFileSelected(ev:Event):void{
+    const img=(ev.target as HTMLInputElement).files?.[0]||null;
+    this.selectedFile=img;
+  }
   onSubmit():void{
     if(this.reclamationForm.valid){
-      const data={
-      Objet:this.reclamationForm.value.Objet,
-      MessageEnvoye:this.reclamationForm.value.MessageEnvoye,
-      };
+      const data = new FormData();
+      data.append('Objet', this.reclamationForm.value.Objet);
+      data.append('MessageEnvoye', this.reclamationForm.value.MessageEnvoye);
+  
+      if (this.selectedFile) {
+        data.append('imageUrl', this.selectedFile);
+      }
       
       this.ReclamationService.AjouterReclamation(data).subscribe({
         next:res=>{

@@ -2,19 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { CommandeServiceService } from '../../../services/commande-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-commande-menu',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './commande-menu.component.html',
   styleUrl: './commande-menu.component.css'
 })
 export class CommandeMenuComponent implements OnInit {
+  vols:any[]=[];
   nom:string='';
   commandeFrom:FormGroup;
   constructor(private fb: FormBuilder,private cmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
-      'numVol':['',[Validators.required,Validators.pattern(/^\d{3}$/)]],
+      'numVol':[''],
     })
   }
   
@@ -22,13 +24,20 @@ export class CommandeMenuComponent implements OnInit {
     this.route.queryParams.subscribe(params=>{
       this.nom=params['Menu']||'';
     })
+    this.cmdService.getVols().subscribe(vols => {
+      console.log(vols);
+      this.vols = vols.map(vol => ({
+          ...vol,
+          numVol: vol.numVol.trim()
+        }));
+    });
   }
   onSubmit(): void {
         if (this.commandeFrom.valid){
-          const numVol = parseInt(this.commandeFrom.value.numVol);
-          const data=new FormData();
-          data.append('nom',this.nom);
-          data.append('numVol',numVol.toString());
+          const data={
+            numVol: this.commandeFrom.value.numVol.trim(),
+            nom: this.nom,
+          };
           this.cmdService.CommanderMenu(data).subscribe({
             next: res => {
                 console.log("Commande effectuée avec succès", res);

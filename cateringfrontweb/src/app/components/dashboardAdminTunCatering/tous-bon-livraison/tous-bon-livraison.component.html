@@ -1,5 +1,5 @@
 <div class="container">
-    <h2>Liste des Bons de Livraison</h2>
+    <h3>LISTE DES BONS DE LIVRAISON</h3>
   
     <div *ngIf="isLoading" class="text-center mt-3">
       <div class="spinner-border text-primary" role="status">
@@ -21,9 +21,9 @@
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
-              <th>Numéro Bon</th>
+              <th>N°</th>
               <th>Vol</th>
-              <th>Nombre de Commandes</th>
+              <th>Nombre des Commandes</th>
               <th>Personnel Livraison</th>
               <th>Statut</th>
               <th>Conformité</th>
@@ -32,12 +32,11 @@
           </thead>
           <tbody>
             <tr *ngFor="let bon of bonsLivraison" [class.table-secondary]="bon.Statut === 'Annulé'">
-              <td>{{ bon.numeroBon }}</td>
+              <td class="fw-semibold text-primary">{{ bon.numeroBon }}</td>
               <td>{{ bon.vol }}</td>
               <td>{{ bon.commandes?.length || 0 }}</td>
               <td>
-                {{ bon.personnelLivraison?.nom || 'Non assigné' }}
-                {{ bon.personnelLivraison?.prenom || '' }}
+                {{ bon.personnelLivraison|| 'Non assigné' }}
               </td>
               <td>
                 <span class="badge" [ngClass]="getStatusBadgeClass(bon.Statut)">
@@ -56,11 +55,16 @@
                   [disabled]="isLoading">
                   <i class="bi bi-download"></i> PDF
                 </button>
-                
                 <button 
-                  (click)="deleteBonLivraison(bon._id)" 
+                  (click)="modifierBn(bon._id)" 
+                  class="btn btn-sm btn-warning"
+                  [disabled]="bon.Statut !== 'En attente'">
+                  <i class="bi bi-trash"></i> Modifier
+                </button>
+                <button 
+                  (click)="annulerBonLivraison(bon._id)" 
                   class="btn btn-sm btn-danger"
-                  [disabled]="isLoading">
+                  [disabled]="bon.Statut !== 'En attente'">
                   <i class="bi bi-trash"></i> Supprimer
                 </button>
               </td>

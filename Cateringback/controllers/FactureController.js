@@ -18,19 +18,13 @@ class FactureController {
       if (vols.length === 0) {
         throw new Error("Aucun vol trouvé à cette date");
       }
-
-      const volnumero = vols.map((v) => v.numVol);
+      const volNumero = vols.map((v) => v.numVol);
       //find all bn livraison include vols
       const bonsLivraison = await BonLivraison.find({
-        vol: { $in: volnumero },
+        vol: { $in: volNumero },
       }).populate({
         path: "commandes",
-        populate: [
-          { path: "menu", select: "nom" },
-          { path: "plats", select: "nom" },
-          { path: "MatriculePn", select: "_id Matricule" },
-          { path: "MatriculeDirTunCater", select: "_id Matricule" },
-        ],
+        select: "montantsTotal Matricule",
       });
       //filtrer les bons non livré
       const bnNonLivre = bonsLivraison.filter((bn) => bn.Statut !== "Livré");
@@ -41,12 +35,18 @@ class FactureController {
           .join(", ");
         return { success: false, message };
       }
-
+      const existingFacture = await Facture.findOne({
+        DateFacture: { $gte: debut, $lte: fin },
+        Statut: { $ne: "annulé" },
+      });
+      if (existingFacture) {
+        throw new Error("Un bon de livraison actif existe déjà pour ce vol");
+      }
       const newFacture = new Facture({
         numeroFacture: "FCT-" + Date.now(),
         DateFacture: new Date(),
         Statut: "en attente",
-        BonsLivraison: bonsLivraison.map((bn) => bn._id),
+        BonsLivraison: bonsLivraison.map((bn) => bn._id)
       });
 
       let montantTotal = 0;
@@ -62,20 +62,16 @@ class FactureController {
           const montant = commande.montantsTotal || 0;
           montantVol += montant;
 
-          let pn = null;
-          if (commande.MatriculePn) {
-            pn = commande.MatriculePn;
-          } else if (commande.MatriculeDirTunCater) {
-            pn = commande.MatriculeDirTunCater;
-          }
-
-          if (pn) {
-            montantPN.set(pn, (montantPN.get(pn) || 0) + montant);
+          if (commande.Matricule) {
+            montantPN.set(
+              commande.Matricule,
+              (montantPN.get(commande.Matricule) || 0) + montant
+            );
           }
         }
 
         montantParVol.push({
-          vol: bn.volInfo,
+          vol: bn.vol,
           montant: montantVol,
         });
 
@@ -92,14 +88,13 @@ class FactureController {
       );
 
       await newFacture.save();
-
       console.log("Facture générée :", newFacture);
       return { success: true, data: newFacture };
     } catch (err) {
       console.error("Erreur dans creerFacture:", err);
       return { success: false, message: err.message };
     }
-  }
+}
   static async TousLesFacture(){
     try{
       const factures = await Facture.find();
@@ -113,7 +108,7 @@ class FactureController {
   static async updateFactureStatus(id,newStatus){
     try{
       const facture = await Facture.findById(id);
-      if (facture.Statut!== "En attente") {
+      if (facture.Statut!== "en attente") {
         throw new Error("Seules les factures en attente peuvent être annulées");
       }
       const updateFact = await Facture.findByIdAndUpdate(id, { Statut :newStatus},{new:true,runValidators:true});
@@ -122,6 +117,18 @@ class FactureController {
       }
       return updateFact;
     }catch(err){
+      throw err;
+    }
+  }
+  static async AnnulerFacture(id){
+    try {
+      const facture = await Facture.findById(id);
+      if (facture.Statut !== "en attente") {
+        throw new Error("Seules les factures en attente peuvent être annulées");
+      }
+      facture.Statut = "annulé"; 
+      await facture.save();
+    } catch (err) {
       throw err;
     }
   }

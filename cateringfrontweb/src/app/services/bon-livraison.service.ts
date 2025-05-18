@@ -1,69 +1,52 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, map } from 'rxjs';
-import { io } from 'socket.io-client';
-
-// Interface locale pour le typage des réponses
-interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data: T;
+export interface BonLivraison {
+  _id?: string;
+  numeroBon: string;
+  dateCreation?: Date;
+  Statut:string;
+  vol: string;
+  volInfo?:any; 
+  commandes:any[]; 
+  personnelLivraison?: any; 
+  signatureResponsable?: string;
+  dateLivraison?: Date;
+  conformite:string;
+  qrCodeImage?: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class BonLivraisonService {
   private apiUrl = 'http://localhost:5000/api/bonLivraison';
-  private bonsLivraisonSubject = new BehaviorSubject<any[]>([]);
-  private socket: any;
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {
-    this.socket = io(this.apiUrl);
-    this.socket.on('bonsLivraisonUpdate', (updatedBonsLivraison: any[]) => {
-      this.bonsLivraisonSubject.next(updatedBonsLivraison);
+  getBonByVolId(volId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/vol/${volId}`);
+  }
+  getBnById(id:string):Observable<BonLivraison>{
+    return this.http.get<BonLivraison>(`${this.apiUrl}/${id}`);
+  }
+  createBonLivraison(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/add`, data);
+  }
+  getAllBonsLivraison(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/all`)
+  }
+  updateStatutBonLivraison(bonId: string, newStatut: string): Observable<any> {
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
     });
+    return this.http.put<any>(`${this.apiUrl}/${bonId}/statut`, {statut: newStatut},{headers});
   }
-
-  getBonByVolId(volId: string): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/vol/${volId}`);
+  annulerBonLivraison(bonId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/annule/${bonId}`,{});
   }
-
-  createBonLivraison(data: any): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/add`, data);
+  ModifierBonLivraison(id:string,bn:BonLivraison):Observable<BonLivraison>{
+    return this.http.put<BonLivraison>(`${this.apiUrl}/modifier/${id}`, bn)
   }
-
-  getAllBonsLivraison(): Observable<ApiResponse<any[]>> {
-    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/all`).pipe(
-      map(response => {
-        if (response.success) {
-          this.bonsLivraisonSubject.next(response.data);
-        }
-        return response;
-      })
-    );
-  }
-
-  getBonsLivraisonRealTime(): Observable<any[]> {
-    return this.bonsLivraisonSubject.asObservable();
-  }
-
-  updateStatutBonLivraison(bonId: string, newStatut: string): Observable<ApiResponse<null>> {
-    return this.http.put<ApiResponse<null>>(`${this.apiUrl}/${bonId}/statut`, {
-      statut: newStatut
-    });
-  }
-
-  cancelBonLivraison(numeroBon: string): Observable<ApiResponse<null>> {
-    return this.http.put<ApiResponse<null>>(`${this.apiUrl}/${numeroBon}/statut`, {
-      statut: 'Annulé'
-    });
-  }
-
-  deleteBonLivraison(bonId: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${bonId}`);
-  }
-
   downloadPdf(numeroBon: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/pdf/${numeroBon}`, { 
       responseType: 'blob',
@@ -71,10 +54,5 @@ export class BonLivraisonService {
         'Accept': 'application/pdf'
       }
     });
-  }
-  disconnectSocket(): void {
-    if (this.socket) {
-      this.socket.disconnect();
-    }
   }
 }

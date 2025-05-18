@@ -1,0 +1,25 @@
+<div class="container">
+    <h3>Modification des Commandes du Bon de Livraison</h3>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  
+    <div *ngIf="bonLivraison">
+      <div class="card my-3">
+        <div class="card-header">
+          <strong>Bon N°:</strong> {{ bonLivraison.numeroBon }} |
+          <strong>Vol:</strong> {{ bonLivraison.vol }}
+        </div>
+        <div class="card-body">
+          <h5>Liste des Commandes :</h5>
+          <ul class="list-group">
+            <li *ngFor="let commande of bonLivraison.commandes; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+              Commande ID: {{ commande._id }}
+              <button class="btn btn-danger btn-sm" (click)="supprimerCommande(i)">Supprimer</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <button class="btn btn-secondary" (click)="retour()">Retour</button>
+    </div>
+  </div>
+  

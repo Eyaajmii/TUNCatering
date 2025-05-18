@@ -7,6 +7,26 @@ import { isPlatformBrowser } from '@angular/common';
 const FactureURL = "http://localhost:5000/api/facture"; 
 const PrelevementURL = "http://localhost:5000/api/prelevement"; 
 const WS_URL = "ws://localhost:5000"; 
+export interface MontantParVol {
+  vol: string;
+  montant: number;
+}
+
+export interface MontantParPn {
+  personnel: string;
+  montant: number;
+}
+export interface Facture {
+  _id?: string; 
+  numeroFacture: string;
+  dateCreation?: Date; 
+  DateFacture: Date;
+  Statut: string;
+  BonsLivraison: string[]; 
+  montantTotal: number;
+  montantParVol: MontantParVol[];
+  montantParPn: MontantParPn[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +45,9 @@ export class FactureService {
   ajouterFacture(date:string):Observable<any>{
     return this.http.post<any>(`${FactureURL}/addFacture`,{date});
   }
-
+  AnnulerFacture(id:string):Observable<Facture>{
+    return this.http.put<Facture>(`${FactureURL}/Annuler/${id}`,{});
+  }
   private initializeWebSocket(): void {  
     try {  
       if (typeof WebSocket !== 'undefined') {  
@@ -140,6 +162,9 @@ ajouterPrelevement(dateDebut:string,dateFin:string):Observable<any>{
   return this.http.post<any>(`${PrelevementURL}/creer`, { dateDebut, dateFin });
 }
 lesPrelevement():Observable<any>{
-  return this.http.get<any>((`${PrelevementURL}/tousPrelvement`));
+  return this.http.get<any>(`${PrelevementURL}/tousPrelvement`);
+}
+annulerPrelevement(id:string):Observable<any>{
+  return this.http.put<any>(`${PrelevementURL}/annule/${id}`,{});
 }
 }

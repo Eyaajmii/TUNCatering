@@ -1,21 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommandeServiceService } from '../../../services/commande-service.service';
+import { CommandeServiceService, Menu } from '../../../services/commande-service.service';
 import { Subscription } from 'rxjs';  
 import * as XLSX from 'xlsx';  
 import { saveAs } from 'file-saver';  
-interface Commande {  
-  _id: string;
-  NombreCommande: number;
-  dateCommnade: Date;
-  Statut: string;
-  MatriculePn?: any;  
-  MatriculeResTun?: any;
-  vol?: any;
-  menu?: any;
-  plats: any[];  
-}  
+interface Plat {
+    _id: string;
+    nom: string;
+    typePlat: string;
+    prix: number;
+    description?: string;
+  }
+  
+  interface Commande {
+    _id: string;
+    Statut: string;
+    plats: Plat[];
+    dateCommnade: Date;
+    NombreCommande:number;
+    Matricule: any;
+    menu?: Menu;
+    vol:any
+  }
 @Component({
   selector: 'app-consulte-commandes',
   imports: [CommonModule,FormsModule],
@@ -24,6 +31,7 @@ interface Commande {
 })
 export class ConsulteCommandesComponent implements OnInit , OnDestroy{
   commands: Commande[] = [];  
+  filtres = { statut: 'tous' };
   connectionStatus: boolean = false;  
   error: string | null = null;  
   loading: boolean = true;  
@@ -32,7 +40,11 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
   EXCEL_TYPE: string = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';  
 
   availableStatuses = [  
-      { value: 'annulé', display: 'Annulé', class: 'annule' },  
+    { value: 'en attente', display: 'En attente', class: 'en-attente' },
+    { value: 'prêt', display: 'prêt', class: 'pret' },
+    { value: 'annulé', display: 'Annulé', class: 'annule' },
+    { value: 'en retard', display: 'En retard', class: 'en-retard' },
+    { value: 'livré', display: 'Livré', class: 'livre' }
   ];  
 
   constructor(private commandeService: CommandeServiceService) {}  
@@ -50,10 +62,9 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
     const formattedCommands = this.commands.map(commande => ({
       'ID': this.formatId(commande._id),
       'Nombre de Commandes': commande.NombreCommande,
-      'Statut': this.getStatusDisplayText(commande.Statut), // Utilise le texte d'affichage
+      'Statut': this.getStatusDisplayText(commande.Statut), 
       'Date de Commande': this.formatDateTime(commande.dateCommnade),
-      'Matricule PN': formatReference(commande.MatriculePn),
-      'Matricule Res Tunisie': formatReference(commande.MatriculeResTun),
+      'Matricule': formatReference(commande.Matricule),
       'Vol ID': formatReference(commande.vol),
       'Menu ID': formatReference(commande.menu),
       'Plats IDs': commande.plats?.length 
@@ -142,4 +153,9 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
   ngOnDestroy(): void {  
       this.subscriptions.unsubscribe();  
   }  
+  get filteredCommands() {
+    return this.filtres.statut === 'tous'
+      ? this.commands
+      : this.commands.filter(c => c.Statut === this.filtres.statut);
+  }
 }

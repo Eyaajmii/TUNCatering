@@ -1,79 +1,85 @@
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  .spinner-border {
-    display: inline-block;
-    width: 3rem;
-    height: 3rem;
-  }
-  
-  .alert {
-    margin-top: 20px;
-  }
-  
-  .card {
-    margin-top: 20px;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .table th,
-  .table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .table th {
-    background-color: #f2f2f2;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  .table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  .table tbody tr:hover {
-    background-color: #eaeaea;
-  }
-  
-  .btn {
-    margin-right: 5px;
-  }
-  
-  .bg-warning {
-    background-color: #ffc107;
-  }
-  
-  .bg-danger {
-    background-color: #dc3545;
-  }
-  
-  .bg-success {
-    background-color: #28a745;
-  }
-  
-  .bg-secondary {
-    background-color: #6c757d;
-  }
-  
-  .bg-info {
-    background-color: #17a2b8;
-  }
+  max-width: 1200px;
+  margin-left:15%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h3{
+  font-family: inherit;
+  font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: .5rem;
+    color: #32325d;
+    font-size: 1.0625rem;
+    font-family: Open Sans,sans-serif;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.alert {
+  margin-top: 20px;
+}
+thead th {
+  background-color: #871376 !important; 
+  color: white; 
+}
+.card {
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+  background-color: #eaeaea;
+}
+
+.btn {
+  margin-right: 5px;
+}
+
+.bg-warning {
+  background-color: #ffc107;
+}
+
+.bg-danger {
+  background-color: #dc3545;
+}
+
+.bg-success {
+  background-color: #28a745;
+}
+
+.bg-secondary {
+  background-color: #6c757d;
+}
+
+.bg-info {
+  background-color: #17a2b8;
+}

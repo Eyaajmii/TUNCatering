@@ -1,44 +1,69 @@
-<div class="commandes-container">  
-    <h2>Gestion des Commandes</h2>  
-
-    <div class="status-indicator" [class.connected]="connectionStatus">  
-        {{ connectionStatus ? 'Connecté' : 'Déconnecté' }}  
-    </div>  
-
-    <div *ngIf="loading" class="loading-indicator">  
-        Chargement en cours...  
-    </div>  
-
-    <div *ngIf="error" class="error-message">  
-        {{ error }}  
-    </div>  
-
-    <div class="commandes-list">  
-        <div *ngFor="let commande of commands" class="commande-card">  
-            <div class="commande-header">  
-                <h3>Commande #{{ formatId(commande._id) }}</h3>  
-                <span class="commande-date">{{ formatDateTime(commande.dateCommnade) }}</span>  
-            </div>  
-
-            <div class="commande-status">  
-                <span [class]="getStatusClass(commande.Statut)">  
-                    {{ getStatusDisplayText(commande.Statut) }}  
-                </span>  
-            </div>  
-
-            <div class="commande-actions">  
-                <select [(ngModel)]="commande.Statut"   
-                        (change)="changerStatut(commande._id, commande.Statut)"  
-                        class="status-select">  
-                    <option *ngFor="let status of availableStatuses" [value]="status.value">  
-                        {{ status.display }}  
-                    </option>  
-                </select>  
-            </div>  
-        </div>  
-    </div>  
-    
-    <button (click)="exportToExcel()" class="export-button">  
+<div class="content">
+    <div class="container">
+      <div *ngIf="loading" class="loading-indicator">
+        Chargement des commandes...
+      </div>
+      <button (click)="exportToExcel()" class="export-button">  
         Exporter en Excel  
     </button>  
-</div>
+      <div class="filters mb-3">
+        <select [(ngModel)]="filtres.statut" class="form-control">
+          <option value="tous">Toutes les commandes</option>
+          <option *ngFor="let status of availableStatuses" [value]="status.value">
+            {{ status.display }}
+          </option>
+        </select>
+      </div>
+      <div class="card ">
+        <div class="card-header bg-white border-bottom-0 ">
+          <h3 class="mb-0 fw-bold">LISTE DES COMMANDES</h3>
+        </div>
+      <div class="table-responsive">
+        <table class="table table-striped custom-table">
+          <thead class="thead">
+            <tr>
+              <th scope="col">Numéro commande</th>
+              <th scope="col">Vol</th>
+              <th scope="col">Matricule </th>
+              <th scope="col">Commande</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Statut</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="!loading && !error">
+            <tr *ngFor="let commande of filteredCommands">
+              <td class="fw-semibold text-primary">
+                #{{ formatId(commande._id) }}
+              </td>
+              <td>{{ commande.vol?.numVol }}</td>
+              <td>                
+                <div>{{ commande.Matricule }}</div>
+              </td>            
+            
+              <td>
+                {{ commande.menu?.nom  }}
+                <ul>
+                  <li *ngFor="let plat of commande.plats">
+                    {{ plat.nom }}
+                  </li>
+                </ul>
+              </td>
+              <td>{{ commande.NombreCommande }}</td>
+              <td>
+                <select
+                [(ngModel)]="commande.Statut"
+                [ngClass]="getStatusClass(commande.Statut)"
+                (change)="changerStatut(commande._id, commande.Statut)"
+                class="form-control">
+                <option *ngFor="let status of availableStatuses" [value]="status.value" >
+                  {{ status.display }}
+                </option>
+              </select>
+              </td>                      
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

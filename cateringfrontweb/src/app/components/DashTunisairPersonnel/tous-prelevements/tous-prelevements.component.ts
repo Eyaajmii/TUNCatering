@@ -7,6 +7,7 @@ export interface Prelevement {
   montantTotal:number;
   dateDebut:Date;
   dateFin:Date;
+  annulation:Boolean
 }
 @Component({
   selector: 'app-tous-prelevements',
@@ -18,6 +19,9 @@ export class TousPrelevementsComponent implements OnInit{
   prelevements:Prelevement[]=[];
   constructor(private prelevementService:FactureService){}
   ngOnInit(): void {
+    this.laodPrelevement();
+  }
+  laodPrelevement(){
     this.prelevementService.lesPrelevement().subscribe({
       next: (p:any[])=>{
         this.prelevements = p
@@ -27,5 +31,27 @@ export class TousPrelevementsComponent implements OnInit{
       }
     })
   }
-
+  AnnulerPrelevement(id:string| undefined){
+    if (id) {
+      const confirmation = confirm("Voulez-vous vraiment annuler ce prélevement ?");
+      if (confirmation) {
+        this.prelevementService.annulerPrelevement(id).subscribe({
+          next: () => {
+            this.laodPrelevement();
+            alert('Prélevement annulée avec succès.');
+          },
+          error: (error) => {
+            if (error.error && typeof error.error === 'string') {
+              alert(error.error);
+            } else if (error.error && error.error.message) {
+              alert(error.error.message);
+            } else {
+              alert('Erreur lors de l\'annulation.');
+            }
+            console.error(error);
+          }
+        });
+      }
+    }
+  }
 }

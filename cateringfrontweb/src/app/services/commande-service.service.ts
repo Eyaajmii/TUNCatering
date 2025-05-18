@@ -5,6 +5,18 @@ import { Observable, Subject, EMPTY, of } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
 import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
 import { ToastrService } from 'ngx-toastr';
+export interface Vol {
+  _id?: string; 
+  numVol: string;
+  volName: string;
+  Depart: string;
+  Destination: string;
+  DureeVol: string;
+  dateVolDep: Date;
+  Escale: boolean;
+  Commande: string[];
+}
+
 interface Plat {
   _id: string;
   nom: string;
@@ -28,9 +40,11 @@ interface Commande {
   plats: string[]; 
   dateCommnade: Date;
   NombreCommande:number;
-  menu:string;
+  menu:Menu|string;
+  vol:Vol|string;
 }
 const commandeURL = "http://localhost:5000/api/commande"; 
+const VolURL = "http://localhost:5000/api/vol"; 
 const WS_URL = "ws://localhost:5000"; 
 
 @Injectable({  
@@ -43,7 +57,7 @@ export class CommandeServiceService {
   private connectionStatus$ = new Subject<boolean>();  
   private isBrowser: boolean;  
   private readonly apiUrl = 'http://localhost:5000/api/meal'; 
-  private readonly apiUrlMenu = 'http://localhost:5000/api/menu';
+  private VolURL = "http://localhost:5000/api/vol"; 
   constructor(  
     private http: HttpClient,  
     @Inject(PLATFORM_ID) private platformId: Object  ,
@@ -54,28 +68,40 @@ export class CommandeServiceService {
       this.initializeWebSocket();  
     }  
   }  
-  //pour personnel navigant
-  CommanderMenu(formData:FormData):Observable<any>{
-    const token = localStorage.getItem('token'); 
-    const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-    return this.http.post<any>(`${commandeURL}/addCommandeMenu`,formData,{headers});
+  getVols():Observable<Vol[]>{
+    return this.http.get<Vol[]>(`${this.VolURL}/`);
   }
-  CommanderPlats(formData:FormData):Observable<any>{
+  ModifierCommande(id:string,cmd:Commande):Observable<Commande>{
+    return this.http.put<Commande>(`${commandeURL}/ModifierMaCommande/${id}`,cmd);
+  }
+  AnnulerCommande(id:string):Observable<Commande>{
+    return this.http.put<Commande>(`${commandeURL}/${id}`,{});
+  }
+  commandeById(id:String):Observable<Commande>{
+    return this.http.get<Commande>(`${commandeURL}/Commande/${id}`);
+  }
+  //pour personnel navigant
+  CommanderMenu(data:any):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-    return this.http.post<any>(`${commandeURL}/addCommandePlat`,formData,{headers});
+    return this.http.post<any>(`${commandeURL}/addCommandeMenu`,data,{headers});
+  }
+  CommanderPlats(data:any):Observable<any>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.post<any>(`${commandeURL}/addCommandePlat`,data,{headers});
   } 
   //pour direction tunisair du catering
-  CommanderAffretes(formData:FormData):Observable<any>{
+  CommanderAffretes(data:any):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,formData,{headers});
+    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,data,{headers});
   }
   //commandebynumVol
   getCommandesByVol(numVol: string): Observable<any> {
@@ -213,9 +239,6 @@ private createEmptyPlat(platId: string): Plat {
         })  
       );  
   }  
-  /*getMouvements(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/commandes/mouvements`);
-  }*/
   getStatusUpdates(): Observable<any> {  
     return this.statusUpdates$.asObservable();  
   }  
@@ -234,4 +257,5 @@ private createEmptyPlat(platId: string): Plat {
   get isWebSocketAvailable(): boolean {  
     return this.isBrowser && typeof WebSocket !== 'undefined';  
   }  
+  
 } 

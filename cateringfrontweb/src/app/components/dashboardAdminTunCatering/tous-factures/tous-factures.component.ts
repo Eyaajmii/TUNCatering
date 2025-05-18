@@ -9,7 +9,7 @@ export interface Facture {
   dateCreation?: Date;
   DateFacture: Date;
   Statut:string;
-  BonsLivraison: string[];
+  BonsLivraison?: string[];
   montantTotal: number;
   montantParVol: {
     vol: string; 
@@ -29,9 +29,10 @@ export interface Facture {
 })
 export class TousFacturesComponent implements OnInit, OnDestroy{
   factures:Facture[]=[];
+  errorMessage: string | null = null;
+  isLoading: boolean = false;
+  successMessage: string = '';
   connectionStatus: boolean = false;
-  loading: boolean = true;
-  error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
     { value: 'confirmé', display: 'Confirmé', class: 'confirmé' },
@@ -42,25 +43,48 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.loadFactures();
     this.setupWebSocketListeners();
-    this.monitorConnectionStatus();
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
   loadFactures() {
-    this.loading = true;
+    this.isLoading = true;
     this.factureService.getAllFactures().subscribe({
         next: (facture: any[]) => {
             this.factures = facture;
-            this.loading = false;
+            this.isLoading = false;
         },
         error: (err) => {
             console.error('Error loading facture:', err);
-            this.error = 'Échec du chargement des factures';
-            this.loading = false;
+            this.errorMessage = 'Échec du chargement des factures';
+            this.isLoading = false;
         }
     });
   }
+  annulerFacture(id: string | undefined) {
+    if (id) {
+      const confirmation = confirm("Voulez-vous vraiment annuler cette facture ?");
+      if (confirmation) {
+        this.factureService.AnnulerFacture(id).subscribe({
+          next: () => {
+            this.loadFactures();
+            alert('Facture annulée avec succès.');
+          },
+          error: (error) => {
+            if (error.error && typeof error.error === 'string') {
+              alert(error.error);
+            } else if (error.error && error.error.message) {
+              alert(error.error.message);
+            } else {
+              alert('Erreur lors de l\'annulation.');
+            }
+            console.error(error);
+          }
+        });
+      }
+    }
+}
+
   private transformFacture(facture:any):Facture{
     return {
       ...facture
@@ -75,19 +99,26 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
         },
         error: (err) => {
           console.error('Erreur dans le flux des nouvelles factures:', err);
-          this.error = 'Erreur de réception des nouvelles factures';
+          this.errorMessage = 'Erreur de réception des nouvelles factures';
         }
       })
     );
   }
-
   monitorConnectionStatus() {
     this.subscriptions.add(
       this.factureService.getConnectionStatus().subscribe((status: boolean) => {
         this.connectionStatus = status;
-        this.error = status ? null : 'Connexion perdue. Reconnexion...';
+        this.errorMessage = status ? null : 'Connexion perdue. Reconnexion...';
       })
     );
+  }
+  getStatusBadgeClass(status: string): string {
+    switch (status) {
+      case 'En attente': return 'bg-warning';
+      case 'Annulé': return 'bg-danger';
+      case 'confirmé': return 'bg-success';
+      default: return 'bg-info';
+    }
   }
 
 }

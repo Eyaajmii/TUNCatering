@@ -1,96 +1,78 @@
-/* Global Styles */
-.content {
-    padding: 20px;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .mb-5 {
-    margin-bottom: 30px;
-  }
-  
-  .connection-status {
-    padding: 10px;
-    margin-bottom: 20px;
-    font-size: 18px;
-  }
-  
-  .connection-status.connected {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .connection-status.disconnected {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .alert {
-    margin-bottom: 20px;
-  }
-  
-  .loading-indicator {
-    font-size: 16px;
-    color: #007bff;
-  }
-  
-  .filters select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .table th,
-  .table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .table th {
-    background-color: #f8f9fa;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    vertical-align: middle;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  ul li {
-    margin: 5px 0;
-  }
-  
-  .status-en-attente {
-    background-color: #ffc107;
-  }
-  
-  .status-traite {
-    background-color: #28a745;
-  }
-  
-  .status-annule {
-    background-color: #dc3545;
-  }
-  
-  .status-en-retard {
-    background-color: #ffc107;
-  }
-  
-  .status-livre {
-    background-color: #007bff;
-  }
-  
+.container {
+  max-width: 1200px;
+  margin-left:30%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h3{
+  font-family: inherit;
+  font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: .5rem;
+    color: #32325d;
+    font-size: 1.0625rem;
+    font-family: Open Sans,sans-serif;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.alert {
+  margin-top: 20px;
+}
+
+.card {
+  margin-top: 20px;
+}
+thead th {
+  background-color: #4c7abe !important; 
+  color: white; 
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+  background-color: #eaeaea;
+}
+
+.btn {
+  margin-right: 5px;
+}
+
+.bg-warning {
+  background-color: #ffc107;
+}
+
+.bg-danger {
+  background-color: #dc3545;
+}
+
+.bg-success {
+  background-color: #28a745;
+}
+

@@ -20,4 +20,13 @@ router.post("/addvol",async(req,res)=>{
         res.status(500).json({message:"Error creating vol",err});
     }
 })
+router.get("/",async(req,res)=>{
+    try{
+        const fligths = await volController.VolsJours();
+        res.status(200).json(fligths);
+    }catch(err){
+        res.status(500).json({message:"Error loading vol",err});
+    }
+})
+
 module.exports=router;

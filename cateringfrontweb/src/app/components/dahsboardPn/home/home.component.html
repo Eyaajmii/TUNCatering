@@ -2,233 +2,243 @@
     <div class="container my-5 py-5">
         <div class="row align-items-center g-5">
             <div class="col-lg-6  text-lg-start">
-                <h1 class="display-3 text-black animated slideInLeft">Sélectionnez<br>vos repas<br> pour le vol à venir.</h1>
-                <p class="text-white animated slideInLeft mb-4 pb-2">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
+                <h1 class="display-3 text-black animated slideInLeft">Commandez<br>vos repas<br> à bord</h1>
+                <p class="text-white animated slideInLeft mb-4 pb-2">en toute simplicité.</p>
             </div>
         </div>
     </div>
 </div>
-<div id="specials-grid" class="month-specials " data-scroll-reveal="enter from the bottom after 0.9s">
-    <div class="container my-5">
-        <h1 class="header-txt mb-4 titre">Nos menus du jour</h1>
-        <!--.divider-->
-        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1930 255.5" style="enable-background:new 0 0 1930 255.5;" xml:space="preserve">
-            <style type="text/css">
-                .st0{fill:none;stroke:#3c3c3c;stroke-width:10;stroke-linecap:square;stroke-miterlimit:10;}
-            </style>
-            <polyline class="st0" points="1224,171.8 1181.3,171.8 1139.2,129.6 1065,203.9 970.5,110.4 876,203.6 801.8,129.4 759.7,171.5 
-                717,171.5 "/>
-            <polyline class="st0" points="5,131.5 757.3,131.5 801.8,176.1 885.9,91.9 868.3,74.2 831.5,111 870.4,149.9 970.2,50.2 1070,149.9 
-                1108.8,111 1072.1,74.2 1054.4,91.9 1138.5,176.1 1183.1,131.5 1925,131.5 "/>
-            <rect x="921.9" y="26.7" transform="matrix(0.7071 -0.7071 0.7071 0.7071 231.426 707.2043)" class="st0" width="95" height="95"/>
-            <rect x="921.9" y="99.7" transform="matrix(0.7071 -0.7071 0.7071 0.7071 179.8072 728.5855)" class="st0" width="95" height="95"/>
-            <rect x="940.3" y="178.1" transform="matrix(0.7071 -0.7071 0.7071 0.7071 137.3893 746.1556)" class="st0" width="58.2" height="58.2"/>
-            </svg>
-        <div class="row justify-content-center">
-        <div class="col-md mb-4" *ngFor="let menu of menus">
-            <div class="menu-card">
-                <!--<div class="special-img img-02">
-                    <img src="assets/img/special-2.png" />
-                </div>-->
-                <div class="menu-title">{{menu.nom}}</div>
-                <p class="menu-description">
-                    Entrée : {{menu.PlatsEntree[0].nom}}<br>
-                    Plat principal : {{menu.PlatsPrincipaux[0].nom}}<br>
-                    Dessert : {{menu.PlatsDessert[0].nom}}<br>
-                    Boisson: {{menu.Boissons[0].nom}}<br>
-                    Prix: {{ menu.prixtotal ? (menu.prixtotal | currency: 'TND' : 'symbol' : '1.3-3') : 'N/A' }}<br>
-                </p>
-                <div class="menu-footer">
-                    <span class="menu-category">Menu complet</span>
-                    <button class="btn btn-primary btn-sm" (click)="commanderMenu(menu.nom)" [disabled]="!menu.Disponible">
-                        Commander
-                    </button>
+
+
+    <div class="restaurant-section">
+      <h2 class="menu-title">Liste des menus </h2>
+      <p class="description">Découvrez nos menus du jour avec <span style="font-weight: bold;">des plats frais.</span></p>
+      <p-carousel 
+        [value]="menus" 
+        [numVisible]="2" 
+        [numScroll]="2" 
+        [circular]="true" 
+        [responsiveOptions]="responsiveOptions" 
+        [autoplayInterval]="3000"
+        [showIndicators]="false"
+        [showNavigators]="true">
+    
+        <ng-template pTemplate="item" let-menu>
+          <div class="menu-card">
+                <div class="menu-image">
+                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsEntree[0].image" alt="{{menu.PlatsEntree[0].nom}}">
+                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsPrincipaux[0].image" alt="{{menu.PlatsPrincipaux[0].nom}}" />
+                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsDessert[0].image" alt="{{menu.PlatsDessert[0].nom}}" />
+                  <img [src]="'http://localhost:5000/uploads/' + menu.Boissons[0].image" alt="{{menu.Boissons[0].nom}}" />
                 </div>
+                <i class="fa-regular fa-heart heart-icon" (click)="commanderMenu(menu.nom)"></i>
+                <div class="availability-indicator">
+                  <div class="availability-dot" [class.available]="menu.Disponible"></div>
+                  <span class="availability-text">
+                    {{ menu.Disponible ? 'Disponible' : 'Indisponible' }}
+                  </span>
+                </div>
+            <div class="menu-content">
+              <h3>{{ menu.nom }}</h3>
+              <div class="menu-details">
+                <div>Entrée : {{menu.PlatsEntree[0].nom}}</div>
+                <div>Plat principal : {{menu.PlatsPrincipaux[0].nom}}</div>
+                <div>Dessert : {{menu.PlatsDessert[0].nom}}</div>
+                <div>Boisson : {{menu.Boissons[0].nom}}</div>
+              </div>
+              <div class="menu-price">
+                {{ menu.prixtotal ? (menu.prixtotal | currency: 'TND':'symbol':'1.2-2') : 'N/A' }}
+              </div>
             </div>
-        </div>
-        </div>
+          </div>
+        </ng-template>
+      </p-carousel>
     </div>
-</div>
+<!--PLaaaats-->
 <div class="container-xxl py-5">
-    <div class="container">
-      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-        <h5 class="section-title ff-secondary text-primary fw-normal">Liste des plats</h5>
-        <h1 class="mb-5">Nos suggestions</h1>
-      </div>
-
-      <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
-        <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-          <li class="nav-item">
-            <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
-              <i class="fas fa-utensils icon fa-2x text-primary"></i>
-              <div class="ps-3">
-                <h6 class="mt-n1 mb-0">Entrée</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
-              <i class="fa fa-hamburger fa-2x text-primary"></i>
-              <div class="ps-3">
-                <h6 class="mt-n1 mb-0">Plat principal</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-3">
-              <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-              <div class="ps-3">
-                <h6 class="mt-n1 mb-0">Dessert</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-4">
-              <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-              <div class="ps-3">
-                <h6 class="mt-n1 mb-0">Boissons</h6>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-5">
-              <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-              <div class="ps-3">
-                <h6 class="mt-n1 mb-0">Petit déjuner</h6>
-              </div>
-            </a>
-          </li>
-        </ul>
-
-        <div class="tab-content">
-          <!-- Entrée -->
-          <div id="tab-1" class="tab-pane fade show active p-0">
-            <div class="row g-4">
-              <div class="col-lg-6" *ngFor="let entree of PlatsEntree">
-                <div class="d-flex align-items-center">
-                  <img *ngIf="entree.image" [src]="'http://localhost:5000/uploads/' + entree.image" class="flex-shrink-0 img-fluid rounded" alt="{{entree.nom}}" style="width: 80px;">
-                  <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                      <span>{{ entree.nom }}</span>
-                      <span class="text-primary">{{ entree.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree ) ">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                      </button>
-                    </h5>
-                    <small class="fst-italic">{{ entree.description }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Plat principal -->
-          <div id="tab-2" class="tab-pane fade p-0">
-            <div class="row g-4">
-              <div class="col-lg-6" *ngFor="let principal of PlatsPrincipaux">
-                <div class="d-flex align-items-center">
-                  <img *ngIf="principal.image" [src]="'http://localhost:5000/uploads/' + principal.image" class="flex-shrink-0 img-fluid rounded" alt="{{principal.nom}}" style="width: 80px;">
-                  <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                      <span>{{ principal.nom }}</span>
-                      <span class="text-primary">{{ principal.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]=" !principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                      </button>
-                    </h5>
-                    <small class="fst-italic">{{ principal.description }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Dessert -->
-          <div id="tab-3" class="tab-pane fade p-0">
-            <div class="row g-4">
-              <div class="col-lg-6" *ngFor="let dessert of PlatsDessert">
-                <div class="d-flex align-items-center">
-                  <img *ngIf="dessert.image" [src]="'http://localhost:5000/uploads/' + dessert.image" class="flex-shrink-0 img-fluid rounded" alt="{{dessert.nom}}" style="width: 80px;">
-                  <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                      <span>{{ dessert.nom }}</span>
-                      <span class="text-primary">{{ dessert.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]=" !dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                      </button>
-                    </h5>
-                    <small class="fst-italic">{{ dessert.description }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Boissons -->
-          <div id="tab-4" class="tab-pane fade p-0">
-            <div class="row g-4">
-              <div class="col-lg-6" *ngFor="let b of Boissons">
-                <div class="d-flex align-items-center">
-                  <img *ngIf="b.image" [src]="'http://localhost:5000/uploads/' + b.image" class="flex-shrink-0 img-fluid rounded" alt="{{b.nom}}" style="width: 80px;">
-                  <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                      <span>{{ b.nom }}</span>
-                      <span class="text-primary">{{ b.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]=" !b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                      </button>
-                    </h5>
-                    <small class="fst-italic">{{ b.description }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Petit déjuner -->
-          <div id="tab-5" class="tab-pane fade p-0">
-            <div class="row g-4">
-              <div class="col-lg-6" *ngFor="let dj of Petitdejuner">
-                <div class="d-flex align-items-center">
-                  <img *ngIf="dj.image" [src]="'http://localhost:5000/uploads/' + dj.image" class="flex-shrink-0 img-fluid rounded" alt="{{dj.nom}}" style="width: 80px;">
-                  <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                      <span>{{ dj.nom }}</span>
-                      <span class="text-primary">{{ dj.prix }} DT</span>
-                      <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dj, 'Petit déjuner')">
-                        <i class="fa-solid fa-basket-shopping"></i>
-                      </button>
-                    </h5>
-                    <small class="fst-italic">{{ dj.description }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mt-4" *ngIf="afficherButtonPanier()">
-            <button class="btn btn-primary px-4 py-2" (click)="allerAuPanier()">
-              <i class="fa fa-shopping-cart me-2"></i> Aller au panier
-            </button>
-          </div>
-        </div> <!-- tab-content -->
-      </div>
+  <div class="container">
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+      <h5 class="section-title ff-secondary text-primary fw-normal">Liste des plats</h5>
+      <p class="mb-5" style="font-size: 20px;">Composez votre menu selon vos envies parmi notre sélection de plats variés.</p>
     </div>
+
+    <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+      <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+        <li class="nav-item">
+          <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
+            <i class="fas fa-utensils icon fa-2x text-primary"></i>
+            <div class="ps-3">
+              <h6 class="mt-n1 mb-0">Entrée</h6>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
+            <i class="fa fa-hamburger fa-2x text-primary"></i>
+            <div class="ps-3">
+              <h6 class="mt-n1 mb-0">Plat principal</h6>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-3">
+            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
+            <div class="ps-3">
+              <h6 class="mt-n1 mb-0">Dessert</h6>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-4">
+            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
+            <div class="ps-3">
+              <h6 class="mt-n1 mb-0">Boissons</h6>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-5">
+            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
+            <div class="ps-3">
+              <h6 class="mt-n1 mb-0">Petit déjuner</h6>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- Entrée -->
+        <div id="tab-1" class="tab-pane fade show active p-0">
+          <div class="row g-4">
+            <div class="col-lg-6" *ngFor="let entree of PlatsEntree">
+              <div class="d-flex align-items-center">
+                <img *ngIf="entree.image" [src]="'http://localhost:5000/uploads/' + entree.image" class="flex-shrink-0 img-fluid rounded" alt="{{entree.nom}}" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ entree.nom }}</span>
+                    <span class="text-primary">{{ entree.prix }} DT</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree ) ">
+                      <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                  </h5>
+                  <small class="fst-italic">{{ entree.description }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plat principal -->
+        <div id="tab-2" class="tab-pane fade p-0">
+          <div class="row g-4">
+            <div class="col-lg-6" *ngFor="let principal of PlatsPrincipaux">
+              <div class="d-flex align-items-center">
+                <img *ngIf="principal.image" [src]="'http://localhost:5000/uploads/' + principal.image" class="flex-shrink-0 img-fluid rounded" alt="{{principal.nom}}" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ principal.nom }}</span>
+                    <span class="text-primary">{{ principal.prix }} DT</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]=" !principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)">
+                      <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                  </h5>
+                  <small class="fst-italic">{{ principal.description }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dessert -->
+        <div id="tab-3" class="tab-pane fade p-0">
+          <div class="row g-4">
+            <div class="col-lg-6" *ngFor="let dessert of PlatsDessert">
+              <div class="d-flex align-items-center">
+                <img *ngIf="dessert.image" [src]="'http://localhost:5000/uploads/' + dessert.image" class="flex-shrink-0 img-fluid rounded" alt="{{dessert.nom}}" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ dessert.nom }}</span>
+                    <span class="text-primary">{{ dessert.prix }} DT</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]=" !dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)">
+                      <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                  </h5>
+                  <small class="fst-italic">{{ dessert.description }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Boissons -->
+        <div id="tab-4" class="tab-pane fade p-0">
+          <div class="row g-4">
+            <div class="col-lg-6" *ngFor="let b of Boissons">
+              <div class="d-flex align-items-center">
+                <img *ngIf="b.image" [src]="'http://localhost:5000/uploads/' + b.image" class="flex-shrink-0 img-fluid rounded" alt="{{b.nom}}" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ b.nom }}</span>
+                    <span class="text-primary">{{ b.prix }} DT</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]=" !b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)">
+                      <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                  </h5>
+                  <small class="fst-italic">{{ b.description }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Petit déjuner -->
+        <div id="tab-5" class="tab-pane fade p-0">
+          <div class="row g-4">
+            <div class="col-lg-6" *ngFor="let dj of Petitdejuner">
+              <div class="d-flex align-items-center">
+                <img *ngIf="dj.image" [src]="'http://localhost:5000/uploads/' + dj.image" class="flex-shrink-0 img-fluid rounded" alt="{{dj.nom}}" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ dj.nom }}</span>
+                    <span class="text-primary">{{ dj.prix }} DT</span>
+                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dj, 'Petit déjuner')">
+                      <i class="fa-solid fa-basket-shopping"></i>
+                    </button>
+                  </h5>
+                  <small class="fst-italic">{{ dj.description }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4" *ngIf="afficherButtonPanier()">
+          <button class="btn btn-primary px-4 py-2" (click)="allerAuPanier()">
+            <i class="fa fa-shopping-cart me-2"></i> Aller au panier
+          </button>
+        </div>
+      </div> 
+    </div>
+  </div>
+
 <!--Chatbot from codepen.io -->
-<!-- chatbot.html -->
-<div class="chat-container">
+<button class="chat-toggle-btn" (click)="toggleChat()">
+  {{ isChatOpen ? 'Fermer le Chatbot' : 'Ouvrir le Chatbot' }}
+</button>
+
+<div class="chat-container" *ngIf="isChatOpen">
   <div class="chat-header">
     <h2>Catering Chatbot</h2>
   </div>
   
   <div class="chat-messages" id="messages">
-      <div class="receipt">
-        <div *ngFor="let msg of messages" class="message" [class.bot]="msg.sender === 'Bot'" [class.user]="msg.sender === 'Vous'">
-          <strong>{{ msg.sender }} :</strong> {{ msg.text }}
-          <span class="timestamp">{{ msg.timestamp }} </span>
-        </div>
+    <div class="receipt">
+      <div *ngFor="let msg of messages" class="message" [class.bot]="msg.sender === 'Bot'" [class.user]="msg.sender === 'Vous'">
+        <strong>{{ msg.sender }} :</strong> {{ msg.text }}
+        <span class="timestamp">{{ msg.timestamp }}</span>
       </div>
+    </div>
   </div>
 
   <div class="input-container">
-    <input type="text" [(ngModel)]="userInput" (keyup.enter)="send()" placeholder="Ecrivez votre message...">
-    <button (click)="send()">Send</button>
+    <input type="text" [(ngModel)]="userInput" (keyup.enter)="send()" placeholder="Écrivez votre message...">
+    <button (click)="send()">Envoyer</button>
   </div>
 </div>

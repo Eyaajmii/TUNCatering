@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Rechercher les Commandes par Numéro de Vol</h2>
+  <h2>Créer un bon de livraison</h2>
 
   <div class="form-group">
     <label for="numVol">Numéro de Vol :</label>
@@ -33,8 +33,7 @@
               </ul>
             </td>
             <td>
-              <span *ngIf="commande.MatriculePn">{{ commande.MatriculePn }}</span>
-              <span *ngIf="commande.MatriculeDirTunCater">{{ commande.MatriculeDirTunCater }}</span>
+              <span *ngIf="commande.Matricule">{{ commande.Matricule}}</span>
             </td>
           </tr>
         </tbody>

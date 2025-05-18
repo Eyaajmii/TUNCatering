@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BonLivraisonService } from '../../../services/bon-livraison.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tous-bon-livraison',
@@ -9,25 +10,18 @@ import { BonLivraisonService } from '../../../services/bon-livraison.service';
   templateUrl: './tous-bon-livraison.component.html',
   styleUrl: './tous-bon-livraison.component.css'
 })
-export class TousBonLivraisonComponent implements OnInit, OnDestroy {
+export class TousBonLivraisonComponent implements OnInit {
   bonsLivraison: any[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
 
-  constructor(private bonLivraisonService: BonLivraisonService) {}
+  constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
     this.loadBonsLivraison();
-    this.bonLivraisonService.getBonsLivraisonRealTime().subscribe(updatedBonsLivraison => {
-      this.bonsLivraison = updatedBonsLivraison;
-    });
   }
 
-  ngOnDestroy(): void {
-    // Déconnectez-vous du socket lors de la destruction du composant
-    this.bonLivraisonService.disconnectSocket();
-  }
 
   loadBonsLivraison(): void {
     this.isLoading = true;
@@ -73,30 +67,33 @@ export class TousBonLivraisonComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteBonLivraison(bonId: string): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce bon de livraison ? Cette action est irréversible.')) {
-      this.isLoading = true;
-      this.errorMessage = '';
-
-      this.bonLivraisonService.deleteBonLivraison(bonId).subscribe({
-        next: (response: any) => {
-          if (response && response.success) {
-            this.successMessage = 'Bon de livraison supprimé avec succès';
-            this.loadBonsLivraison(); // Rafraîchir la liste
-          } else {
-            this.errorMessage = response.message || 'Erreur lors de la suppression du bon';
+  annulerBonLivraison(id: string | undefined) {
+    if (id) {
+      const confirmation = confirm("Voulez-vous vraiment annuler ce bon de livraison ?");
+      if (confirmation) {
+        this.bonLivraisonService.annulerBonLivraison(id).subscribe({
+          next: () => {
+            this.loadBonsLivraison();
+          },
+          error: (error) => {
+            if (error.error && typeof error.error === 'string') {
+              alert(error.error);
+            } else if (error.error && error.error.message) {
+              alert(error.error.message);
+            } else {
+              alert('Erreur lors de l\'annulation.');
+            }
+            console.error(error);
           }
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Erreur:', err);
-          this.errorMessage = 'Erreur serveur lors de la suppression';
-          this.isLoading = false;
-        }
-      });
+        });
+      }
     }
   }
-
+  modifierBn(id: string){
+    if (id) {
+      this.router.navigate(['/DashAdmin/ModifierBonLivraison', id]);
+    }
+  }
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'En attente': return 'bg-warning';
