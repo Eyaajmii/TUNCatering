@@ -2,13 +2,15 @@ const { NlpManager } = require("node-nlp");
 const Recommandation = require("../controllers/RecommandationController");
 const Menu = require("../controllers/menuController");
 const Meal = require("../controllers/mealController");
+const user = require("../models/User");
+const personnelTunisair = require("../models/PersonnelTunisairModel");
 const commande = require("../controllers/commandeController");
 const manager = new NlpManager({ languages: ["fr"], forceNER: true });
 
-
-//cette entité permet d'extraaire le num de vol
+// Entité pour extraire le numéro de vol
 manager.addRegexEntity("numVol", "fr", /\b(?:vol\s*)?([A-Z]{2}\d{2,4})\b/gi);
 
+// Documents pour les intentions
 manager.addDocument("fr", "bonjour", "greeting");
 manager.addDocument("fr", "salut", "greeting");
 manager.addDocument("fr", "Je veux commander des plats", "Commande.Meal");
@@ -17,25 +19,55 @@ manager.addDocument("fr", "Je veux commander un menu", "Commande.Menu");
 manager.addDocument("fr", "Je choisi le menu", "Commande.Menu");
 manager.addDocument("fr", "quels sont les menus disponibles ?", "Menu");
 manager.addDocument("fr", "quels sont les plats disponibles ?", "Meal");
-manager.addDocument("fr", "liste des plats", "Meal")
+manager.addDocument("fr", "liste des plats", "Meal");
 manager.addDocument("fr", "liste des menus", "Menu");
-manager.addDocument("fr", "que me conseillez-vous ?", "Recommandation.generale");
-manager.addDocument("fr", "tu me propose qoui ?", "Recommandation.generale");
-manager.addDocument("fr", "Je veux des récommandations", "Recommandation.generale");
-manager.addDocument("fr", "Il ya un menu du jour ?", "Recommandation.Menu");
-manager.addDocument("fr","il ya t-il des récommandations a partir du ma carnet de santé? ","Recommandation.CarnetSante");
-manager.addDocument("fr", "Je veux menu a partir de mon régimz ?", "Recommandation.CarnetSante");
-manager.addDocument("fr", "propose moi quelque chose selon mes anciennes commandes", "Recommandation.Historique");
-manager.addDocument("fr", "tu te souviens de ce que j'ai commandé ?", "Recommandation.Historique");
-//****les réponses */
+manager.addDocument(
+  "fr",
+  "que me conseillez-vous ?",
+  "Recommandation.generale"
+);
+manager.addDocument("fr", "tu me propose quoi ?", "Recommandation.generale");
+manager.addDocument(
+  "fr",
+  "Je veux des recommandations",
+  "Recommandation.generale"
+);
+manager.addDocument("fr", "Il y a un menu du jour ?", "Recommandation.Menu");
+manager.addDocument(
+  "fr",
+  "il y a-t-il des recommandations a partir de mon carnet de santé ?",
+  "Recommandation.CarnetSante"
+);
+manager.addDocument(
+  "fr",
+  "Je veux un menu a partir de mon régime ?",
+  "Recommandation.CarnetSante"
+);
+manager.addDocument(
+  "fr",
+  "propose moi quelque chose selon mes anciennes commandes",
+  "Recommandation.Historique"
+);
+manager.addDocument(
+  "fr",
+  "tu te souviens de ce que j'ai commandé ?",
+  "Recommandation.Historique"
+);
+
+// Réponses
 manager.addAnswer("fr", "greeting", "Bonjour ! Comment puis-je vous aider ?");
-manager.addAnswer("fr", "greeting", "Bonjour ! qu'est ce que tu veux commander pour aujourd'hui?");
-//la sessions des users
+manager.addAnswer(
+  "fr",
+  "greeting",
+  "Bonjour ! Qu'est-ce que tu veux commander pour aujourd'hui ?"
+);
+
+// Sessions des utilisateurs
 const userSessions = new Map();
 
 (async () => {
-  await updateMealEntities(); 
-  await updateMenuEntities(); 
+  await updateMealEntities();
+  await updateMenuEntities();
   await manager.train();
   manager.save("model.nlp");
 })();
@@ -64,45 +96,67 @@ async function updateMenuEntities() {
         "menu",
         menu.nom.toLowerCase().replace(/\s+/g, ""),
         ["fr"],
-        [menu.nom, menu.nom.toLowerCase(), menu.nom.replace(/\s+/g, ""),menu.nom.toLocaleLowerCase().replace(/\s+/g, "")]
+        [
+          menu.nom,
+          menu.nom.toLowerCase(),
+          menu.nom.replace(/\s+/g, ""),
+          menu.nom.toLowerCase().replace(/\s+/g, ""),
+        ]
       );
     });
   } catch (err) {
     console.error("Erreur mise à jour des menus:", err);
   }
 }
+
 async function extraireNumVol(message) {
   try {
     const response = await manager.process("fr", message);
     const EntiteVol = response.entities.find((e) => e.entity === "numVol");
     if (!EntiteVol) return null;
     const vol = EntiteVol.resolution?.value || EntiteVol.sourceText;
-    const nombreVol = vol.replace(/\s+/g, "").toUpperCase();
-    return nombreVol;
+    return vol.replace(/\s+/g, "").toUpperCase();
   } catch (error) {
     console.error("Erreur extraction vol:", error);
     return null;
   }
 }
+
 exports.chatbotMessage = async (req, res) => {
   try {
     const { message } = req.body;
-    const matricule = req.user.Matricule;
+    const username = req.user.username;
+    const User = await user.findOne({ username: username });
+    const pn = await personnelTunisair.findOne({ userId: User._id });
+    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+    const matricule = pn.Matricule;
+
+    // Generate a unique conversation ID if not provided
+    const conversationId =
+      req.body.conversationId || `${matricule}-${Date.now()}`;
 
     if (!userSessions.has(matricule)) {
       userSessions.set(matricule, {
         plats: [],
         menu: null,
         vol: null,
-        //step pour garder en mémoire dans quelle etat est user
         step: "init",
         lastActivity: Date.now(),
+        conversationId: conversationId, // Store the conversation ID in the session
       });
+    } else {
+      // Update the conversation ID if needed
+      const session = userSessions.get(matricule);
+      if (req.body.conversationId) {
+        session.conversationId = req.body.conversationId;
+      }
     }
+
     const session = userSessions.get(matricule);
     session.lastActivity = Date.now();
     const response = await manager.process("fr", message);
-    let reply =response.answer || "Je n'ai pas compris. Pouvez-vous reformuler ?";
+    let reply =
+      response.answer || "Je n'ai pas compris. Pouvez-vous reformuler ?";
 
     switch (session.step) {
       case "awaitingVol": {
@@ -119,13 +173,18 @@ exports.chatbotMessage = async (req, res) => {
             session.step = "recommandationconfirmation";
             const suggestion = await Recommandation.recommandationGenerale();
             if (suggestion?.type) {
-              reply = `Voici une suggestion : ${suggestion}. Commander ? (oui/non)`;
+              reply = `Voici une suggestion : ${
+                suggestion.data.nom ||
+                Object.values(suggestion.data)
+                  .map((p) => p.nom)
+                  .join(", ")
+              }. Commander ? (oui/non)`;
               session.recommandation = suggestion;
             } else {
               reply = "Aucune recommandation disponible pour le moment";
               session.step = "init";
             }
-          }else if (session.previousIntent === "Recommandation.Menu") {
+          } else if (session.previousIntent === "Recommandation.Menu") {
             const menu = await Recommandation.getMenuJour();
             if (menu) {
               const description = [
@@ -134,28 +193,51 @@ exports.chatbotMessage = async (req, res) => {
                 `Dessert : ${menu.PlatsDessert[0]?.nom}`,
                 `Boisson : ${menu.Boissons[0]?.nom}`,
               ].join(", ");
-              reply = `Voici le menu du jour:${menu.nom} ${description}. Souhaitez-vous le commander ? (oui/non)`;
+              reply = `Voici le menu du jour : ${menu.nom} - ${description}. Souhaitez-vous le commander ? (oui/non)`;
               session.step = "recommandationconfirmation";
               session.recommandation = { type: "menu", data: menu };
             } else {
-              reply = "Aucune menu du jour trouvé pour aujourd'hui";
+              reply = "Aucun menu du jour trouvé pour aujourd'hui";
               session.step = "init";
             }
-          }else if(session.previousIntent === "Recommandation.Historique"){
-            const suggestion= await Recommandation.HistoriqueCommandes(matricule);
-            if(suggestion){
+          } else if (session.previousIntent === "Recommandation.Historique") {
+            const suggestion = await Recommandation.HistoriqueCommandes(
+              matricule
+            );
+            if (suggestion && suggestion.length > 0) {
               session.step = "selectingMeals";
-              session.plats =suggestion;
-              reply = `Je vous recommande ces plats basés sur vos commandes précédentes : ${suggestion.map(p => p.nom).join(', ')}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
-            }else{
-              reply = "Désolé ! mais aucune récommandation des plats";
+              session.plats = suggestion;
+              reply = `Je vous recommande ces plats basés sur vos commandes précédentes : ${suggestion
+                .map((p) => p.nom)
+                .join(
+                  ", "
+                )}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
+            } else {
+              reply = "Désolé ! mais aucune recommandation des plats";
+              session.step = "init";
+            }
+          } else if (session.previousIntent === "Recommandation.CarnetSante") {
+            const suggestion = await Recommandation.HistoriqueEtCarnet(
+              matricule
+            );
+            if (suggestion && suggestion.length > 0) {
+              session.step = "selectingMeals";
+              session.plats = suggestion;
+              reply = `Voici des plats recommandés selon votre carnet de santé : ${suggestion
+                .map((p) => p.nom)
+                .join(
+                  ", "
+                )}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
+            } else {
+              reply =
+                "Désolé ! mais aucune recommandation disponible selon votre carnet de santé";
               session.step = "init";
             }
           }
         } else {
           reply = "Numéro de vol invalide. Format attendu : TN123";
         }
-      break;
+        break;
       }
       case "selectingMenu": {
         const menuEntity = response.entities.find((e) => e.entity === "menu");
@@ -168,7 +250,8 @@ exports.chatbotMessage = async (req, res) => {
             (m) => m.nom.toLowerCase().replace(/\s+/g, "").trim() === menu
           );
           if (!foundMenu) {
-            throw new Error("Menu non disponible");
+            reply = "Menu non disponible";
+            break;
           }
           await commande.RequestCommandeMenu(
             session.vol,
@@ -177,12 +260,14 @@ exports.chatbotMessage = async (req, res) => {
           );
           reply = `Menu "${foundMenu.nom}" commandé pour le vol ${session.vol} !`;
           userSessions.delete(matricule);
+        } else {
+          reply = "Veuillez spécifier un menu";
         }
         break;
       }
       case "selectingMeals": {
-        const PlatEntity = response.entities.find((e) => e.entity === "meal");
-        if (PlatEntity && Array.isArray(PlatEntity) && PlatEntity.length > 0) {
+        const PlatEntity = response.entities.filter((e) => e.entity === "meal");
+        if (PlatEntity.length > 0) {
           const plats = PlatEntity.map((e) =>
             e.sourceText.trim().toLowerCase()
           );
@@ -190,7 +275,6 @@ exports.chatbotMessage = async (req, res) => {
           const platsFound = m.filter((meal) =>
             plats.includes(meal.nom.toLowerCase().trim())
           );
-          // Si des plats sont trouvés, les ajouter à la session
           if (platsFound.length > 0) {
             session.plats = [...new Set([...session.plats, ...platsFound])];
             if (session.plats.length < 3) {
@@ -213,10 +297,8 @@ exports.chatbotMessage = async (req, res) => {
           const platsFound = m.filter((meal) =>
             plats.includes(meal.nom.toLowerCase().trim())
           );
-          // Ajouter les plats trouvés à la session sans doublons
           if (platsFound.length > 0) {
             session.plats = [...new Set([...session.plats, ...platsFound])];
-
             if (session.plats.length < 3) {
               reply = `Plats sélectionnés : ${session.plats
                 .map((p) => p.nom)
@@ -234,7 +316,6 @@ exports.chatbotMessage = async (req, res) => {
         }
         break;
       }
-
       case "confirmingOrder": {
         if (message.toLowerCase() === "oui") {
           try {
@@ -263,13 +344,13 @@ exports.chatbotMessage = async (req, res) => {
         break;
       }
       case "recommandationconfirmation": {
-        if(message.toLocaleLowerCase()==="oui"){
+        if (message.toLowerCase() === "oui") {
           if (!session.recommandation?.type) {
             reply = "Erreur de recommandation, veuillez réessayer";
             break;
           }
-          if(session.recommandation.type==="menu"){
-            const menu=session.recommandation.data;
+          if (session.recommandation.type === "menu") {
+            const menu = session.recommandation.data;
             await commande.RequestCommandeMenu(
               session.vol,
               menu.nom,
@@ -277,12 +358,12 @@ exports.chatbotMessage = async (req, res) => {
             );
             reply = `Commande enregistrée pour le vol ${session.vol}. Bon appétit !`;
             userSessions.delete(matricule);
-          }else if (session.recommandation.type === "plats") {
-            const plats=session.recommandation.data;
-            const entree=plats['Entrée'];
-            const platPrincipal=plats["Plat Principal"];
-            const dessert=plats['Dessert'];
-            const boisson=plats['Boisson'];
+          } else if (session.recommandation.type === "plats") {
+            const plats = session.recommandation.data;
+            const entree = plats["Entrée"];
+            const platPrincipal = plats["Plat Principal"];
+            const dessert = plats["Dessert"];
+            const boisson = plats["Boisson"];
             await commande.RequestCommandeMeal(
               session.vol,
               entree?.nom,
@@ -295,7 +376,7 @@ exports.chatbotMessage = async (req, res) => {
             reply = `Commande enregistrée avec la recommandation pour le vol ${session.vol}. Bon appétit !`;
             userSessions.delete(matricule);
           }
-        }else if (message.toLowerCase() === "non") {
+        } else if (message.toLowerCase() === "non") {
           reply = "Très bien. Souhaitez-vous autre chose ?";
           session.step = "init";
         } else {
@@ -309,27 +390,24 @@ exports.chatbotMessage = async (req, res) => {
             if (!session.vol) {
               session.previousIntent = "Commande.Meal";
               session.step = "awaitingVol";
-              reply = "D'abord, quel est votre numéro de vol ? (ex:TN123)";
-              break;
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
+            } else {
+              session.step = "selectingMeals";
+              reply = "Quels plats souhaitez-vous commander ?";
             }
-            session.step = "selectingMeals";
-            reply =
-              "Quels plats souhaitez-vous commander ?" ||
-              "Qu'est-ce que tu veux commander? ";
             break;
           }
           case "Commande.Menu": {
             if (!session.vol) {
-              session.step = "awaitingVol";
               session.previousIntent = "Commande.Menu";
-              reply = "D'abord, quel est votre numéro de vol ? (ex:TN123)";
-              break;
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
+            } else {
+              session.step = "selectingMenu";
+              reply = "Quel menu souhaitez-vous commander ?";
             }
-            session.step = "selectingMenu";
-            reply = "Quel menu souhaitez-vous commander ?";
             break;
           }
-
           case "Menu": {
             const menus = await Menu.getAllMenu();
             reply = `Menus disponibles : ${menus.map((m) => m.nom).join(", ")}`;
@@ -342,63 +420,154 @@ exports.chatbotMessage = async (req, res) => {
           }
           case "Recommandation.generale": {
             if (!session.vol) {
-              session.step = "awaitingVol";
               session.previousIntent = "Recommandation.generale";
-              reply = "D'abord, quel est votre numéro de vol ? (ex:TN123)";
-              break;
-            }
-            const suggestion = await Recommandation.recommandationGenerale();
-            if (suggestion?.type) {
-              let rep;
-              if (suggestion.type==="menu"){
-                reply = `Voici une suggestion pour vous : ${suggestion.data.nom}-${suggestion.data.description}. Souhaitez-vous le commander ? (oui/non)`;
-              }else{
-                const plats = suggestion.data;
-                rep=Object.entries(plats).map(([type,plat])=>`${type}:${plat.nom}`).join(',')
-                reply = `Voici une suggestion pour vous : ${rep}. Souhaitez-vous le commander ? (oui/non)`;
-              }
-              session.step = "recommandationconfirmation";
-              session.recommandation = suggestion;
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
             } else {
-              reply = "Désolé, je n'ai pas de recommandation pour le moment.";
+              const suggestion = await Recommandation.recommandationGenerale();
+              if (suggestion?.type) {
+                let rep;
+                if (suggestion.type === "menu") {
+                  reply = `Voici une suggestion pour vous : ${suggestion.data.nom} - ${suggestion.data.description}. Souhaitez-vous le commander ? (oui/non)`;
+                } else {
+                  const plats = suggestion.data;
+                  rep = Object.entries(plats)
+                    .map(([type, plat]) => `${type}: ${plat.nom}`)
+                    .join(", ");
+                  reply = `Voici une suggestion pour vous : ${rep}. Souhaitez-vous le commander ? (oui/non)`;
+                }
+                session.step = "recommandationconfirmation";
+                session.recommandation = suggestion;
+              } else {
+                reply = "Désolé, je n'ai pas de recommandation pour le moment.";
+              }
             }
             break;
           }
-          case "Recommandation.Menu":{
+          case "Recommandation.Menu": {
             if (!session.vol) {
-              session.step = "awaitingVol";
               session.previousIntent = "Recommandation.Menu";
-              reply = "D'abord, quel est votre numéro de vol ? (ex:TN123)";
-              break;
-            }
-            const menu = await Recommandation.getMenuJour();
-            if(menu){
-              const rep=[`Entrée:${menu.PlatsEntree[0]?.nom}`,`Plat Principal:${menu.PlatsPrincipaux[0]?.nom}`,`Dessert:${menu.PlatsDessert[0]?.nom}`,`Boisson:${menu.Boissons[0]?.nom}`].join(',');
-              reply = `Voici le menu du jour:${menu.nom} ${rep}. Souhaitez-vous le commander ? (oui/non)`;
-              session.step = "recommandationconfirmation";
-              session.recommandation = { type: "menu", data: menu };
-            }
-          }
-          case "Recommandation.Historique":{
-            if (!session.vol) {
               session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
+            } else {
+              const menu = await Recommandation.getMenuJour();
+              if (menu) {
+                const rep = [
+                  `Entrée: ${menu.PlatsEntree[0]?.nom}`,
+                  `Plat Principal: ${menu.PlatsPrincipaux[0]?.nom}`,
+                  `Dessert: ${menu.PlatsDessert[0]?.nom}`,
+                  `Boisson: ${menu.Boissons[0]?.nom}`,
+                ].join(", ");
+                reply = `Voici le menu du jour : ${menu.nom} - ${rep}. Souhaitez-vous le commander ? (oui/non)`;
+                session.step = "recommandationconfirmation";
+                session.recommandation = { type: "menu", data: menu };
+              } else {
+                reply = "Aucun menu du jour disponible";
+              }
+            }
+            break;
+          }
+          case "Recommandation.Historique": {
+            if (!session.vol) {
               session.previousIntent = "Recommandation.Historique";
-              reply = "D'abord, quel est votre numéro de vol ? (ex:TN123)";
-              break;
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
+            } else {
+              const suggestion = await Recommandation.HistoriqueCommandes(
+                matricule
+              );
+              if (suggestion && suggestion.length > 0) {
+                session.step = "selectingMeals";
+                session.plats = suggestion;
+                reply = `Je vous recommande ces plats basés sur vos commandes précédentes : ${suggestion
+                  .map((p) => p.nom)
+                  .join(
+                    ", "
+                  )}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
+              } else {
+                reply =
+                  "Désolé, je n'ai pas de recommandation basée sur vos historiques";
+              }
             }
-            const suggestion= await Recommandation.HistoriqueCommandes(matricule);
-            if(suggestion){
-              session.step = "selectingMeals";
-              session.plats =suggestion;
-              reply = `Je vous recommande ces plats basés sur vos commandes précédentes : ${suggestion.map(p => p.nom).join(', ')}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
+            break;
+          }
+          case "Recommandation.CarnetSante": {
+            if (!session.vol) {
+              session.previousIntent = "Recommandation.CarnetSante";
+              session.step = "awaitingVol";
+              reply = "D'abord, quel est votre numéro de vol ? (ex: TN123)";
+            } else {
+              const suggestion = await Recommandation.HistoriqueEtCarnet(
+                matricule
+              );
+              if (suggestion && suggestion.length > 0) {
+                session.step = "selectingMeals";
+                session.plats = suggestion;
+                reply = `Voici des plats recommandés selon votre carnet de santé : ${suggestion
+                  .map((p) => p.nom)
+                  .join(
+                    ", "
+                  )}. Souhaitez-vous en commander certains ? (vous pouvez les modifier ou valider avec 'oui')`;
+              } else {
+                reply =
+                  "Désolé, je n'ai pas de recommandation basée sur votre carnet de santé";
+              }
             }
+            break;
           }
         }
     }
 
-    res.json({ reply });
+    // Return the conversation ID with the response
+    res.json({
+      reply,
+      conversationId: session.conversationId,
+    });
   } catch (err) {
     console.error("Erreur chatbot:", err);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+};
+
+// Reset conversation logic
+exports.resetConversation = async (req, res) => {
+  try {
+    const username = req.user.username;
+    const User = await user.findOne({ username: username });
+    const pn = await personnelTunisair.findOne({ userId: User._id });
+    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+    const matricule = pn.Matricule;
+    const { conversationId } = req.body;
+
+    // Find the session by matricule
+    if (userSessions.has(matricule)) {
+      const session = userSessions.get(matricule);
+
+      // If a conversationId was provided, check that it matches the session
+      if (conversationId && session.conversationId !== conversationId) {
+        console.warn(
+          `Tentative de réinitialisation avec un conversationId invalide: ${conversationId}`
+        );
+        // We'll allow the reset anyway as the user is authenticated
+      }
+
+      userSessions.delete(matricule);
+      res
+        .status(200)
+        .json({ message: "Conversation réinitialisée avec succès" });
+    } else {
+      // Still return success even if no session was found to be more resilient
+      res
+        .status(200)
+        .json({
+          message: "Aucune conversation active trouvée pour cet utilisateur",
+        });
+    }
+  } catch (err) {
+    console.error(
+      "Erreur lors de la réinitialisation de la conversation:",
+      err
+    );
     res.status(500).json({ error: "Erreur interne du serveur" });
   }
 };

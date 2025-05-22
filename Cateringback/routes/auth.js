@@ -5,7 +5,7 @@ const { authenticateToken } = require("../middlware/auth");
 
 router.post("/register", async (req, res) => {
   try {
-    const{username, password, email, nom, prenom, telephone, role,Matricule,TypePersonnel}=req.body;
+    const{username, password, email, nom, prenom, telephone, role,Matricule,roleTunisair,TypePersonnel}=req.body;
     const newuser = await authcontroller.register(
       username,
       password,
@@ -15,6 +15,7 @@ router.post("/register", async (req, res) => {
       telephone,
       role,
       Matricule,
+      roleTunisair,
       TypePersonnel
     );
     res.status(200).json(newuser);
@@ -24,20 +25,24 @@ router.post("/register", async (req, res) => {
 });
 router.post("/authentification", async(req, res)=>{
     try {
-        const { username, Matricule, password } = req.body;
-        const user = await authcontroller.login(username, Matricule, password);
+        const { username, password } = req.body;
+        const user = await authcontroller.login(username,password);
         res.status(200).json(user);
     } catch (err) {
       res.status(400).send(err.message);
     }
 });
-router.post("/logout", (req, res) => {
-  authcontroller.logout(req, res);
+router.post("/logout", async (req, res) => {
+  try {
+    const result = await authcontroller.logout(req.body.token);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
-router.put('/update/:userId', async (req, res) => {
-    const newUserInfo = req.body;
+router.put('/update', authenticateToken,async (req, res) => {
     try {
-        const updatedUser = await authcontroller.updateUserInfo(req.params.userId, newUserInfo);
+        const updatedUser = await authcontroller.updateUserInfo(req.user.Matricule, req.body);
         res.status(200).json({ message: "Informations mises à jour avec succès", user: updatedUser });
     } catch (err) {
         res.status(400).json({ message: err.message });

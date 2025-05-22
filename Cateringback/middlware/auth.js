@@ -1,14 +1,7 @@
 const jwt=require("jsonwebtoken")
 
-function generateAccesToken(username, Matricule, role, TypePersonnel = null) {
-  if (
-    !Matricule &&
-    role !== "Personnel Tunisie Catering" &&
-    role !== "Administrateur"
-  ) {
-    throw new Error("Matricule is required to generate the token");
-  }
-  return jwt.sign({ username, Matricule, role ,TypePersonnel}, process.env.TOKEN_SECRET, {
+function generateAccesToken(username, role, TypePersonnel = null) {
+  return jwt.sign({ username, role ,TypePersonnel}, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
 }

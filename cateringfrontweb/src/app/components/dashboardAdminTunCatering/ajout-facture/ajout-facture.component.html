@@ -1,11 +1,24 @@
 <div class="container mt-4">
     <h2>Créer une facture</h2>
-  
-    <div class="form-group mb-3">
-      <label for="date">Date du vol :</label>
-      <input type="date" class="form-control" [(ngModel)]="dateFacture" name="date" />
-    </div>
-  
+    <button class="btn btn-primary" (click)="rechercher()">Rechercher les bons de livraison</button>
+    <div *ngIf="bons.length > 0">
+      <h4>Les bons de livraison non facturés</h4>
+    <table class="table table-bordered mt-2">
+      <thead class="table-light">
+        <tr>
+          <th>N° Bon Livraison</th>
+          <th>Vol</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bon of bons">
+          <td>{{ bon.numeroBon}}</td>
+          <td>{{ bon.vol }}</td>
+          <td>{{bon.Statut}}</td>
+        </tr>
+      </tbody>
+    </table>
     <button class="btn btn-primary" (click)="onSubmit()">Créer</button>
   
     <div *ngIf="facture" class="mt-4">
@@ -34,4 +47,5 @@
       {{ erreur }}
     </div>
   </div>
+</div>
   

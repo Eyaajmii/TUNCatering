@@ -4,7 +4,6 @@ const volSchema = new mongoose.Schema({
     numVol:{
         type:String,
         required:true,
-        unique:true
     },
     volName:{
         type:String,

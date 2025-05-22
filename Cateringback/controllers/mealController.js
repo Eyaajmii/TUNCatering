@@ -1,4 +1,4 @@
-const plat=require("../models/Meal");
+const plat=require("../models/Plat");
 
 class mealController {
   //create meal
@@ -12,7 +12,6 @@ class mealController {
         nom,
         description,
         typePlat,
-        prix,
         Disponibilite,
         Categorie,
         quantite,
@@ -21,7 +20,6 @@ class mealController {
         !nom ||
         !description ||
         !typePlat ||
-        !prix ||
         !Categorie ||
         !quantite ||
         !Disponibilite == undefined
@@ -37,7 +35,6 @@ class mealController {
         nom,
         description,
         typePlat,
-        prix,
         Disponibilite,
         Categorie,
         quantite,

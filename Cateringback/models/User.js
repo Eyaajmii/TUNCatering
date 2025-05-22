@@ -24,10 +24,8 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: [
-        "Personnel navigant",
+        "Personnel Tunisair",
         "Personnel Tunisie Catering",
-        "Personnel de Direction du Catering Tunisiar",
-        "Personnel de Direction du Personnel Tunisiar",
         "Administrateur"
       ],
       required: true,

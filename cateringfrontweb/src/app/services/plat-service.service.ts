@@ -1,14 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-const  URL="http://localhost:5000/api/meal";
+const  URL="http://localhost:5000/api/plat";
 export interface Plat{
   _id?: string;
   nom:string;
   description:string;
   image?:string;
   typePlat:string;
-  prix:number;
   Disponibilite:boolean;
   Categorie:string;
   quantite:number;

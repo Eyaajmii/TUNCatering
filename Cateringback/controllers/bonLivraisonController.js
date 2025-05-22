@@ -1,6 +1,8 @@
 const BonLivraison = require("../models/bonLivraison");
 const Vol = require("../models/vol");
 const Commande = require("../models/Commande");
+const user = require("../models/User");
+const personnelTunisair = require("../models/PersonnelTunisairModel");
 const PersonnelNavigant = require("../models/personnelnavigant");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
@@ -116,10 +118,13 @@ exports.createBonLivraison = async (req, res) => {
     const commandesFiltrees = commandesValides
       .filter((c) => c.Statut !== "annulé")
       .map((c) => c._id);
+    const cmds = commandesFiltrees.map((id) => ({
+        commande: id,
+    }));
     const newBonLivraison = new BonLivraison({
       numeroBon,
       vol: volId.toString(),
-      commandes: commandesFiltrees,
+      commandes: cmds,
       personnelLivraison: null,
       Statut: "En attente",
       conformite: conformite || "Non vérifié",
@@ -220,7 +225,7 @@ exports.scanBonLivraison = async (req, res) => {
         .json({ success: false, message: "QR Code invalide" });
     }
 
-    bonLivraison.Statut = "Livré";
+    bonLivraison.Statut = "Validé";
     bonLivraison.conformite = "Confirmé";
     bonLivraison.personnelLivraison = req.user.Matricule;
     bonLivraison.dateLivraison = new Date();
@@ -234,42 +239,65 @@ exports.scanBonLivraison = async (req, res) => {
 exports.updateStatutBonLivraison = async (req, res) => {
   try {
     const { id } = req.params;
-    const { statut } = req.body;
-    const personnelLivraison = req.user.Matricule;
-    const bn = await BonLivraison.findById(id);
-     if (bn.Statut !== "En attente") {
-      return res.status(400).json({ success: false, message: "Le bon de livraison ne peut être annulé que s'il est en attente" });
+    const { confirmerConformite, commandesConfirmées } = req.body;
+    const username = req.user.username;
+    const User = await user.findOne({ username });
+    const pn = await personnelTunisair.findOne({ userId: User._id });
+    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+    const personnelLivraison = pn.Matricule;
+    const bn = await BonLivraison.findById(id).populate("commandes.commande");
+    if (!bn)return res.status(404).json({ message: "Bon de livraison introuvable" });
+    let conformite = bn.conformite;
+    let statut = bn.Statut;
+    //confirmation manuelle des commandes
+    if (Array.isArray(commandesConfirmées) && commandesConfirmées.length > 0) {
+      bn.commandes.forEach((cmd) => {
+        if (commandesConfirmées.includes(String(cmd.commande._id))) {
+          cmd.confirme = true;
+        }
+      });
     }
-    //conformité automatiquement
-    let conformite = "Non vérifié ";
-    if (statut === "Livré") {
+    //confirmation globale => toutes les commandes confirmées
+    if (confirmerConformite === true) {
+      bn.commandes.forEach((cmd) => {
+        cmd.confirme = true;
+      });
       conformite = "Confirmé";
-    } else if (statut === "Annulé" || statut === "En retard") {
-      conformite = "Non confirmé";
+      statut = "Validé";
+    } else {
+      // vérifie si toutes les commandes sont confirmées
+      const toutesConfirmées = bn.commandes.every(
+        (cmd) => cmd.confirme === true
+      );
+      if (toutesConfirmées) {
+        conformite = "Confirmé";
+        statut = "Validé";
+      }
     }
-
-    const bonLivraison = await BonLivraison.findByIdAndUpdate(
-      id,
-      { Statut: statut, conformite ,personnelLivraison}, 
-      { new: true }
-    );
-
-    if (!bonLivraison) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Bon de livraison introuvable." });
+    
+    bn.conformite = conformite;
+    bn.Statut = statut;
+    bn.personnelLivraison = personnelLivraison;
+    await bn.save();
+    if (statut === "Validé") {
+      for (const c of bn.commandes) {
+        if (c.commande && c.commande._id) {
+          await Commande.findByIdAndUpdate(c.commande._id, { Statut: "livré" });
+        }
+      }
     }
 
     res.status(200).json({
       success: true,
-      message: "Statut (et conformité) mis à jour",
-      data: bonLivraison,
+      message: "Statut et conformité mis à jour",
+      data: bn,
     });
   } catch (error) {
     console.error("Erreur lors de la mise à jour du statut :", error);
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 };
+
 //par tunisie catering
 exports.updateBonLivraison=async(req,res)=>{
   try{
@@ -332,5 +360,18 @@ exports.AnnulerBn=async(req,res)=>{
     }
     console.error("Erreur interne:", err);
     res.status(500).send("Erreur interne du serveur.");
+  }
+}
+exports.getBonsNonFacture=async(req,res)=>{
+  try{
+    const bns = await BonLivraison.find({ Facturé:false});
+    if (!bns) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Aucun Bon de livraison trouvé" });
+    }
+    res.status(200).json(bns);
+  }catch (err) {
+     res.status(500)
   }
 }

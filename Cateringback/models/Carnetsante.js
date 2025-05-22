@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 
 const CarnetsanteSchema = new mongoose.Schema({
-  MatriculePn: {
+  Matricule: {
     type: String,
     require: true,
   },

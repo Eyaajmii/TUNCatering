@@ -40,19 +40,28 @@ import { UpdateCommandeComponent } from './components/dahsboardPn/update-command
 import { AjoutcommandeAffreteComponent } from './components/DashTunisairDirCatering/ajoutcommande-affrete/ajoutcommande-affrete.component';
 import { ModifiercommandeAffreteComponent } from './components/DashTunisairDirCatering/modifiercommande-affrete/modifiercommande-affrete.component';
 import { UpdateBnComponent } from './components/dashboardAdminTunCatering/update-bn/update-bn.component';
+import { CarnetSanteComponent } from './components/dahsboardPn/carnet-sante/carnet-sante.component';
+import { ModifierCarnetComponent } from './components/dahsboardPn/modifier-carnet/modifier-carnet.component';
+import { ModifierInfoComponent } from './components/dahsboardPn/modifier-info/modifier-info.component';
+import { ModifierReclamtionComponent } from './components/dahsboardPn/modifier-reclamtion/modifier-reclamtion.component';
+import { ConfirmerBnComponent } from './components/dashboardChefCabine/confirmer-bn/confirmer-bn.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
     {path:'AccueilPersonnel',title:'Accueil',component:AcceuilInterfaceComponent,children:[
         {path:'',redirectTo:'Home',pathMatch:'full'},
         {path:'Home',title:'Home',component:HomeComponent},
+        {path:'MiseAJour',title:'Mise a jour profil',component:ModifierInfoComponent},
         {path:'commandeMenu',title:'Commander',component:CommandeMenuComponent},
         {path:'PanierPlats',title:'Panier Plats',component:PanierPlatsComponent},
         {path:'MyOrders',title:'My Orders',component:EtatCommandeComponent},
-        {path:'reclamation',title:'Reclamation',component:ReclamationComponent},
+        {path:'Ajoutreclamation',title:'Reclamation',component:ReclamationComponent},
         {path:'MesReclamations',title:'Mes réclamations',component:ConsulterReclamationComponent},
         {path:'reponse/:id',title:'Reponse reclamation',component:ReponsereclamationComponent},
+        {path:'modifierReclamation/:id',title:'Reponse reclamation',component:ModifierReclamtionComponent},
+        {path:'MonCarnet',title:'Carnet de santé',component:CarnetSanteComponent},
         {path:'CarnetSante',title:'Carnet de santé',component:AjoutCarnetComponent},
+        {path:'ModifierCarnet',title:'Carnet de santé',component:ModifierCarnetComponent},
         {path:'ModifierCommande/:id',title:'Modifier une commande',component:UpdateCommandeComponent}
     ]},
     //Dashboard admin tunisie catering
@@ -96,6 +105,7 @@ export const routes: Routes = [
     //dashChef
     {path:'DashboardChefCabine',title:'Dashbord',component:DashChefComponent,children:[
         {path:'bonLivraison',title:'Bon livraison',component:ListebonslivraisonsComponent},
+        {path:'Statutbn/:id',title:'Bon livraison',component:ConfirmerBnComponent}
     ]},
     {path:'',redirectTo:'login',pathMatch:'full'}
 ];

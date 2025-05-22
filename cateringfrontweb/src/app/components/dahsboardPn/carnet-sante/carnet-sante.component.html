@@ -1,0 +1,45 @@
+<div class="container mt-4 relative">
+    <div class="flex justify-end mb-4">
+      <button *ngIf="!carnetSante" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" (click)="Ajouter()">
+        Ajouter un carnet
+      </button>
+    </div>
+  
+    <h2 class="text-xl font-bold mb-4">Carnet de santé</h2>
+  
+    <div *ngIf="carnetSante">
+      <div class="mb-2">
+        <strong>Allergies :</strong>
+        <p>{{ carnetSante.Allergies?.length ? carnetSante.Allergies.join(', ') : 'Aucune' }}</p>
+      </div>
+  
+      <div class="mb-2">
+        <strong>Maladies :</strong>
+        <p>{{ carnetSante.Maladie?.length ? carnetSante.Maladie.join(', ') : 'Aucune' }}</p>
+      </div>
+  
+      <div class="mb-2">
+        <strong>Médicaments :</strong>
+        <p>{{ carnetSante.Medicaments?.length ? carnetSante.Medicaments.join(', ') : 'Aucun' }}</p>
+      </div>
+  
+      <div class="mb-2">
+        <strong>Commentaires :</strong>
+        <p>{{ carnetSante.Commentaires?.length ? carnetSante.Commentaires.join(', ') : 'Aucun commentaire' }}</p>
+      </div>
+  
+      <div class="mt-4">
+        <button class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" (click)="Modifier()">
+          Modifier
+        </button>
+        <button class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded ml-2" (click)="Supprimer()">
+          Supprimer
+        </button>
+      </div>
+    </div>
+  
+    <div *ngIf="!carnetSante" class="text-gray-600 mt-4">
+      <p>Aucun carnet de santé trouvé.</p>
+    </div>
+  </div>
+  

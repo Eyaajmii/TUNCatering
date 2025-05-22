@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const menuController = require("../controllers/menuController");
-const Meal=require("../models/Meal");
+const Meal=require("../models/Plat");
 const Menu = require("../models/Menu");
 const {authenticateToken}=require("../middlware/auth")
 router.post("/add", authenticateToken, async (req, res) => {

@@ -5,6 +5,7 @@ const { authenticateToken } = require("../middlware/auth");
 const bonLivraisonController = require("../controllers/bonLivraisonController");
 router.post("/add", bonLivraisonController.createBonLivraison);//pour tunisie catering
 router.get("/all", bonLivraisonController.getAllBonsLivraisons);//pour tunisie catering et tunisair
+router.get("/Nonfacture", bonLivraisonController.getBonsNonFacture);/*Ceci pour tunisie catering*/ 
 router.get("/:id", bonLivraisonController.getBonLivraisonById);
 router.get("/vol/:volId", bonLivraisonController.getBonByVolId);
 router.put("/:id/statut", authenticateToken,bonLivraisonController.updateStatutBonLivraison);//pour chef de cabine

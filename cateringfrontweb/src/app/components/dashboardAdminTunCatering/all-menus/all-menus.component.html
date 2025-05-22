@@ -13,7 +13,6 @@
                 <th scope="col">Plat principal</th>
                 <th scope="col">Desert</th>
                 <th scope="col">Boisson</th>
-                <th scope="col">Prix total</th>
                 <th scope="col">Disponible</th>
                 <th scope="col">Actions</th>
             </tr>
@@ -31,9 +30,6 @@
                 {{m.PlatsDessert[0].nom}}
               </td>
               <td (click)="voir(m.Boissons[0]._id)" > {{m.Boissons[0].nom}}</td>
-              <td>
-                {{m.prixtotal | currency:'TND':'symbol':'1.3-3'}}
-              </td> 
               <td>
                 <input type="checkbox" [checked]="m.Disponible" disabled>
               </td>

@@ -19,7 +19,6 @@ export class AjoutPlatComponent {
     this.mealForm = this.fb.group({
       nom: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      prix: ['', [Validators.required]],
       typePlat: ['', Validators.required],
       Categorie:['',Validators.required],
       Disponibilite: [false],
@@ -42,7 +41,6 @@ export class AjoutPlatComponent {
       data.append('nom',this.mealForm.value.nom);
       data.append('description',this.mealForm.value.description);
       data.append('typePlat',this.mealForm.value.typePlat);
-      data.append('prix',this.mealForm.value.prix);
       data.append('Categorie',this.mealForm.value.Categorie);
       data.append('quantite',this.mealForm.value.quantite);
       data.append('Disponibilite',this.mealForm.value.Disponibilite.toString());

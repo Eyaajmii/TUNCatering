@@ -17,11 +17,10 @@ interface Commande {
   Statut: string;
   plats: Plat[];
   dateCommnade: Date;
-  NombreCommande:number;
-  MatriculePn: any;
-  MatriculeDirTunCater: any;
+  NombreCommande: number;
+  Matricule: any;
   menu?: Menu;
-  vol:any
+  vol: any;
 }
 
 @Component({
@@ -30,45 +29,45 @@ interface Commande {
   templateUrl: './all-orders.component.html',
   styleUrl: './all-orders.component.css'
 })
-export class AllOrdersComponent  implements OnInit, OnDestroy {
+export class AllOrdersComponent implements OnInit, OnDestroy {
   commandes: Commande[] = [];
   filtres = { statut: 'tous' };
-  connectionStatus: boolean = false;
-  loading: boolean = true;
+  connectionStatus = false;
+  loading = true;
   error: string | null = null;
 
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'prêt', display: 'prêt', class: 'pret' },
+    { value: 'prêt', display: 'Prêt', class: 'pret' },
     { value: 'annulé', display: 'Annulé', class: 'annule' },
     { value: 'en retard', display: 'En retard', class: 'en-retard' },
     { value: 'livré', display: 'Livré', class: 'livre' }
   ];
 
-  private subscriptions: Subscription = new Subscription();
+  private subscriptions = new Subscription();
 
   constructor(private commandeService: CommandeServiceService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadInitialOrders();
     this.setupWebSocketListeners();
     this.monitorConnectionStatus();
   }
 
-  loadInitialOrders() {
+  loadInitialOrders(): void {
     this.loading = true;
     this.commandeService.getInitialOrders().subscribe({
-        next: (orders) => {
-            this.commandes = orders;
-            this.loading = false;
-        },
-        error: (err) => {
-            console.error('Error loading orders:', err);
-            this.error = 'Échec du chargement des commandes';
-            this.loading = false;
-        }
+      next: (orders) => {
+        this.commandes = orders.map(order => this.transformCommande(order));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading orders:', err);
+        this.error = 'Échec du chargement des commandes';
+        this.loading = false;
+      }
     });
-}
+  }
 
   private transformCommande(commande: any): Commande {
     return {
@@ -79,13 +78,11 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
 
   private transformPlats(plats: any[]): Plat[] {
     if (!plats) return [];
-    
-    // If plats are already in correct format
+    // Si les plats sont déjà des objets complets
     if (plats.length > 0 && typeof plats[0] === 'object' && 'nom' in plats[0]) {
       return plats as Plat[];
     }
-    
-    // If plats are just IDs (strings)
+    // Sinon, transforme les ids en objets plats "placeholder"
     return plats.map(plat => ({
       _id: typeof plat === 'string' ? plat : plat._id,
       nom: typeof plat === 'string' ? 'Chargement...' : plat.nom,
@@ -95,7 +92,7 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
     }));
   }
 
-  setupWebSocketListeners() {
+  setupWebSocketListeners(): void {
     this.subscriptions.add(
       this.commandeService.getNewOrders().subscribe({
         next: (commande: any) => {
@@ -128,7 +125,7 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
     );
   }
 
-  monitorConnectionStatus() {
+  monitorConnectionStatus(): void {
     this.subscriptions.add(
       this.commandeService.getConnectionStatus().subscribe((status: boolean) => {
         this.connectionStatus = status;
@@ -146,17 +143,14 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
     const found = this.availableStatuses.find(s => s.value === status);
     return found ? 'status-' + found.class : '';
   }
-  
 
-  changerStatut(commandeId: string, nouveauStatut: string) {
+  changerStatut(commandeId: string, nouveauStatut: string): void {
     if (!this.availableStatuses.some(s => s.value === nouveauStatut)) {
       this.error = 'Statut invalide';
       return;
     }
-
     this.commandeService.updateOrderStatus(commandeId, nouveauStatut).subscribe({
-      next: (response) => {
-        console.log('Statut mis à jour avec succès:', response);
+      next: () => {
         const index = this.commandes.findIndex(c => c._id === commandeId);
         if (index !== -1) {
           this.commandes[index].Statut = nouveauStatut;
@@ -169,7 +163,7 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
     });
   }
 
-  get filteredCommands() {
+  get filteredCommands(): Commande[] {
     return this.filtres.statut === 'tous'
       ? this.commandes
       : this.commandes.filter(c => c.Statut === this.filtres.statut);
@@ -181,33 +175,30 @@ export class AllOrdersComponent  implements OnInit, OnDestroy {
 
   formatDateTime(dateString: string | Date): string {
     if (!dateString) return 'Date invalide';
-    
+
     const date = new Date(dateString);
-    
     if (isNaN(date.getTime())) {
       return 'Date invalide';
     }
-  
-    // Options pour le formatage
-    const dateOptions: Intl.DateTimeFormatOptions = { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
     };
-    
-    const timeOptions: Intl.DateTimeFormatOptions = { 
-      hour: '2-digit', 
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false
     };
-  
+
     const formattedDate = date.toLocaleDateString('fr-FR', dateOptions);
     const formattedTime = date.toLocaleTimeString('fr-FR', timeOptions);
-  
+
     return `${formattedDate} à ${formattedTime}`;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 }

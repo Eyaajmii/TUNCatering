@@ -2,9 +2,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';  
 import { isPlatformBrowser } from '@angular/common';  
 import { Observable, Subject, EMPTY, of } from 'rxjs';  
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
-import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
+import { catchError, tap } from 'rxjs/operators';  
 import { ToastrService } from 'ngx-toastr';
+import { io, Socket } from 'socket.io-client'; 
 export interface Vol {
   _id?: string; 
   numVol: string;
@@ -44,19 +44,18 @@ interface Commande {
   vol:Vol|string;
 }
 const commandeURL = "http://localhost:5000/api/commande"; 
-const VolURL = "http://localhost:5000/api/vol"; 
-const WS_URL = "ws://localhost:5000"; 
+const SOCKET_URL = "http://localhost:5000"; 
 
 @Injectable({  
   providedIn: 'root'  
 })  
 export class CommandeServiceService {  
-  private socket$: WebSocketSubject<any> | null = null;  
+  private socket:Socket| null = null;  
   private newOrders$ = new Subject<any>();  
   private statusUpdates$ = new Subject<any>();  
   private connectionStatus$ = new Subject<boolean>();  
   private isBrowser: boolean;  
-  private readonly apiUrl = 'http://localhost:5000/api/meal'; 
+  private readonly apiUrl = 'http://localhost:5000/api/plat'; 
   private VolURL = "http://localhost:5000/api/vol"; 
   constructor(  
     private http: HttpClient,  
@@ -65,7 +64,55 @@ export class CommandeServiceService {
   ) {  
     this.isBrowser = isPlatformBrowser(this.platformId);  
     if (this.isBrowser) {  
-      this.initializeWebSocket();  
+      this.initializeSocketIO();  
+    }  
+  }
+  private initializeSocketIO(): void {
+    this.socket = io(SOCKET_URL, {
+      transports: ['websocket'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000
+    });
+
+    this.socket.on('connect', () => {
+      console.log('Socket.IO connected');
+      this.connectionStatus$.next(true);
+    });
+
+    this.socket.on('disconnect', () => {
+      console.warn('Socket.IO disconnected');
+      this.connectionStatus$.next(false);
+    });
+    this.socket.on('newOrder', (data: any) => {
+      this.newOrders$.next(data);
+      this.toastr.info('Nouvelle commande reçue!', 'Mise à jour en temps réel');
+    });
+    this.socket.on('orderStatusUpdate', (data: any) => {
+      this.statusUpdates$.next(data);
+      this.toastr.info('Statut de commande mis à jour', 'Mise à jour en temps réel');
+    });
+
+    this.socket.on('connect_error', (error: any) => {
+      console.error('Socket.IO connection error:', error);
+      this.connectionStatus$.next(false);
+    });
+  }
+  updateOrderStatus(orderId: string, newStatus: string): Observable<any> {  
+    return this.http.put<any>(
+      `${commandeURL}/updateStatut/${orderId}`, 
+      { Statut: newStatus }
+    ).pipe(
+      catchError(error => {
+        console.error('Error updating order status:', error);
+        this.toastr.error('Échec de la mise à jour du statut');
+        throw error;
+      })
+    );  
+  }
+  closeConnection(): void {  
+    if (this.socket) {  
+      this.socket.disconnect();
+      this.socket = null;  
     }  
   }  
   getVols():Observable<Vol[]>{
@@ -112,81 +159,14 @@ export class CommandeServiceService {
       })
     );
   }
-  private initializeWebSocket(): void {  
-    try {  
-      if (typeof WebSocket !== 'undefined') {  
-        this.connect();  
-      } else {  
-        console.warn('WebSocket not available in this environment');  
-      }  
-    } catch (e) {  
-      console.error('WebSocket initialization failed:', e);  
-    }  
-  }  
-
-  private connect(): void {  
-    if (this.socket$ && !this.socket$.closed) {  
-      return;  
-    }  
-
-    this.socket$ = webSocket({  
-      url: WS_URL,  
-      openObserver: {  
-        next: () => {  
-          console.log('WebSocket connection established');  
-          this.connectionStatus$.next(true);  
-        }  
-      },  
-      closeObserver: {  
-        next: () => {  
-          console.log('WebSocket connection closed');  
-          this.connectionStatus$.next(false);  
-          this.reconnect();  
-        }  
-      },  
-      serializer: msg => JSON.stringify(msg),  
-      deserializer: msg => JSON.parse(msg.data)  
-    });  
-
-    this.socket$.pipe(  
-      catchError((error: any) => {  
-        console.error('WebSocket error:', error);  
-        this.connectionStatus$.next(false);  
-        return EMPTY;  
-      }),  
-      retryWhen((errors: any) =>  
-        errors.pipe(  
-          delay(5000),  
-          tap(() => console.log('Retrying WebSocket connection...'))  
-        )  
-      )  
-    ).subscribe({  
-      next: (msg: any) => this.handleMessage(msg),  
-      error: (err: any) => console.error('WebSocket subscription error:', err),  
-      complete: () => console.log('WebSocket subscription completed')  
-    });  
-  }  
-
-  private handleMessage(msg: any): void {
-    console.log("Message reçu :", msg);  
-    try {  
-      if (msg.type === 'NEW_ORDER') {  
-        this.newOrders$.next(msg.data);
-       // this.toastr.success('Nouvelle commande recue','Notification');  
-      } else if (msg.type === 'STATUS_UPDATE' ) {  
-        this.statusUpdates$.next(msg.data);  
-        //this.toastr.info('Statut de la commande mis à jour', 'Mise à jour');
-      }  
-    } catch (e) {  
-      console.error('Error processing WebSocket message:', e);  
-    }  
-  }  
-
-  private reconnect(): void {  
-    if (this.isBrowser) {  
-      setTimeout(() => this.connect(), 5000);  
-    }  
-  }  
+  sendStatusUpdate(orderId: string, newStatus: string): void {
+    if (this.socket) {
+      this.socket.emit('statusUpdate', {
+        orderId,
+        newStatus
+      });
+    }
+  }
   //AllOrders
     getInitialOrders(): Observable<any[]> {  
       return this.http.get<any[]>(commandeURL)
@@ -198,34 +178,8 @@ getMyOrders(): Observable<any[]> {
     });
     return this.http.get<any[]>(`${commandeURL}/Orders`,{headers})
 
-}
-private createEmptyPlat(platId: string): Plat {
-  return {
-    _id: platId,
-    nom: 'Plat non disponible',
-    typePlat: 'Inconnu',
-    prix: 0,
-    description: ''
-  };
-}
-  updateOrderStatus(orderId: string, newStatus: string): Observable<any> {  
-    return this.http.put<any>(`${commandeURL}/updateStatut/${orderId}`, { Statut: newStatus }).pipe(  
-      tap(updatedOrder => {  
-        if (this.socket$ && !this.socket$.closed) {  
-          this.socket$.next({  
-            type: 'STATUS_UPDATE_REQUEST',  
-            data: { _id: orderId, Statut: newStatus }  
-          });  
-        }  
-      }),  
-      catchError(error => {  
-        console.error('Error updating order status:', error);  
-        throw error;
-      })  
-    );  
-  }  
+} 
 
-  // WebSocket Observables  
   getNewOrders(): Observable<any> {  
     return this.newOrders$.asObservable();  
   }  
@@ -246,16 +200,9 @@ private createEmptyPlat(platId: string): Plat {
   getConnectionStatus(): Observable<boolean> {  
     return this.connectionStatus$.asObservable();  
   }  
-
-  closeConnection(): void {  
-    if (this.socket$) {  
-      this.socket$.complete();  
-      this.socket$ = null;  
-    }  
-  }  
-
-  get isWebSocketAvailable(): boolean {  
-    return this.isBrowser && typeof WebSocket !== 'undefined';  
-  }  
-  
+  connectUser(userId: string): void {
+    if (this.socket && userId) {
+      this.socket.emit('login', userId);
+    }
+  }
 } 

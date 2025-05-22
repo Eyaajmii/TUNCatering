@@ -35,15 +35,7 @@
             </td>
             <td>{{ commande.vol?.numVol }}</td>
             <td>
-              <div *ngIf="!commande.MatriculeDirTunCater?.Matricule">
-                <div>Personnel navigant</div>
-              </div>
-              <div *ngIf="commande.MatriculeDirTunCater?.Matricule">
-                <div>Direction du catering chez Tunisair</div>
-                <div>{{ commande.MatriculeDirTunCater }}</div>
-              </div>
-              
-              <div>{{ commande.MatriculePn }}</div>
+             {{ commande.Matricule}}
             </td>            
           
             <td>

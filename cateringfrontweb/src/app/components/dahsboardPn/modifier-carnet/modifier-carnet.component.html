@@ -1,0 +1,43 @@
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Modifier le carnet de santé</h2>
+  
+    <div class="mb-3">
+      <label>Allergies</label>
+      <div *ngFor="let allergie of carnetSante.Allergies; let i = index">
+        {{ allergie }} <button class="btn btn-sm btn-danger" (click)="supprimerChamp('Allergies', i)">Supprimer</button>
+      </div>
+      <input type="text" [(ngModel)]="AllergieInput" class="form-control mt-2" placeholder="Nouvelle allergie">
+      <button class="btn btn-primary mt-1" (click)="ajouterChamp('Allergies', AllergieInput)">Ajouter</button>
+    </div>
+  
+    <div class="mb-3">
+      <label>Maladies</label>
+      <div *ngFor="let m of carnetSante.Maladie; let i = index">
+        {{ m }} <button class="btn btn-sm btn-danger" (click)="supprimerChamp('Maladie', i)">Supprimer</button>
+      </div>
+      <input type="text" [(ngModel)]="MaladieInput" class="form-control mt-2" placeholder="Nouvelle maladie">
+      <button class="btn btn-primary mt-1" (click)="ajouterChamp('Maladie', MaladieInput)">Ajouter</button>
+    </div>
+  
+    <div class="mb-3">
+      <label>Médicaments</label>
+      <div *ngFor="let med of carnetSante.Medicaments; let i = index">
+        {{ med }} <button class="btn btn-sm btn-danger" (click)="supprimerChamp('Medicaments', i)">Supprimer</button>
+      </div>
+      <input type="text" [(ngModel)]="MedicamentInput" class="form-control mt-2" placeholder="Nouveau médicament">
+      <button class="btn btn-primary mt-1" (click)="ajouterChamp('Medicaments', MedicamentInput)">Ajouter</button>
+    </div>
+  
+    <div class="mb-3">
+      <label>Commentaires</label>
+      <div *ngFor="let com of carnetSante.Commentaires; let i = index">
+        {{ com }} <button class="btn btn-sm btn-danger" (click)="supprimerChamp('Commentaires', i)">Supprimer</button>
+      </div>
+      <input type="text" [(ngModel)]="CommentaireInput" class="form-control mt-2" placeholder="Nouveau commentaire">
+      <button class="btn btn-primary mt-1" (click)="ajouterChamp('Commentaires', CommentaireInput)">Ajouter</button>
+    </div>
+  
+    <button class="btn btn-success mt-3" (click)="enregistrerModifications()">Enregistrer</button>
+    <button class="btn btn-secondary mt-3 ms-2" (click)="retour()">Annuler</button>
+  </div>
+  

@@ -1,24 +1,19 @@
 const mongoose = require("mongoose");
-const User = require("./User"); 
 const personnelnavigantSchema = new mongoose.Schema(
   {
-    userId:{
+    PersonnelTunisiarId:{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'PersonnelTunisair',
       required: true
-    },
-    
-    Matricule: {
-      type: String,
-      required: true,
-      match: /^\d{5}$/,
-      unique: true,
     },
     TypePersonnel: {
       type: String,
-      enum: ["Technique", "Commercial", "Stagiaire", "Chef de cabine"],
+      enum: ["Technique", "Commercial", "Stagiaire", "Chef de cabine","Affrété"],
       default: "Commercial",
     },
+    Prelevement:{
+      type:Number
+    }
   },
   {
     timestamps: true,

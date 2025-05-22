@@ -41,7 +41,6 @@ export class UpdatePlatComponent implements OnInit {
       nom: ['', Validators.required],
       description: ['', Validators.required],
       typePlat: ['', Validators.required],
-      prix: [0, Validators.required],
       quantite: [0, Validators.required],
       Categorie: ['', Validators.required],
       Disponibilite: [false],

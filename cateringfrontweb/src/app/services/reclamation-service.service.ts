@@ -151,4 +151,10 @@ export class ReclamationServiceService {
   getTousReclamations():Observable<any>{
     return this.http.get<any>(`${this.reclamationURL}/reclamations`);
   }
+  modifierReclamation(id:string,data:any):Observable<any>{
+    return this.http.put<any>(`${this.reclamationURL}/modifier/${id}`,data);
+  }
+  annulerReclamation(id:string):Observable<any>{
+    return this.http.put<any>(`${this.reclamationURL}/annuler/${id}`,{});
+  }
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private url='http://localhost:5000/api/auth';
   constructor(private http:HttpClient) { }
-  login(username: string, Matricule:string,password: string):Observable<any>{
-    return this.http.post(`${this.url}/authentification`, {username, Matricule,password});
+  login(username: string,password: string):Observable<any>{
+    return this.http.post(`${this.url}/authentification`, {username,password});
   }
   //fait par l'administrateur
   register(data:any):Observable<any>{
@@ -22,8 +22,19 @@ export class AuthService {
   getToken():string|null{
     return localStorage.getItem('token');
   }
-  logout():void{
+  /*logout():void{
     localStorage.removeItem('token');
+  }*/
+  logout(token: string): Observable<any> {
+    return this.http.post(`${this.url}/logout`, { token });
+  }
+  ModifierUser(data: any): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.put(`${this.url}/update`, data, { headers });
   }
   isAuthenticated():boolean{
     return this.getToken() !== null;
@@ -36,5 +47,9 @@ export class AuthService {
       return null;
     }
   }
+  getPersonnelTunisairByUsername(username: string) {
+    return this.http.get<any>(`http://localhost:5000/api/personnelTunisair/${username}`);
+  }
+  
 }
 

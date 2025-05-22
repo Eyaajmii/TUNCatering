@@ -42,8 +42,8 @@ export class FactureService {
       this.initializeWebSocket(); 
     }
   }
-  ajouterFacture(date:string):Observable<any>{
-    return this.http.post<any>(`${FactureURL}/addFacture`,{date});
+  ajouterFacture():Observable<any>{
+    return this.http.post<any>(`${FactureURL}/addFacture`,{});
   }
   AnnulerFacture(id:string):Observable<Facture>{
     return this.http.put<Facture>(`${FactureURL}/Annuler/${id}`,{});

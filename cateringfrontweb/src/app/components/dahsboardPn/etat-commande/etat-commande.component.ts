@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 export class EtatCommandeComponent implements OnInit, OnDestroy {
   commandes: any[] = [];
   subscriptions: Subscription[] = [];
-  statusFilters=[
+  statusFilters = [
     { name: 'en attente', selected: false, count: 0 },
     { name: 'prêt', selected: false, count: 0 },
     { name: 'en retard', selected: false, count: 0 },
@@ -23,19 +23,24 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
     { name: 'annulé', selected: false, count: 0 }
   ];
   selectedDate?: string;
-  constructor(private commandeService: CommandeServiceService,private router: Router) {}
+
+  constructor(
+    private commandeService: CommandeServiceService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadCommande();
+    this.loadCommandes();
+
     const newOrderSub = this.commandeService.getNewOrders().subscribe(newOrder => {
-        this.commandes.push(newOrder);
-        this.updateStatusCounts();
+      this.commandes.push(newOrder);
+      this.updateStatusCounts();
     });
 
     const statusUpdateSub = this.commandeService.getStatusUpdates().subscribe(update => {
       const index = this.commandes.findIndex(c => c._id === update._id);
       if (index !== -1) {
-        this.commandes[index].Statut = update.statut;
+        this.commandes[index].Statut = update.statut || update.Statut;
         this.commandes[index].updatedAt = update.updatedAt;
         this.updateStatusCounts();
       }
@@ -43,7 +48,8 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(newOrderSub, statusUpdateSub);
   }
-  loadCommande(){
+
+  loadCommandes(): void {
     this.commandeService.getMyOrders().subscribe({
       next: (data) => {
         this.commandes = data;
@@ -54,43 +60,51 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
-  get FiltreCommande():any[]{
-    let filtres=this.commandes;
+
+  get filtreCommande(): any[] {
+    let filtres = this.commandes;
     const selectedStatuses = this.statusFilters.filter(s => s.selected).map(s => s.name);
+
     if (selectedStatuses.length > 0) {
       filtres = filtres.filter(c => selectedStatuses.includes(c.Statut));
     }
+
     if (this.selectedDate) {
       filtres = filtres.filter(c => {
         const commandeDate = new Date(c.createdAt).toISOString().split('T')[0];
         return commandeDate === this.selectedDate;
       });
     }
+
     return filtres;
   }
-  updateStatusCounts():void{
+
+  updateStatusCounts(): void {
     this.statusFilters.forEach(filter => {
       filter.count = this.commandes.filter(c => c.Statut === filter.name).length;
     });
   }
-  modifier(id: string | undefined) {
+
+  modifier(id?: string): void {
     if (id) {
       this.router.navigate(['/AccueilPersonnel/ModifierCommande', id]);
     }
   }
-  Annuler(id: string | undefined) {
+
+  annuler(id?: string): void {
     if (id) {
-      const confirmation = confirm("Voulez-vous vraiment annuler ce commande ?");
+      const confirmation = confirm("Voulez-vous vraiment annuler cette commande ?");
       if (confirmation) {
         this.commandeService.AnnulerCommande(id).subscribe({
           next: () => {
-            this.loadCommande();
+            this.loadCommandes();
           },
           error: (error) => {
-            alert('Erreur lors de l annulation.');
+            alert('Erreur lors de l\'annulation.');
             console.error(error);
           }
         });

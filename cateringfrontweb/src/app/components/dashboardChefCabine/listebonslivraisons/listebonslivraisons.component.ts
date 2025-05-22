@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { BonLivraisonService } from '../../../services/bon-livraison.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-listebonslivraisons',
   imports: [CommonModule, FormsModule],
@@ -17,7 +18,7 @@ export class ListebonslivraisonsComponent implements OnInit {
   successMessage: string = '';
   private realTimeSub!: Subscription;
 
-  constructor(private bonLivraisonService: BonLivraisonService) {}
+  constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
     this.loadBonsLivraison();
@@ -68,30 +69,6 @@ export class ListebonslivraisonsComponent implements OnInit {
     });
   }
 
-  updateStatutBonLivraison(bonId: string, newStatut: string): void {
-    if (confirm(`Êtes-vous sûr de vouloir changer le statut du bon de livraison à "${newStatut}" ?`)) {
-      this.isLoading = true;
-      this.errorMessage = '';
-
-      this.bonLivraisonService.updateStatutBonLivraison(bonId, newStatut).subscribe({
-        next: (response: any) => {
-          if (response && response.success) {
-            this.successMessage = 'Statut du bon de livraison mis à jour avec succès';
-            this.loadBonsLivraison(); 
-          } else {
-            this.errorMessage = response.message || 'Erreur lors de la mise à jour du statut';
-          }
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Erreur:', err);
-          this.errorMessage = 'Erreur serveur lors de la mise à jour du statut';
-          this.isLoading = false;
-        }
-      });
-    }
-  }
-
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'En attente': return 'bg-warning';
@@ -108,6 +85,11 @@ export class ListebonslivraisonsComponent implements OnInit {
       case 'Non confirmé': return 'bg-danger';
       case 'En attente': return 'bg-warning';
       default: return 'bg-info';
+    }
+  }
+  aller(id: string | undefined) {
+    if (id) {
+      this.router.navigate(['/DashboardChefCabine/Statutbn', id]);
     }
   }
 }

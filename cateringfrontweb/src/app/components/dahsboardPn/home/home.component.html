@@ -116,7 +116,6 @@
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ entree.nom }}</span>
-                    <span class="text-primary">{{ entree.prix }} DT</span>
                     <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree ) ">
                       <i class="fa-solid fa-basket-shopping"></i>
                     </button>
@@ -137,7 +136,6 @@
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ principal.nom }}</span>
-                    <span class="text-primary">{{ principal.prix }} DT</span>
                     <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]=" !principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)">
                       <i class="fa-solid fa-basket-shopping"></i>
                     </button>
@@ -158,7 +156,6 @@
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ dessert.nom }}</span>
-                    <span class="text-primary">{{ dessert.prix }} DT</span>
                     <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]=" !dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)">
                       <i class="fa-solid fa-basket-shopping"></i>
                     </button>
@@ -178,7 +175,6 @@
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ b.nom }}</span>
-                    <span class="text-primary">{{ b.prix }} DT</span>
                     <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]=" !b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)">
                       <i class="fa-solid fa-basket-shopping"></i>
                     </button>
@@ -198,7 +194,6 @@
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ dj.nom }}</span>
-                    <span class="text-primary">{{ dj.prix }} DT</span>
                     <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dj, 'Petit déjuner')">
                       <i class="fa-solid fa-basket-shopping"></i>
                     </button>

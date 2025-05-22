@@ -13,13 +13,16 @@ import { CommonModule } from '@angular/common';
 export class RegisterComponent {
   registerForm!:FormGroup;
   roles:string[]=[
+    "Personnel Tunisair",
+    "Personnel Tunisie Catering"
+  ];
+  rolestunisair:string[]=[
     "Personnel navigant",
-    "Personnel Tunisie Catering",
     "Personnel de Direction du Catering Tunisiar",
     "Personnel de Direction du Personnel Tunisiar",
   ];
   typePersonnels:string[]=[
-    "Technique", "Commercial", "Stagiaire", "Chef de cabine"
+    "Technique", "Commercial", "Stagiaire", "Chef de cabine","Affrété"
   ]
   constructor(private fb: FormBuilder,private registerService:AuthService, private router: Router) {
     this.registerForm = this.fb.group({
@@ -31,40 +34,61 @@ export class RegisterComponent {
       telephone: ['', Validators.required],
       role: ['', Validators.required],
       Matricule: [''],
+      roleTunisair:[''],
       TypePersonnel: ['']
     });
     this.registerForm.get('role')?.valueChanges.subscribe(role => {
+      const roleTunisair = this.registerForm.get('roleTunisair');
       const matricule = this.registerForm.get('Matricule');
       const typePersonnel = this.registerForm.get('TypePersonnel');
 
-      // Reset and disable by default
+      roleTunisair?.reset();
       matricule?.reset();
       typePersonnel?.reset();
+
+      roleTunisair?.clearValidators();
       matricule?.clearValidators();
       typePersonnel?.clearValidators();
 
-      if (role === 'Personnel navigant') {
+      if (role === 'Personnel Tunisair') {
+        roleTunisair?.setValidators([Validators.required]);
+      }
+
+      roleTunisair?.updateValueAndValidity();
+      matricule?.updateValueAndValidity();
+      typePersonnel?.updateValueAndValidity();
+    });
+
+    this.registerForm.get('roleTunisair')?.valueChanges.subscribe(rt => {
+      const matricule = this.registerForm.get('Matricule');
+      const typePersonnel = this.registerForm.get('TypePersonnel');
+
+      matricule?.reset();
+      typePersonnel?.reset();
+
+      matricule?.clearValidators();
+      typePersonnel?.clearValidators();
+
+      if (rt === 'Personnel navigant') {
         matricule?.setValidators([Validators.required]);
         typePersonnel?.setValidators([Validators.required]);
-      } else if (
-        role === 'Personnel de Direction du Catering Tunisiar' ||
-        role === 'Personnel de Direction du Personnel Tunisiar'
-      ) {
+      } else if (rt === 'Personnel de Direction du Catering Tunisiar' || rt === 'Personnel de Direction du Personnel Tunisiar') {
         matricule?.setValidators([Validators.required]);
       }
 
       matricule?.updateValueAndValidity();
       typePersonnel?.updateValueAndValidity();
     });
-   }
-   onSubmit(){
+  }
+
+  onSubmit() {
     if (this.registerForm.valid) {
       this.registerService.register(this.registerForm.value).subscribe({
-        next: (res) => {
+        next: () => {
           alert('Utilisateur enregistré avec succès');
-          this.router.navigate(['/admin-dashboard']); // à adapter selon votre route
+          this.router.navigate(['/Dashboard']);
         },
-        error: (err) => {
+        error: err => {
           alert('Erreur : ' + err.error);
         }
       });

@@ -1,0 +1,48 @@
+<div *ngIf="bonLivraison">
+  <h2>Bon de Livraison : {{ bonLivraison.numeroBon }}</h2>
+
+  <h3>Commandes</h3>
+  <ul>
+    <li *ngFor="let c of bonLivraison.commandes">
+      <label>
+        <input
+          type="checkbox"
+          [(ngModel)]="c.confirme"
+          (change)="toggleCommande(c.commande._id, c.confirme)"
+          [disabled]="confirmerConformite"
+        />
+        Commande: {{ c.commande.Matricule}} - {{ c.commande.menu ||'liste des plats' }}
+      </label>
+    </li>
+  </ul>
+
+  <hr />
+
+  <div class="form-check">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="confirmerConformite"
+      [(ngModel)]="confirmerConformite"
+      (ngModelChange)="onGlobalConfirmationChange($event)"
+    />
+    <label class="form-check-label" for="confirmerConformite">
+      Confirmer la conformité de toutes les commandes
+    </label>
+  </div>
+
+  <div class="mt-3">
+    <button
+      class="btn btn-success me-2"
+      (click)="validerBonLivraison()"
+      [disabled]="isLoading"
+    >
+      Confirmer
+    </button>
+  </div>
+
+  <div *ngIf="bonLivraison.conformite">
+    <p>Conformité : {{ bonLivraison.conformite }}</p>
+    <p>Statut : {{ bonLivraison.Statut }}</p>
+  </div>
+</div>

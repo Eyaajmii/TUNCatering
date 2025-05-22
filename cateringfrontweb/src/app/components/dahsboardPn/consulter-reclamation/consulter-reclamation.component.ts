@@ -54,6 +54,24 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
   voirDetails(id: string) {
     this.router.navigate(['/AccueilPersonnel/reponse/', id]);
   }
+  Modifier(id:string){
+    this.router.navigate(['/AccueilPersonnel/modifierReclamation/', id]);
+  }
+  Annuler(id:string){
+    if (confirm('Voulez-vous vraiment supprimer cette réclamation ?')) {
+      this.reclamationservice.annulerReclamation(id).subscribe({
+        next: () => {
+          alert('Reclamtion annulée avec succès.');
+        },
+        error: (err) => {
+          console.error('Erreur de suppression :', err);
+        }
+      });
+    }
+  }
+  Ajouter(){
+    this.router.navigate(['/AccueilPersonnel/Ajoutreclamation'])
+  }
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }

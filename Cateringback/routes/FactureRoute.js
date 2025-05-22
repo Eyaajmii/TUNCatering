@@ -5,8 +5,7 @@ const facturecontroller=require("../controllers/FactureController");
 module.exports=function(broadcastNewFacture,broadcastFactureStatusUpdate){
 router.post("/addFacture",async(req,res)=>{
     try{
-        const{date}=req.body;
-        const facture = await facturecontroller.creerFacture(date);
+        const facture = await facturecontroller.creerFacture();
         broadcastNewFacture({
           ...facture._doc,
           type: "Facture",

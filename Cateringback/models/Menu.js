@@ -14,38 +14,36 @@ const menuSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  prixtotal: {
-    type: Number,
-    default: 0,
-  },
   PlatsPrincipaux: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      ref: "Plat",
     },
   ],
   PlatsEntree: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      ref: "Plat",
     },
   ],
   PlatsDessert: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      ref: "Plat",
     },
   ],
   Boissons: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      ref: "Plat",
     },
   ],
-  PetitDejuner:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Meal"
-  }],
+  PetitDejuner: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plat",
+    },
+  ],
   personnelTunisieCatering: {
     type: String,
   },

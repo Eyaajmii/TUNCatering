@@ -11,13 +11,14 @@ const FactureSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    dateCreation: {
-      type: Date,
-      default: Date.now,
+    Preleve: {
+      type: Boolean,
+      default: false,
     },
     DateFacture: {
       type: Date,
       required: true,
+      default: Date.now,
     },
     Statut: {
       type: String,
@@ -37,7 +38,7 @@ const FactureSchema = new mongoose.Schema(
     montantParVol: [
       {
         vol: {
-          type:String,
+          type: String,
         },
         montant: Number,
       },
@@ -45,7 +46,7 @@ const FactureSchema = new mongoose.Schema(
     montantParPn: [
       {
         personnel: {
-          type:String
+          type: String,
         },
         montant: Number,
       },

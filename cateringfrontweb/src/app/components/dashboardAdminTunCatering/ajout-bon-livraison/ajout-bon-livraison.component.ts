@@ -1,35 +1,44 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BonLivraisonService } from '../../../services/bon-livraison.service';
 import { CommandeServiceService } from '../../../services/commande-service.service';
 
 @Component({
   selector: 'app-ajout-bon-livraison',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule],
   templateUrl: './ajout-bon-livraison.component.html',
   styleUrl: './ajout-bon-livraison.component.css'
 })
-export class AjoutBonLivraisonComponent {
-  numVol: string = '';
+export class AjoutBonLivraisonComponent implements OnInit {
+  //numVol: string = '';
+  vols:any[]=[];
   commandes: any[] = [];
   errorMessage: string = '';
   selectedCommandes: string[] = [];
   personnelLivraisonId: string = ''; 
-
+  BnFrom:FormGroup;
   constructor(
     private commandeService: CommandeServiceService,
-    private bonLivraisonService: BonLivraisonService
-  ) {}
+    private bonLivraisonService: BonLivraisonService,
+    private fb: FormBuilder
+  ) {
+    this.BnFrom=this.fb.group({
+      'numVol':[''],
+    })
+  }
+  ngOnInit(): void {
+    this.commandeService.getVols().subscribe(vols => {
+      console.log(vols);
+      this.vols = vols.map(vol => ({
+          ...vol,
+          numVol: vol.numVol.trim()
+        }));
+    });
+  }
 
   searchCommandes(): void {
-    if (!this.numVol.trim()) {
-      this.errorMessage = "Veuillez entrer un numéro de vol.";
-      return;
-    }
-    this.errorMessage = '';
-
-    this.commandeService.getCommandesByVol(this.numVol).subscribe({
+    this.commandeService.getCommandesByVol(this.BnFrom.value.numVol).subscribe({
       next: (response) => {
         console.log("Response from API:", response);
         if (response && response.success) {
@@ -37,7 +46,7 @@ export class AjoutBonLivraisonComponent {
           this.selectedCommandes = this.commandes.map(commande => commande._id);
           this.errorMessage = '';
         } else {
-          this.errorMessage = `Aucune commande trouvée pour le vol ${this.numVol}`;
+          this.errorMessage = `Aucune commande trouvée pour le vol ${this.BnFrom.value.numVol}`;
           this.commandes = [];
         }
       },
@@ -57,7 +66,7 @@ export class AjoutBonLivraisonComponent {
 
     const bonLivraisonData: any = {
       numeroBon: `BL-${new Date().getFullYear()}-${(Math.random() * 10000).toFixed(0)}`, 
-      volId: this.numVol,
+      volId: this.BnFrom.value.numVol,
       commandes: this.selectedCommandes,
     };
 

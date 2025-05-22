@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const ReclamationSchema = new mongoose.Schema({
-  /*NumeroReclamation: {
+  NumeroReclamation: {
     type: String,
     required: true,
     unique: true,
-  },*/
+  },
   dateSoumission: {
     type: Date,
     default: Date.now,

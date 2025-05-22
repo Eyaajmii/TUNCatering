@@ -1,18 +1,23 @@
 <div class="container">
   <h2>Créer un bon de livraison</h2>
 
-  <div class="form-group">
-    <label for="numVol">Numéro de Vol :</label>
-    <input type="text" id="numVol" [(ngModel)]="numVol" class="form-control" placeholder="Entrez le numéro de vol">
-    <button (click)="searchCommandes()" class="btn btn-primary mt-2">Rechercher</button>
-  </div>
+  <form [formGroup]="BnFrom">
+    <div class="form-group"> 
+      <label>Numéro de vol</label>
+      <div *ngIf="vols.length === 0">Chargement des vols...</div>
+      <select class="form-control" formControlName="numVol">
+        <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
+      </select>
+      <button (click)="searchCommandes()" type="button" class="btn btn-primary mt-2">Rechercher</button>
+    </div>
+  </form>
 
   <div *ngIf="errorMessage" class="alert alert-danger mt-3">
     {{ errorMessage }}
   </div>
 
   <div *ngIf="commandes.length > 0" class="card mt-3">
-    <div class="card-header">Commandes associées au vol {{ numVol }}</div>
+    <div class="card-header">Commandes associées au vol</div>
     <div class="card-body">
       <table class="table table-bordered">
         <thead>
@@ -33,7 +38,7 @@
               </ul>
             </td>
             <td>
-              <span *ngIf="commande.Matricule">{{ commande.Matricule}}</span>
+              <span *ngIf="commande.Matricule">{{ commande.Matricule }}</span>
             </td>
           </tr>
         </tbody>

@@ -2,7 +2,7 @@ const express = require('express');
 const mealController=require("../controllers/mealController");
 const upload=require("../middlware/upload");
 const router = express.Router();
-const Meal = require('../models/Meal');
+const Meal = require('../models/Plat');
 const{authenticateToken}=require("../middlware/auth");
 router.get("/",async(req,res)=>{
     try{

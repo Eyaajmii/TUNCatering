@@ -1,8 +1,6 @@
 <div class="container mt-4">
   <h2 class="mb-3">Mes Réclamations</h2>
-
-
-
+  <button (click)="Ajouter()">Ajouter </button>
   <div *ngIf="reclamations.length === 0 ">
     <p>
       Aucune réclamation trouvée pour le matricule
@@ -42,6 +40,8 @@
             <button class="btn btn-info btn-sm" (click)="voirDetails(rec._id)">
               Détails
             </button>
+            <button class="btn btn-warning btn-sm" (click)="Modifier(rec._id)">Modifier</button>
+            <button class="btn btn-warning btn-sm" (click)="Annuler(rec._id)">Annuler</button>
           </td>
         </tr>
       </tbody>

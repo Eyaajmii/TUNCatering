@@ -1,5 +1,5 @@
 const Menu = require("../models/Menu"); 
-const Meal = require("../models/Meal"); 
+const Meal = require("../models/Plat"); 
 
 class menuController {
   //create a menu
@@ -30,12 +30,6 @@ class menuController {
       if(platsPrincipaux[0]?.quantite<=0||platsEntrees[0]?.quantite<=0||platsDesserts[0]?.quantite<=0||boissons[0]?.quantite<=0){
         throw new Error("Quantité insuffisante pour les plats choisis");
       }
-      const prixTotal =
-        (platsPrincipaux[0]?.prix || 0) +
-        (platsEntrees[0]?.prix || 0) +
-        (platsDesserts[0]?.prix || 0) +
-        (boissons[0]?.prix||0);
-      
       const nouveauMenu = await Menu.create({
         nom,
         PlatsPrincipaux,
@@ -43,7 +37,6 @@ class menuController {
         PlatsDessert,
         Boissons,
         Disponible: true,
-        prixtotal: prixTotal,
         DateAjout: Date.now(),
         personnelTunisieCatering: personnelTunisieCatering,
       }); 

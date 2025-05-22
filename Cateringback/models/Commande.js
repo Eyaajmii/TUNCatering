@@ -50,7 +50,7 @@ const commandeSchema = new mongoose.Schema({
   plats: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      ref: "Plat",
     },
   ],
 });

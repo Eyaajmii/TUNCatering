@@ -57,7 +57,6 @@ export class UpdateMenuComponent implements OnInit {
       next: (data) => {
         this.menuForm.patchValue({
           nom: data.nom,
-          prixtotal: data.prixtotal,
           PlatsEntree: data.PlatsEntree[0]?._id,
           PlatsPrincipaux: data.PlatsPrincipaux[0]?._id,
           PlatsDessert: data.PlatsDessert[0]?._id,

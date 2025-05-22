@@ -34,18 +34,21 @@ export class BonLivraisonService {
   getAllBonsLivraison(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/all`)
   }
-  updateStatutBonLivraison(bonId: string, newStatut: string): Observable<any> {
+  updateStatutBonLivraison(bonId: string, payload: any): Observable<any> {
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
     });
-    return this.http.put<any>(`${this.apiUrl}/${bonId}/statut`, {statut: newStatut},{headers});
+    return this.http.put<any>(`${this.apiUrl}/${bonId}/statut`,payload,{headers});
   }
   annulerBonLivraison(bonId: string): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/annule/${bonId}`,{});
   }
   ModifierBonLivraison(id:string,bn:BonLivraison):Observable<BonLivraison>{
     return this.http.put<BonLivraison>(`${this.apiUrl}/modifier/${id}`, bn)
+  }
+  BonsLivraisonNonFacture():Observable<BonLivraison[]>{
+    return this.http.get<BonLivraison[]>(`${this.apiUrl}/Nonfacture`,)
   }
   downloadPdf(numeroBon: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/pdf/${numeroBon}`, { 

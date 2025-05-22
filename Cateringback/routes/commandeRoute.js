@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
+const user=require("../models/User");
+const personnelTunisair=require("../models/PersonnelTunisairModel");
 const CommandeController = require("../controllers/commandeController");
 const { authenticateToken } = require("../middlware/auth");
 
@@ -27,34 +28,26 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/Orders", authenticateToken ,async (req, res) => {
     try {
-      const Matricule = req.user.Matricule;
+      const username = req.user.username;
+      const User = await user.findOne({ username: username });
+      const pn = await personnelTunisair.findOne({ userId: User._id });
+      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+      const Matricule = pn.Matricule;
       const orders = await CommandeController.getMyOrders(Matricule);
       res.status(200).json(orders);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
-  router.post("/addCommandeAffrete", authenticateToken, async (req, res) => {
-    try {
-      //const numvol = parseInt(req.body.numVol);
-      const { numVol, nom, nbrCmd } = req.body;
-      const Matricule = req.user.Matricule;
-      const newcommande = await CommandeController.RequestCommande(
-        numVol.trim(),
-        nom,
-        Matricule,
-        nbrCmd
-      );
-      res.status(200).json(newcommande);
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
-  });
-  router.post("/addCommandeMenu", authenticateToken, async (req, res) => {
+  router.post("/addCommandeMenu", authenticateToken,async (req, res) => {
     try {
       //const numVol = parseInt(req.body.numVol);
       const { nom, numVol } = req.body;
-       const Matricule = req.user.Matricule;
+      const username = req.user.username;
+      const User = await user.findOne({ username: username });
+      const pn = await personnelTunisair.findOne({ userId: User._id });
+      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+      const Matricule = pn.Matricule;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
         nom,
@@ -71,7 +64,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(error.message);
     }
   });
-  router.post("/addCommandePlat", authenticateToken, async (req, res) => {
+  router.post("/addCommandePlat", authenticateToken ,async (req, res) => {
     try {
       const {
         numVol,
@@ -81,7 +74,11 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomBoissons,
         nomsPetitdejuner
       } = req.body;
-       const Matricule = req.user.Matricule;
+      const username = req.user.username;
+      const User = await user.findOne({ username: username });
+      const pn = await personnelTunisair.findOne({ userId: User._id });
+      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+      const Matricule = pn.Matricule;
       const newCommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,
@@ -145,12 +142,16 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         req.params.id,
         Statut.toLowerCase() 
       );
-
+      const destinataireNotification = updateCommande ? updateCommande.Matricule: null;
+      if (!destinataireNotification) {
+        console.error(`[CommandeRoute /updateStatut/:id] ERREUR: updateCommande.Matricule (créateur de la commande ${req.params.id}) est indéfini ou la réponse du contrôleur est invalide. La notification de mise à jour ne sera pas ciblée.`);
+      }
       // Broadcast
       broadcastOrderStatusUpdate({
         _id: req.params.id,
         statut: Statut,
         updatedAt: new Date(),
+        destinataire: destinataireNotification,
       });
 
       res.status(200).json(updateCommande);
@@ -178,6 +179,6 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     }catch(err){
       res.status(500).send(err.message);
     }
-  })
+  });
   return router;
 };

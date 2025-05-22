@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 const  menuURL="http://localhost:5000/api/menu";
-const platURL="http://localhost:5000/api/meal";
+const platURL="http://localhost:5000/api/plat";
 
 export interface Plat{
   _id?: string;
@@ -11,7 +11,6 @@ export interface Plat{
   description:string;
   image?:string;
   typePlat:string;
-  prix:number;
   Disponibilite:boolean;
   Categorie:string;
   quantite:number;
@@ -25,7 +24,6 @@ export interface Menu{
   PlatsDessert:Plat[];
   Boissons:Plat[];
   Disponible:boolean;
-  prixtotal:number;
 }
 @Injectable({
   providedIn: 'root'

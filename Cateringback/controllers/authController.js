@@ -1,11 +1,12 @@
-const bcrypt=require("bcrypt");
-const user=require("../models/User");
-const pn=require("../models/personnelnavigant");
-const pnTunisieCatering=require("../models/AdminTunCatering");
-const pnDirectionCatering=require("../models/PersonnelTunDirCatering");
-const pnDirectionPersonnel=require("../models/personnelDirPersonnel");
-const admin=require("../models/adminModel")
-const{generateAccesToken}=require("../middlware/auth");
+const bcrypt = require("bcrypt");
+const user = require("../models/User");
+const userTunisair=require("../models/PersonnelTunisairModel");
+const pn = require("../models/personnelnavigant");
+const pnTunisieCatering = require("../models/AdminTunCatering");
+const pnDirectionCatering = require("../models/PersonnelTunDirCatering");
+const pnDirectionPersonnel = require("../models/personnelDirPersonnel");
+const admin = require("../models/adminModel");
+const { generateAccesToken } = require("../middlware/auth");
 
 class AuthController {
   static async register(
@@ -17,6 +18,7 @@ class AuthController {
     telephone,
     role,
     Matricule,
+    roleTunisair,
     TypePersonnel
   ) {
     try {
@@ -34,25 +36,33 @@ class AuthController {
         telephone,
         role,
       });
-      if (role == "Personnel navigant") {
-        await pn.create({
+      if (role == "Personnel Tunisair") {
+        const personnelTunisair = await userTunisair.create({
           userId: newuser._id,
           Matricule,
-          TypePersonnel,
+          roleTunisair,
         });
+        if (roleTunisair == "Personnel navigant") {
+          await pn.create({
+            PersonnelTunisiarId: personnelTunisair._id,
+            TypePersonnel,
+          });
+        } else if (
+          roleTunisair == "Personnel de Direction du Catering Tunisiar"
+        ) {
+          await pnDirectionCatering.create({
+            PersonnelTunisiarId: personnelTunisair._id,
+          });
+        } else if (
+          roleTunisair == "Personnel de Direction du Personnel Tunisiar"
+        ) {
+          await pnDirectionPersonnel.create({
+            PersonnelTunisiarId: personnelTunisair._id,
+          });
+        }
       } else if (role == "Personnel Tunisie Catering") {
         await pnTunisieCatering.create({
           userId: newuser._id,
-        });
-      } else if (role == "Personnel de Direction du Catering Tunisiar") {
-        await pnDirectionCatering.create({
-          userId: newuser._id,
-          Matricule,
-        });
-      } else if (role == "Personnel de Direction du Personnel Tunisiar") {
-        await pnDirectionPersonnel.create({
-          userId: newuser._id,
-          Matricule,
         });
       } else if (role == "Administrateur") {
         await admin.create({
@@ -64,7 +74,7 @@ class AuthController {
       throw new Error(err.message);
     }
   }
-  static async login(username, Matricule, password) {
+  static async login(username, password) {
     try {
       const Finduser = await user.findOne({ username });
       if (!Finduser) {
@@ -75,13 +85,22 @@ class AuthController {
         throw new Error("Mot de passe incorrect");
       }
       let TypePersonnel = null;
-      if (Finduser.role === "Personnel navigant") {
-        const pnData = await pn.findOne({ Matricule });
-        if (pnData) TypePersonnel = pnData.TypePersonnel;
+      if (Finduser.role === "Personnel Tunisair") {
+        const personnelTunisair = await userTunisair.findOne({
+          userId: Finduser._id,
+        });
+        if (
+          personnelTunisair &&
+          personnelTunisair.roleTunisair === "Personnel navigant"
+        ) {
+          const pnData = await pn.findOne({
+            PersonnelTunisiarId: personnelTunisair._id,
+          });
+          TypePersonnel = pnData?.TypePersonnel || null;
+        }
       }
       const token = generateAccesToken(
         Finduser.username,
-        Matricule || null,
         Finduser.role,
         TypePersonnel
       );

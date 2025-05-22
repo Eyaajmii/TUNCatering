@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-reclamation=require("../models/ReclamationModel");
-notification=require("../models/NotificationModel");
+const reclamation=require("../models/ReclamationModel");
+const notification=require("../models/NotificationModel");
+const user = require("../models/User");
+const personnelTunisair = require("../models/PersonnelTunisairModel");
 const reclamationController=require("../controllers/ReclamationController");
 const { authenticateToken } = require("../middlware/auth");
 const upload = require("../middlware/upload");
@@ -9,12 +11,20 @@ const upload = require("../middlware/upload");
 module.exports=function(broadcastNewReclamation,broadcastReclamationStatusUpdate){
 router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),async(req,res)=> {
   try {
+    const username = req.user.username;
+    const User = await user.findOne({ username: username });
+    const pn = await personnelTunisair.findOne({ userId: User._id });
+    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+    const Matricule = pn.Matricule;
+    const randomPart=Math.floor(Math.random()*1000).toString().padStart(3,'0');
+    const NumeroReclamation = `REC-${randomPart}`;
     const { Objet, MessageEnvoye, imageUrl } = req.body;
     const newReclamation = await reclamation.create({
+      NumeroReclamation,
       Objet,
       MessageEnvoye,
       MessageReponse: null,
-      MatriculePn: req.user.Matricule,
+      MatriculePn:Matricule,
       MatriculeDirTunCater: null,
       dateSoumission: Date.now(),
       Statut: "en attente",
@@ -22,8 +32,8 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
     });
 
     const notifcreer = await notification.create({
-      message: `Nouvelle réclamation créée pour le personnel navigant ${req.user.Matricule}`,
-      user: req.user.Matricule,
+      message: `Nouvelle réclamation créée pour le personnel navigant ${Matricule}`,
+      user:Matricule,
       notificationType: "reclamation",
     });
     global.io.emit("newNotification", {
@@ -37,6 +47,7 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
       ...newReclamation._doc,
       type: "Reclamation",
       items: [{ newReclamation, quantite: 1 }],
+      destinataire: Matricule,
     });
     res.status(200).json(newReclamation);
   } catch (err) {
@@ -46,7 +57,12 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
 });
 router.get("/reclamation",authenticateToken,async(req,res)=>{
     try{
-        const MatriculePn = req.user.Matricule;
+        const username = req.user.username;
+        const User = await user.findOne({ username: username });
+        const pn = await personnelTunisair.findOne({ userId: User._id });
+        if (!pn)
+          return res.status(404).json({ message: "Matricule non trouvé" });
+        const MatriculePn = pn.Matricule;
         const reclamations = await reclamationController.MesReclamations(MatriculePn);
         res.status(200).json({ reclamations });
     }catch(err){
@@ -65,7 +81,11 @@ router.get("/reclamation/detail/:id",async (req,res)=>{
 router.put("/repondre/:id", authenticateToken, async (req, res) => {
   try {
     const { newStatut, MessageReponse } = req.body;
-    const MatriculeDirTunCater = req.user.Matricule;
+    const username = req.user.username;
+    const User = await user.findOne({ username: username });
+    const pn = await personnelTunisair.findOne({ userId: User._id });
+    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
+    const MatriculeDirTunCater = pn.Matricule;
     const reponse = await reclamationController.reponseReclamation(
       req.params.id,
       newStatut,
@@ -77,7 +97,8 @@ router.put("/repondre/:id", authenticateToken, async (req, res) => {
       statut: newStatut,
       MessageReponse,
       MatriculeDirTunCater,
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
+      destinataire: reponse.MatriculePn,
     });
     res.status(200).json({ message: "Reponse envoyee avec succes", reponse });
   } catch (err) {
@@ -100,6 +121,14 @@ router.put("/annuler/:id", async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+router.put("/modifier/:id",async(req,res)=>{
+  try{
+    const rec=await reclamationController.ModifReclamation(req.params.id,req.body);
+    res.status(200).json(rec);
+  }catch(err){
+    res.status(400).json({ error: err.message });
+  }
+})
 return router;
 }
 

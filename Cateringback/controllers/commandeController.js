@@ -1,6 +1,6 @@
 const commande = require("../models/Commande");
 const Menu = require("../models/Menu");
-const plat = require("../models/Meal");
+const plat = require("../models/Plat");
 const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
 const Vol = require("../models/vol");
@@ -86,78 +86,7 @@ class CommandeController {
       throw new Error("Error retrieving command: " + error.message);
     }
   }
-  //Orders for tunisair direction
-  static async RequestCommande(numVol, nom, Matricule, nbrCmd) {
-    try {
-      const vol = await Vol.findOne({ numVol: numVol });
-      if (!vol) {
-        throw new Error("Flight not found");
-      }
-
-      const volId = vol._id;
-      const dureeVol = parseInt(vol.DureeVol);
-      const cmdExist = await commande.countDocuments({
-        vol: volId,
-        MatriculeDirTunCater,
-      });
-      if (dureeVol > 6 && cmdExist >= 2) {
-        throw new Error("Only 2 menu are allowed per PN for flights > 6h");
-      }
-      if (dureeVol <= 6 && cmdExist >= 1) {
-        throw new Error("Only 1 menu is allowed per PN for flights ≤ 6h");
-      }
-
-      const menu = await Menu.findOne({ nom: nom });
-      if (!menu || !menu.Disponible) {
-        throw new Error("Menu not available");
-      }
-
-      const menuId = menu._id;
-      const now = new Date();
-      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      const limitdate = new Date(vol.dateVolDep);
-      if (date > limitdate) {
-        throw new Error("Commande not allowed after the flight departure time");
-      }
-
-      const deadline = new Date(limitdate);
-      if (["Tunis", "Monastir", "Djerba"].includes(vol.Depart)) {
-        deadline.setHours(deadline.getHours() - 3);
-      } else if (
-        ["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)
-      ) {
-        deadline.setHours(deadline.getHours() - 12);
-      }
-      const total = menu.prixtotal * nbrCmd;
-      const newCmd = await commande.create({
-        vol: volId,
-        menu: menuId,
-        dateCommnade: date,
-        Statut: "En attente",
-        NombreCommande: nbrCmd,
-        montantsTotal: total,
-        Matricule: Matricule,
-      });
-      await menucontroller.miseajourmenuCommande(nom);
-      const notifcreer = await notification.create({
-        message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: Matricule,
-        notificationType: "commande",
-      });
-      global.io.emit("newNotification", {
-        _id: notifcreer._id,
-        message: notifcreer.message,
-        createdAt: notifcreer.createdAt,
-        user: notifcreer.user,
-        notificationType: notifcreer.notificationType,
-      });
-      return newCmd;
-    } catch (err) {
-      console.error("Erreur lors de la récupération des commandes:", err);
-      throw err;
-    }
-  }
-
+  
   // Order Menu
   static async RequestCommandeMenu(numVol, nom, Matricule) {
     try {
@@ -202,14 +131,13 @@ class CommandeController {
       ) {
         deadline.setHours(deadline.getHours() - 12);
       }
-      const total = menu.prixtotal;
       const newCmd = await commande.create({
         vol: volId,
         menu: menuId,
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
-        montantsTotal: total,
+        montantsTotal:2.5,
         Matricule: Matricule || undefined,
       });
       await menucontroller.miseajourmenuCommande(nom);
@@ -224,6 +152,7 @@ class CommandeController {
         createdAt: notifcreer.createdAt,
         user: notifcreer.user,
         notificationType: notifcreer.notificationType,
+        destinataire: Matricule,
       });
       return newCmd;
     } catch (err) {
@@ -338,34 +267,20 @@ class CommandeController {
       if (date > limitdate) {
         throw new Error("Order not allowed after the flight departure time");
       }
-
-      let total = 0;
       let platsArray = [];
-
-      if (Petitdejeuner.length > 0) {
-        total = Petitdejeuner.reduce((sum, plat) => sum + plat.prix, 0);
-        platsArray = Petitdejeuner.map((plat) => plat._id);
-      } else {
-        total =
-          (Entree ? Entree.prix : 0) +
-          (PlatPrincipal ? PlatPrincipal.prix : 0) +
-          (Dessert ? Dessert.prix : 0) +
-          (Boissons ? Boissons.prix : 0);
         platsArray = [
           ...(Entree ? [Entree._id] : []),
           ...(PlatPrincipal ? [PlatPrincipal._id] : []),
           ...(Dessert ? [Dessert._id] : []),
           ...(Boissons ? [Boissons._id] : []),
         ];
-      }
-
       const newCmd = await commande.create({
         vol: volId,
         plats: platsArray,
         dateCommande: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
-        montantsTotal: total,
+        montantsTotal:2.5,
         Matricule: Matricule || undefined,
       });
       if (Boissons) {
@@ -394,6 +309,7 @@ class CommandeController {
         createdAt: notifcreer.createdAt,
         user: notifcreer.user,
         notificationType: notifcreer.notificationType,
+        destinataire: Matricule,
       });
 
       console.log("Commande bien enregistrée");
@@ -428,6 +344,7 @@ class CommandeController {
           createdAt: notifcreer.createdAt,
           user: notifcreer.user,
           notificationType: notifcreer.notificationType,
+          destinataire: updatedCommande.Matricule,
         });
       }
       return updatedCommande;

@@ -50,13 +50,7 @@
                   [disabled]="isLoading">
                   <i class="bi bi-download"></i> PDF
                 </button>
-                
-                <select (change)="updateStatutBonLivraison(bon._id, $any($event.target).value)" class="form-select form-select-sm">
-                  <option value="En attente" [selected]="bon.Statut === 'En attente'">En attente</option>
-                  <option value="En retard" [selected]="bon.Statut === 'En retard'">En retard</option>
-                  <option value="Annulé" [selected]="bon.Statut === 'Annulé'">Annulé</option>
-                  <option value="Livré" [selected]="bon.Statut === 'Livré'">Livré</option>
-                </select>
+                <button (click)="aller(bon._id)" class="btn btn-sm btn-secondary" [disabled]="bon.Statut==='Annulé'">Controler</button>
               </td>
             </tr>
           </tbody>

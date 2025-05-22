@@ -11,6 +11,7 @@ class PrelevementController {
       const factures = await facture.find({
         DateFacture: { $gte: debut, $lte: fin },
         Statut: "confirmé",
+        Preleve:false
       });
 
       console.log("Nombre de factures trouvées :", factures.length);
@@ -41,7 +42,13 @@ class PrelevementController {
         console.log("Prélevement créé :", created);
         result.push(created);
       }
-
+      const fct=factures.map(f=>f._id);
+      if (fct.length > 0) {
+        await facture.updateMany(
+          { _id: { $in: fct } },
+          { $set: { Preleve: true } }
+        );
+      }
       console.log("Prélevements générés :", result.length);
       return result;
     } catch (err) {

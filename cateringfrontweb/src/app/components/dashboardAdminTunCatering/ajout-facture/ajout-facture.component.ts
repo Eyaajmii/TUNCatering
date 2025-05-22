@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FactureService } from '../../../services/facture.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BonLivraisonService } from '../../../services/bon-livraison.service';
 
 @Component({
   selector: 'app-ajout-facture',
@@ -10,22 +11,26 @@ import { CommonModule } from '@angular/common';
   styleUrl: './ajout-facture.component.css'
 })
 export class AjoutFactureComponent {
-  dateFacture: string = "";
   facture: any = null;
   erreur: string = "";
-
-  constructor(private factureService: FactureService) {}
-
+  bons:any[]=[];
+  constructor(private factureService: FactureService,private bonLivraisonService: BonLivraisonService ) {}
+  rechercher(){
+    this.bonLivraisonService.BonsLivraisonNonFacture().subscribe({
+      next: (response) => {
+          this.bons = response;
+      },
+      error: (err) => {
+        console.error("Erreur dans la récupération des bons de livraisons:", err);
+        this.bons = [];
+      }
+    });
+  }
   onSubmit() {
     this.facture = null;
     this.erreur = "";
 
-    if (!this.dateFacture) {
-      this.erreur = "Veuillez saisir la date de la facture.";
-      return;
-    }
-
-    this.factureService.ajouterFacture(this.dateFacture).subscribe({
+    this.factureService.ajouterFacture().subscribe({
       next: (res) => {
         this.facture = res.data;
       },
