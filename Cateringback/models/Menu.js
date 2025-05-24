@@ -38,12 +38,6 @@ const menuSchema = new mongoose.Schema({
       ref: "Plat",
     },
   ],
-  PetitDejuner: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Plat",
-    },
-  ],
   personnelTunisieCatering: {
     type: String,
   },

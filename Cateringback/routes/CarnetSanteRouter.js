@@ -7,11 +7,7 @@ const { authenticateToken } = require("../middlware/auth");
 router.post("/addCarnet", authenticateToken, async (req, res) => {
   try {
     const {Allergies, Maladie, Medicaments, Commentaires } =req.body;
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const Matricule = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const CarnetNouveau = await CarnetSanteController.creerCarnet(
       Matricule,
       Allergies,
@@ -28,11 +24,7 @@ router.post("/addCarnet", authenticateToken, async (req, res) => {
 });
 router.get("/Carnet", authenticateToken, async (req, res) => {
   try {
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const Matricule = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const carnet = await CarnetSanteController.getCarnet(Matricule);
     res.status(200).json({ message: "Carnet récupéré avec succès", carnet });
   } catch (err) {
@@ -41,11 +33,7 @@ router.get("/Carnet", authenticateToken, async (req, res) => {
 });
 router.put("/updateCarnet", authenticateToken,async (req, res) => {
   try {
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const Matricule = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const carnetUpdate = await CarnetSanteController.modifCarnet(
       Matricule,
       req.body
@@ -59,11 +47,7 @@ router.put("/updateCarnet", authenticateToken,async (req, res) => {
 });
 router.delete("/supprimer", authenticateToken, async (req, res) => {
   try {
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const Matricule = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const carnet = await CarnetSanteController.supprimerCarnet(
       Matricule
     );

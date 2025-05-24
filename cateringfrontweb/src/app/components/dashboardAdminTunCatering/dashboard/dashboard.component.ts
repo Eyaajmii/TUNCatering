@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,Inject, PLATFORM_ID } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule,isPlatformBrowser } from '@angular/common';
 import { CommandeServiceService } from '../../../services/commande-service.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -18,19 +18,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private commandeService: CommandeServiceService,
-    private toastr: ToastrService
+    private toastr: ToastrService,@Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-    this.commandeService.getNewOrders().subscribe(notification => {
-      this.toastr.success(notification.message, 'Nouvelle commande reçue');
-    });
+    
   }
 
   ngAfterViewInit(): void {
-    const dropdowns = document.getElementsByClassName("dropdown-btn") as HTMLCollectionOf<HTMLElement>;
+    if (isPlatformBrowser(this.platformId)) {
+      const dropdowns = document.getElementsByClassName("dropdown-btn") as HTMLCollectionOf<HTMLElement>;
 
-    for (let i = 0; i < dropdowns.length; i++) {
+      for (let i = 0; i < dropdowns.length; i++) {
       const btn = dropdowns[i];
 
       btn.addEventListener("click", function (this: HTMLElement) {
@@ -42,7 +41,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
         }
       });
-    }
+    }}
   }
   selectItem(item: string) {
     this.selectedItem = item;

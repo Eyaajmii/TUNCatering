@@ -21,7 +21,7 @@ class volController{
   static async VolsJours(){
         try {
         const Jour = new Date();
-        const prochainJour=new Date(Jour.getTime() + 48 * 60 * 60 * 1000);
+        const prochainJour=new Date(Jour.getTime() + 72 * 60 * 60 * 1000);
         const vols = await fligth
           .find({
             dateVolDep: {
@@ -30,11 +30,11 @@ class volController{
             },
           })
           .populate("numVol");
-        console.log("Vols des prochaines 48h",vols);
+        console.log("Vols des prochaines 72h",vols);
         return vols;
     } catch (error) {
         throw error;
     }
-    };
+  };
 }
 module.exports=volController;

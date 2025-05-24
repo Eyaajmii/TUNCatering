@@ -6,7 +6,7 @@ const CommandeController = require("../controllers/commandeController");
 const { authenticateToken } = require("../middlware/auth");
 
 module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
-  router.get("/", async (req, res) => {
+  router.get("/", authenticateToken,async (req, res) => {
     try {
       const commandes = await CommandeController.getAllCommands();
       res.status(200).json(commandes);
@@ -26,13 +26,9 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
   router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);//a supprimé apres verification avec wajih
 
-  router.get("/Orders", authenticateToken ,async (req, res) => {
+  router.get("/Orders", authenticateToken, async (req, res) => {
     try {
-      const username = req.user.username;
-      const User = await user.findOne({ username: username });
-      const pn = await personnelTunisair.findOne({ userId: User._id });
-      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-      const Matricule = pn.Matricule;
+      const Matricule = req.user.Matricule;
       const orders = await CommandeController.getMyOrders(Matricule);
       res.status(200).json(orders);
     } catch (err) {
@@ -43,11 +39,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     try {
       //const numVol = parseInt(req.body.numVol);
       const { nom, numVol } = req.body;
-      const username = req.user.username;
-      const User = await user.findOne({ username: username });
-      const pn = await personnelTunisair.findOne({ userId: User._id });
-      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-      const Matricule = pn.Matricule;
+      const Matricule = req.user.Matricule;
       const newcommande = await CommandeController.RequestCommandeMenu(
         numVol,
         nom,
@@ -57,6 +49,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         ...newcommande._doc,
         type: "menu",
         items: [{ nom, quantite: 1 }],
+        destinataire:Matricule
       });
 
       res.status(200).json(newcommande);
@@ -74,11 +67,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomBoissons,
         nomsPetitdejuner
       } = req.body;
-      const username = req.user.username;
-      const User = await user.findOne({ username: username });
-      const pn = await personnelTunisair.findOne({ userId: User._id });
-      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-      const Matricule = pn.Matricule;
+      const Matricule = req.user.Matricule;
       const newCommande = await CommandeController.RequestCommandeMeal(
         numVol,
         nomEntree,
@@ -99,6 +88,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
           { nom: nomDessert, quantite: 1 },
           { nom: nomBoissons, quantite: 1 },
         ].filter((item) => item.nom),
+        destinataire:Matricule
       });
 
       res.status(200).json(newCommande);
@@ -130,9 +120,9 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     }
   });
 
-  router.put("/updateStatut/:id", async (req, res) => {
+  router.put("/updateStatut/:id", authenticateToken, async (req, res) => {
     try {
-      const { Statut } = req.body; 
+      const { Statut } = req.body;
 
       if (!Statut) {
         return res.status(400).send("Le champ 'Statut' est requis");
@@ -140,11 +130,15 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
       const updateCommande = await CommandeController.updateCommandeStatus(
         req.params.id,
-        Statut.toLowerCase() 
+        Statut.toLowerCase()
       );
-      const destinataireNotification = updateCommande ? updateCommande.Matricule: null;
+      const destinataireNotification = updateCommande
+        ? updateCommande.Matricule
+        : null;
       if (!destinataireNotification) {
-        console.error(`[CommandeRoute /updateStatut/:id] ERREUR: updateCommande.Matricule (créateur de la commande ${req.params.id}) est indéfini ou la réponse du contrôleur est invalide. La notification de mise à jour ne sera pas ciblée.`);
+        console.error(
+          `[CommandeRoute /updateStatut/:id] ERREUR: updateCommande.Matricule (créateur de la commande ${req.params.id}) est indéfini ou la réponse du contrôleur est invalide. La notification de mise à jour ne sera pas ciblée.`
+        );
       }
       // Broadcast
       broadcastOrderStatusUpdate({
@@ -164,14 +158,17 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       }
     }
   });
-  router.put("/ModifierMaCommande/:id",async(req,res)=>{
-    try{
-      const updatcmd = await CommandeController.updateCommande(req.params.id,req.body);
+  router.put("/ModifierMaCommande/:id", authenticateToken, async (req, res) => {
+    try {
+      const updatcmd = await CommandeController.updateCommande(
+        req.params.id,
+        req.body
+      );
       res.status(200).json(updatcmd);
-    }catch(err){
+    } catch (err) {
       res.status(500).send(err.message);
     }
-  })
+  });
   router.put("/:id",async(req,res)=>{
     try{
       const annulCmsd = await CommandeController.annulCmd(req.params.id);

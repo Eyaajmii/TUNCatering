@@ -80,33 +80,69 @@ class AuthController {
       if (!Finduser) {
         throw new Error("Utilisateur non trouvé");
       }
+
+      console.log("🔍 User found:", {
+        id: Finduser._id,
+        username: Finduser.username,
+        role: Finduser.role,
+      });
+
       const isValidPassword = await bcrypt.compare(password, Finduser.password);
       if (!isValidPassword) {
         throw new Error("Mot de passe incorrect");
       }
+
       let TypePersonnel = null;
-      if (Finduser.role === "Personnel Tunisair") {
+      let Matricule = null;
+
+      if (
+        Finduser.role === "Personnel Tunisair" ||
+        Finduser.role === "Personnel navigant"
+      ) {
+        console.log(
+          "🔍 Looking for personnelTunisair with userId:",
+          Finduser._id
+        );
+
         const personnelTunisair = await userTunisair.findOne({
           userId: Finduser._id,
         });
-        if (
-          personnelTunisair &&
-          personnelTunisair.roleTunisair === "Personnel navigant"
-        ) {
-          const pnData = await pn.findOne({
-            PersonnelTunisiarId: personnelTunisair._id,
-          });
-          TypePersonnel = pnData?.TypePersonnel || null;
+        console.log("🔍 PersonnelTunisair result:", personnelTunisair);
+
+        if (personnelTunisair) {
+          Matricule = personnelTunisair.Matricule;
+        } else {
+          console.log("❌ No personnelTunisair record found for user");
         }
+
+        // ✅ Correction ici : utiliser userId dans personnelnavigant
+        const pnData = await pn.findOne({ userId: Finduser._id });
+        if (pnData) {
+          TypePersonnel = pnData.TypePersonnel;
+          if (!Matricule) Matricule = pnData.Matricule; // fallback
+          console.log("🔍 Personnel navigant data:", pnData);
+        }
+      } else {
+        console.log("⚠️ No additional data fetched for role:", Finduser.role);
       }
+
+      console.log("🎯 Final token data:", {
+        username: Finduser.username,
+        role: Finduser.role,
+        TypePersonnel,
+        Matricule,
+      });
+
       const token = generateAccesToken(
         Finduser.username,
         Finduser.role,
-        TypePersonnel
+        TypePersonnel,
+        Matricule
       );
+
       return { token };
     } catch (err) {
-      throw new Error(err);
+      throw new Error(err.message || "Erreur lors de la connexion");
     }
   }
   static logout(req, res) {

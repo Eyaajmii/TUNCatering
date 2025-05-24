@@ -18,10 +18,10 @@ export class AcceuilInterfaceComponent implements OnInit{
   notifications: any[] = [];
   constructor(private commandeService:CommandeServiceService,private toastr:ToastrService ,private reclamationService:ReclamationServiceService,private authService: AuthService,private router:Router){}
   ngOnInit(): void {
-    this.commandeService.getStatusUpdates().subscribe(notification => {
+    /*this.commandeService.getStatusUpdates().subscribe(notification => {
       //this.notifications.push(notification);
       this.toastr.info(notification.message,"Statut de la commande mis à jour");
-    });
+    });*/
     this.reclamationService.getStatusUpdate().subscribe(notification => {
       //this.notifications.push(notification);
        this.toastr.info(notification.message,"Statut de la réclamation a mis à jour");

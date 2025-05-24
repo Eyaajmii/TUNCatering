@@ -125,11 +125,7 @@ async function extraireNumVol(message) {
 exports.chatbotMessage = async (req, res) => {
   try {
     const { message } = req.body;
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const matricule = pn.Matricule;
+    const matricule = req.user.Matricule;
 
     // Generate a unique conversation ID if not provided
     const conversationId =
@@ -532,11 +528,7 @@ exports.chatbotMessage = async (req, res) => {
 // Reset conversation logic
 exports.resetConversation = async (req, res) => {
   try {
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const matricule = pn.Matricule;
+    const matricule = req.user.Matricule;
     const { conversationId } = req.body;
 
     // Find the session by matricule

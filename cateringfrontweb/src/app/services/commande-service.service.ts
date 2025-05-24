@@ -1,10 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';  
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';  
-import { isPlatformBrowser } from '@angular/common';  
-import { Observable, Subject, EMPTY, of } from 'rxjs';  
-import { catchError, tap } from 'rxjs/operators';  
+import { Injectable } from '@angular/core';  
+import { catchError, Observable, of, Subject } from 'rxjs';  
 import { ToastrService } from 'ngx-toastr';
-import { io, Socket } from 'socket.io-client'; 
+import { io,Socket } from 'socket.io-client';
 export interface Vol {
   _id?: string; 
   numVol: string;
@@ -16,14 +14,6 @@ export interface Vol {
   Escale: boolean;
   Commande: string[];
 }
-
-interface Plat {
-  _id: string;
-  nom: string;
-  typePlat: string;
-  prix: number;
-  description?: string;
-}
 export interface Menu{
   _id?: string;
   nom:string;
@@ -34,14 +24,22 @@ export interface Menu{
   Disponible:boolean;
   prixtotal:number;
 }
-interface Commande {
+export interface Plat {
+  _id: string;
+  nom: string;
+  typePlat: string;
+  description?: string;
+}
+
+export interface Commande {
   _id: string;
   Statut: string;
-  plats: string[]; 
+  plats: Plat[];
   dateCommnade: Date;
-  NombreCommande:number;
-  menu:Menu|string;
-  vol:Vol|string;
+  NombreCommande: number;
+  Matricule: any;
+  menu?: Menu;
+  vol: any;
 }
 const commandeURL = "http://localhost:5000/api/commande"; 
 const SOCKET_URL = "http://localhost:5000"; 
@@ -50,76 +48,41 @@ const SOCKET_URL = "http://localhost:5000";
   providedIn: 'root'  
 })  
 export class CommandeServiceService {  
-  private socket:Socket| null = null;  
-  private newOrders$ = new Subject<any>();  
-  private statusUpdates$ = new Subject<any>();  
-  private connectionStatus$ = new Subject<boolean>();  
-  private isBrowser: boolean;  
+  private socket!:Socket;  
+  private newOrders= new Subject<Commande>();  
+  private statusUpdates= new Subject<any>();  
+  private notificationSubject = new Subject<any>();
   private readonly apiUrl = 'http://localhost:5000/api/plat'; 
   private VolURL = "http://localhost:5000/api/vol"; 
-  constructor(  
-    private http: HttpClient,  
-    @Inject(PLATFORM_ID) private platformId: Object  ,
-    private toastr: ToastrService
-  ) {  
-    this.isBrowser = isPlatformBrowser(this.platformId);  
-    if (this.isBrowser) {  
-      this.initializeSocketIO();  
-    }  
+  constructor(private http: HttpClient,private toastr: ToastrService) {  
+    this.initializeSocket();
+  } 
+  private initializeSocket():void{
+    this.socket=io(SOCKET_URL,{auth:{token:localStorage.getItem('token')},transports:['websocket']});
+    this.setupSocketListeners();
   }
-  private initializeSocketIO(): void {
-    this.socket = io(SOCKET_URL, {
-      transports: ['websocket'],
-      reconnectionAttempts: 5,
-      reconnectionDelay: 3000
-    });
-
+  private setupSocketListeners():void{
+    this.socket=io(SOCKET_URL,{auth:{token:localStorage.getItem('token')},transports:['websocket']});
     this.socket.on('connect', () => {
-      console.log('Socket.IO connected');
-      this.connectionStatus$.next(true);
-    });
-
-    this.socket.on('disconnect', () => {
-      console.warn('Socket.IO disconnected');
-      this.connectionStatus$.next(false);
-    });
-    this.socket.on('newOrder', (data: any) => {
-      this.newOrders$.next(data);
-      this.toastr.info('Nouvelle commande reçue!', 'Mise à jour en temps réel');
-    });
-    this.socket.on('orderStatusUpdate', (data: any) => {
-      this.statusUpdates$.next(data);
-      this.toastr.info('Statut de commande mis à jour', 'Mise à jour en temps réel');
-    });
-
-    this.socket.on('connect_error', (error: any) => {
-      console.error('Socket.IO connection error:', error);
-      this.connectionStatus$.next(false);
-    });
+      console.log('Connecté à Socket.IO avec ID:', this.socket.id);
+      const matricule = localStorage.getItem('Matricule');
+      if (typeof window !== 'undefined' && localStorage.getItem('Matricule')) {
+        this.socket.emit('login', matricule);}
+    });  
+    this.socket.on('newOrder', (data:Commande) => this.newOrders.next(data));
+    this.socket.on('orderStatusUpdate', (data: any) => this.statusUpdates.next(data));
+    this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
-  updateOrderStatus(orderId: string, newStatus: string): Observable<any> {  
-    return this.http.put<any>(
-      `${commandeURL}/updateStatut/${orderId}`, 
-      { Statut: newStatus }
-    ).pipe(
-      catchError(error => {
-        console.error('Error updating order status:', error);
-        this.toastr.error('Échec de la mise à jour du statut');
-        throw error;
-      })
-    );  
-  }
-  closeConnection(): void {  
-    if (this.socket) {  
-      this.socket.disconnect();
-      this.socket = null;  
-    }  
-  }  
+  
   getVols():Observable<Vol[]>{
     return this.http.get<Vol[]>(`${this.VolURL}/`);
   }
   ModifierCommande(id:string,cmd:Commande):Observable<Commande>{
-    return this.http.put<Commande>(`${commandeURL}/ModifierMaCommande/${id}`,cmd);
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.put<Commande>(`${commandeURL}/ModifierMaCommande/${id}`,cmd,{headers});
   }
   AnnulerCommande(id:string):Observable<Commande>{
     return this.http.put<Commande>(`${commandeURL}/${id}`,{});
@@ -127,7 +90,6 @@ export class CommandeServiceService {
   commandeById(id:String):Observable<Commande>{
     return this.http.get<Commande>(`${commandeURL}/Commande/${id}`);
   }
-  //pour personnel navigant
   CommanderMenu(data:any):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
@@ -142,14 +104,6 @@ export class CommandeServiceService {
   });
     return this.http.post<any>(`${commandeURL}/addCommandePlat`,data,{headers});
   } 
-  //pour direction tunisair du catering
-  CommanderAffretes(data:any):Observable<any>{
-    const token = localStorage.getItem('token'); 
-    const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-  });
-    return this.http.post<any>(`${commandeURL}/addCommandeAffrete`,data,{headers});
-  }
   //commandebynumVol
   getCommandesByVol(numVol: string): Observable<any> {
     return this.http.get<any>(`${commandeURL}/vol/${numVol}`).pipe(
@@ -159,50 +113,61 @@ export class CommandeServiceService {
       })
     );
   }
-  sendStatusUpdate(orderId: string, newStatus: string): void {
-    if (this.socket) {
-      this.socket.emit('statusUpdate', {
-        orderId,
-        newStatus
-      });
-    }
+  getInitialOrders(): Observable<any[]> { 
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.get<any[]>(commandeURL,{headers})
   }
-  //AllOrders
-    getInitialOrders(): Observable<any[]> {  
-      return this.http.get<any[]>(commandeURL)
-    }
-getMyOrders(): Observable<any[]> {
-      const token = localStorage.getItem('token'); 
-      const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.get<any[]>(`${commandeURL}/Orders`,{headers})
-
-} 
-
-  getNewOrders(): Observable<any> {  
-    return this.newOrders$.asObservable();  
-  }  
-  //plat detail
+  getMyOrders(): Observable<any[]> {
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  return this.http.get<any[]>(`${commandeURL}/Orders`,{headers})
+  } 
   getPlatsDetails(platIds: string[]): Observable<Plat[]> {  
     return this.http.post<Plat[]>(`${this.apiUrl}/details`, { ids: platIds })  
-      .pipe(  
-        catchError(error => {  
-          console.error('Error fetching meal details:', error);  
-          return of([]);  
-        })  
-      );  
-  }  
-  getStatusUpdates(): Observable<any> {  
-    return this.statusUpdates$.asObservable();  
-  }  
+    .pipe(  
+      catchError(error => {  
+        console.error('Error fetching meal details:', error);  
+        return of([]);  
+      })  
+    );  
+  } 
+  updateOrderStatus(orderId: string, newStatus: string): Observable<any> {  
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.put<any>(`${commandeURL}/updateStatut/${orderId}`, { Statut: newStatus },{headers}).pipe(
+      catchError(error => {
+        console.error('Error updating order status:', error);
+        this.toastr.error('Échec de la mise à jour du statut');
+        throw error;
+      })
+    );  
+  }
+/**** Observables pour Socket.IO*** */
+  onNewOrder(): Observable<Commande> {
+    return this.newOrders.asObservable();
+  }
 
-  getConnectionStatus(): Observable<boolean> {  
-    return this.connectionStatus$.asObservable();  
-  }  
-  connectUser(userId: string): void {
-    if (this.socket && userId) {
-      this.socket.emit('login', userId);
-    }
+  onOrderStatusUpdate(): Observable<any> {
+  return this.statusUpdates.asObservable();
+  }
+  onNotification(): Observable<any> {
+    return this.notificationSubject.asObservable();
+  }
+  // Pour rejoindre une room spécifique
+  joinRoom(roomName: string): void {
+    this.socket.emit('joinRoom', roomName);
+  }
+  leaveRoom(roomName: string): void {
+    this.socket.emit('leaveRoom', roomName);
+  }
+  disconnect(): void {
+    this.socket.disconnect();
   }
 } 

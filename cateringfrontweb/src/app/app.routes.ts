@@ -11,7 +11,6 @@ import { AllMealsComponent } from './components/dashboardAdminTunCatering/all-me
 import { AllMenusComponent } from './components/dashboardAdminTunCatering/all-menus/all-menus.component';
 import { DashboardDirectionComponent } from './components/DashTunisairDirCatering/dashboard-direction/dashboard-direction.component';
 import { EtatCommandeComponent } from './components/dahsboardPn/etat-commande/etat-commande.component';
-import { CommandeAffretteComponent } from './components/DashTunisairDirCatering/commande-affrette/commande-affrette.component';
 import { AjoutBonLivraisonComponent } from './components/dashboardAdminTunCatering/ajout-bon-livraison/ajout-bon-livraison.component';
 import { ConsulteCommandesComponent } from './components/DashTunisairDirCatering/consulte-commandes/consulte-commandes.component';
 import { HomeComponent } from './components/dahsboardPn/home/home.component';
@@ -37,8 +36,6 @@ import { TousPrelevementsComponent } from './components/DashTunisairPersonnel/to
 import { UpdatePlatComponent } from './components/dashboardAdminTunCatering/update-plat/update-plat.component';
 import { UpdateMenuComponent } from './components/dashboardAdminTunCatering/update-menu/update-menu.component';
 import { UpdateCommandeComponent } from './components/dahsboardPn/update-commande/update-commande.component';
-import { AjoutcommandeAffreteComponent } from './components/DashTunisairDirCatering/ajoutcommande-affrete/ajoutcommande-affrete.component';
-import { ModifiercommandeAffreteComponent } from './components/DashTunisairDirCatering/modifiercommande-affrete/modifiercommande-affrete.component';
 import { UpdateBnComponent } from './components/dashboardAdminTunCatering/update-bn/update-bn.component';
 import { CarnetSanteComponent } from './components/dahsboardPn/carnet-sante/carnet-sante.component';
 import { ModifierCarnetComponent } from './components/dahsboardPn/modifier-carnet/modifier-carnet.component';
@@ -84,9 +81,6 @@ export const routes: Routes = [
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},*/
     //Dashboard admin direcetion catering
     {path:'TunisairCatering',title:'Tunisair Catering',component:DashboardDirectionComponent,children:[
-        {path:'CommandeAffretes',title:'Commande Affretes',component:CommandeAffretteComponent},
-        {path:'AjoutCommande',title:'Ajouter commande',component:AjoutcommandeAffreteComponent},
-        {path:'ModifierCommande/:id',title:'Modifier commande',component:ModifiercommandeAffreteComponent},
         {path:'TousCommande',title:'Les commandes',component:ConsulteCommandesComponent},
         {path:'ControleFacture',title:'Controler facture',component:ControleFactureComponent},
         {path:'TousReclamations',title:'Tous Reclamations',component:TousreclamationComponent},

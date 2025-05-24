@@ -4,7 +4,7 @@ import { Observable, Subject, EMPTY, of } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';  
 import { catchError, tap, retryWhen, delay, map, switchMap } from 'rxjs/operators';  
 import { isPlatformBrowser } from '@angular/common';  
-const WS_URL = "ws://localhost:5000"; 
+const WS_URL = "//localhost:5000"; 
 @Injectable({
   providedIn: 'root'
 })

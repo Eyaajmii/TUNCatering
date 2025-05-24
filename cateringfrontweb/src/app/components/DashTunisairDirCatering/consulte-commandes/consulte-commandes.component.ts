@@ -51,7 +51,6 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
 
   ngOnInit(): void {  
       this.fetchCommandes();  
-      this.setupConnectionListener();  
   }  
 
   exportToExcel(): void {
@@ -97,13 +96,7 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
       );  
   }  
 
-  setupConnectionListener(): void {  
-      this.subscriptions.add(  
-          this.commandeService.getConnectionStatus().subscribe(  
-              (status: boolean) => this.connectionStatus = status  
-          )  
-      );  
-  }  
+  
 
   changerStatut(commandeId: string, nouveauStatut: string): void {  
       this.subscriptions.add(  

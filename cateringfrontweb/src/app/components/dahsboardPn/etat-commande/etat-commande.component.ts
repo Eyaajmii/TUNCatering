@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class EtatCommandeComponent implements OnInit, OnDestroy {
   commandes: any[] = [];
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription = new Subscription();
   statusFilters = [
     { name: 'en attente', selected: false, count: 0 },
     { name: 'prêt', selected: false, count: 0 },
@@ -31,27 +31,12 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCommandes();
-
-    const newOrderSub = this.commandeService.getNewOrders().subscribe(newOrder => {
-      this.commandes.push(newOrder);
-      this.updateStatusCounts();
-    });
-
-    const statusUpdateSub = this.commandeService.getStatusUpdates().subscribe(update => {
-      const index = this.commandes.findIndex(c => c._id === update._id);
-      if (index !== -1) {
-        this.commandes[index].Statut = update.statut || update.Statut;
-        this.commandes[index].updatedAt = update.updatedAt;
-        this.updateStatusCounts();
-      }
-    });
-
-    this.subscriptions.push(newOrderSub, statusUpdateSub);
+    this.setupWebSocketListeners();
   }
 
   loadCommandes(): void {
     this.commandeService.getMyOrders().subscribe({
-      next: (data) => {
+      next: (data:any[]) => {
         this.commandes = data;
         this.updateStatusCounts();
       },
@@ -60,9 +45,23 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
       }
     });
   }
+setupWebSocketListeners() {
+    this.subscriptions.add(
+      this.commandeService.onNewOrder().subscribe({
+        next: (commande: any) => {
+          console.log('Nouvelle commande reçue:', commande);
+          this.commandes.unshift(commande);
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles commandes:', err);
+        }
+      })
+    );
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+
+  }
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   get filtreCommande(): any[] {

@@ -90,7 +90,7 @@ class CommandeController {
   // Order Menu
   static async RequestCommandeMenu(numVol, nom, Matricule) {
     try {
-      const vol = await Vol.findOne({ numVol: numVol });
+      const vol = await Vol.findOne({ numVol: numVol, dateVolDep: { $gte: new Date() } });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -131,9 +131,16 @@ class CommandeController {
       ) {
         deadline.setHours(deadline.getHours() - 12);
       }
+      const arrayplat = [
+        ...menu.PlatsPrincipaux,
+        ...menu.PlatsEntree,
+        ...menu.PlatsDessert,
+        ...menu.Boissons,
+      ];
       const newCmd = await commande.create({
         vol: volId,
         menu: menuId,
+        plats:arrayplat,
         dateCommnade: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
@@ -171,7 +178,7 @@ class CommandeController {
     Matricule
   ) {
     try {
-      const vol = await Vol.findOne({ numVol: numVol });
+      const vol = await Vol.findOne({ numVol: numVol,dateVolDep: { $gte: new Date() } });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -337,16 +344,14 @@ class CommandeController {
           updatedCommande.Matricule,
         notificationType: "commande",
       });
-      if (updatedCommande.Matricule) {
-        global.io.emit("newNotification", {
+      global.io.emit("newNotification", {
           _id: notifcreer._id,
           message: notifcreer.message,
           createdAt: notifcreer.createdAt,
           user: notifcreer.user,
           notificationType: notifcreer.notificationType,
           destinataire: updatedCommande.Matricule,
-        });
-      }
+      });
       return updatedCommande;
     } catch (error) {
       throw error;

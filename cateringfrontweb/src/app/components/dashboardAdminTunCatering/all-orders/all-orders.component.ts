@@ -1,27 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommandeServiceService, Menu } from '../../../services/commande-service.service';
-import { Subscription } from 'rxjs';
+import { Commande, CommandeServiceService, Menu, Plat} from '../../../services/commande-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
-interface Plat {
-  _id: string;
-  nom: string;
-  typePlat: string;
-  prix: number;
-  description?: string;
-}
 
-interface Commande {
-  _id: string;
-  Statut: string;
-  plats: Plat[];
-  dateCommnade: Date;
-  NombreCommande: number;
-  Matricule: any;
-  menu?: Menu;
-  vol: any;
-}
 
 @Component({
   selector: 'app-all-orders',
@@ -29,13 +12,11 @@ interface Commande {
   templateUrl: './all-orders.component.html',
   styleUrl: './all-orders.component.css'
 })
-export class AllOrdersComponent implements OnInit, OnDestroy {
+export class AllOrdersComponent implements OnInit,OnDestroy {
   commandes: Commande[] = [];
   filtres = { statut: 'tous' };
-  connectionStatus = false;
   loading = true;
   error: string | null = null;
-
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
     { value: 'prêt', display: 'Prêt', class: 'pret' },
@@ -43,18 +24,60 @@ export class AllOrdersComponent implements OnInit, OnDestroy {
     { value: 'en retard', display: 'En retard', class: 'en-retard' },
     { value: 'livré', display: 'Livré', class: 'livre' }
   ];
-
-  private subscriptions = new Subscription();
-
+  private subscriptions: Subscription = new Subscription();
   constructor(private commandeService: CommandeServiceService) {}
 
   ngOnInit(): void {
-    this.loadInitialOrders();
+    this.loadOrders();
     this.setupWebSocketListeners();
-    this.monitorConnectionStatus();
   }
+  loadOrders():void{
+    this.loading = true;
+    this.commandeService.getInitialOrders().subscribe({
+        next: (orders: any[]) => {
+            this.commandes = orders;
+            this.loading = false;
+        },
+        error: (err) => {
+            console.error('Error loading orders:', err);
+            this.error = 'Échec du chargement des commandes';
+            this.loading = false;
+        }
+    });
+  }
+  setupWebSocketListeners() {
+    this.subscriptions.add(
+      this.commandeService.onNewOrder().subscribe({
+        next: (commande: any) => {
+          console.log('Nouvelle commande reçue:', commande);
+          this.commandes.unshift(this.transformCommande(commande));
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles commandes:', err);
+          this.error = 'Erreur de réception des nouvelles commandes';
+        }
+      })
+    );
 
-  loadInitialOrders(): void {
+    this.subscriptions.add(
+      this.commandeService.onOrderStatusUpdate().subscribe({
+        next: (update: any) => {
+          const index = this.commandes.findIndex(c => c._id === update._id);
+          if (index !== -1) {
+            this.commandes[index] = this.transformCommande({
+              ...this.commandes[index],
+              ...update
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des mises à jour:', err);
+          this.error = 'Erreur de réception des mises à jour';
+        }
+      })
+    );
+  }
+  /*loadOrders(): void {
     this.loading = true;
     this.commandeService.getInitialOrders().subscribe({
       next: (orders) => {
@@ -67,7 +90,7 @@ export class AllOrdersComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
-  }
+  }*/
 
   private transformCommande(commande: any): Commande {
     return {
@@ -91,49 +114,6 @@ export class AllOrdersComponent implements OnInit, OnDestroy {
       description: typeof plat === 'string' ? '' : plat.description
     }));
   }
-
-  setupWebSocketListeners(): void {
-    this.subscriptions.add(
-      this.commandeService.getNewOrders().subscribe({
-        next: (commande: any) => {
-          console.log('Nouvelle commande reçue:', commande);
-          this.commandes.unshift(this.transformCommande(commande));
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des nouvelles commandes:', err);
-          this.error = 'Erreur de réception des nouvelles commandes';
-        }
-      })
-    );
-
-    this.subscriptions.add(
-      this.commandeService.getStatusUpdates().subscribe({
-        next: (update: any) => {
-          const index = this.commandes.findIndex(c => c._id === update._id);
-          if (index !== -1) {
-            this.commandes[index] = this.transformCommande({
-              ...this.commandes[index],
-              ...update
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des mises à jour:', err);
-          this.error = 'Erreur de réception des mises à jour';
-        }
-      })
-    );
-  }
-
-  monitorConnectionStatus(): void {
-    this.subscriptions.add(
-      this.commandeService.getConnectionStatus().subscribe((status: boolean) => {
-        this.connectionStatus = status;
-        this.error = status ? null : 'Connexion perdue. Reconnexion...';
-      })
-    );
-  }
-
   getStatusDisplayText(status: string): string {
     const foundStatus = this.availableStatuses.find(s => s.value === status);
     return foundStatus ? foundStatus.display : status;
@@ -197,8 +177,7 @@ export class AllOrdersComponent implements OnInit, OnDestroy {
 
     return `${formattedDate} à ${formattedTime}`;
   }
-
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 }

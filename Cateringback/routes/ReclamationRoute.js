@@ -11,11 +11,7 @@ const upload = require("../middlware/upload");
 module.exports=function(broadcastNewReclamation,broadcastReclamationStatusUpdate){
 router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),async(req,res)=> {
   try {
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const Matricule = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const randomPart=Math.floor(Math.random()*1000).toString().padStart(3,'0');
     const NumeroReclamation = `REC-${randomPart}`;
     const { Objet, MessageEnvoye, imageUrl } = req.body;
@@ -57,12 +53,7 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
 });
 router.get("/reclamation",authenticateToken,async(req,res)=>{
     try{
-        const username = req.user.username;
-        const User = await user.findOne({ username: username });
-        const pn = await personnelTunisair.findOne({ userId: User._id });
-        if (!pn)
-          return res.status(404).json({ message: "Matricule non trouvé" });
-        const MatriculePn = pn.Matricule;
+        const Matricule = req.user.Matricule;
         const reclamations = await reclamationController.MesReclamations(MatriculePn);
         res.status(200).json({ reclamations });
     }catch(err){
@@ -81,11 +72,7 @@ router.get("/reclamation/detail/:id",async (req,res)=>{
 router.put("/repondre/:id", authenticateToken, async (req, res) => {
   try {
     const { newStatut, MessageReponse } = req.body;
-    const username = req.user.username;
-    const User = await user.findOne({ username: username });
-    const pn = await personnelTunisair.findOne({ userId: User._id });
-    if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-    const MatriculeDirTunCater = pn.Matricule;
+    const Matricule = req.user.Matricule;
     const reponse = await reclamationController.reponseReclamation(
       req.params.id,
       newStatut,

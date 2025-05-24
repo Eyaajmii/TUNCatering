@@ -5,12 +5,11 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import {SocketIoConfig, provideSocketIo } from 'ngx-socket-io';
 
+const config: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay()), provideHttpClient(withFetch()),provideAnimations(),BrowserAnimationsModule,
-    provideToastr({positionClass: 'toast-top-right',
-      timeOut: 5000,
-      progressBar: true,
-      closeButton: true,
-      tapToDismiss: true,}),]
+    provideToastr({positionClass: 'toast-top-right',timeOut: 5000,progressBar: true,closeButton: true,tapToDismiss: true,}),provideSocketIo(config)
+  ]
 };
