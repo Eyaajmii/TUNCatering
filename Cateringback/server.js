@@ -25,7 +25,7 @@ const server = http.createServer(app);
 
 // Configuration de Socket.IO
 const io = socketIo(server, {
-  cors: { origin: "*" },
+  cors: { origin: "*", methods: ["GET", "POST","PUT"] },
 });
 
 // Rendre io accessible globalement
@@ -33,22 +33,25 @@ global.io = io;
 
 // Gestionnaire de connexions Socket.IO avec système de rooms amélioré
 io.on("connection", (socket) => {
-  console.log(`Client connected: ${socket.id}`);
+  console.log(`Client connected avec: ${socket.id}`);
 
   // Événement login pour que l'utilisateur rejoigne sa propre room (basée sur son ID)
-  socket.on("login", (userId) => {
+  socket.on("login", ({ userId, role, roleTunisair }) => {
     if (userId) {
-      console.log(
-        `User ${userId} logged in and joined personal room: ${userId}`
-      );
       socket.join(userId);
-      // Confirmer la connexion à l'utilisateur
-      socket.emit("loginConfirmed", { userId, socketId: socket.id });
-    } else {
-      console.warn(
-        `Socket ${socket.id} attempted to login with invalid/empty user ID.`
-      );
     }
+    if (role === "Personnel Tunisie Catering") {
+      socket.join("tunisie_catering");
+    }
+    if (
+      role === "Personnel Tunisair" &&
+      roleTunisair === "Personnel de Direction du Catering Tunisiar"
+    ) {
+      socket.join("Direction_Catering_Tunisair");
+      console.log(`User ${userId} joined Direction_Catering_Tunisair room`);
+    }
+    // Confirmer la connexion à l'utilisateur
+    socket.emit("loginConfirmed", { userId, socketId: socket.id });
   });
 
   // Pour rejoindre d'autres rooms au besoin (groupes, etc.)
@@ -79,78 +82,51 @@ io.on("connection", (socket) => {
 // Gestionnaires de notifications centralisés avec ciblage par room
 const socketHandlers = {
   broadcastNewOrder: (data) => {
-    console.log(
-      "[SocketHandler] broadcastNewOrder called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
-      io.to(data.destinataire).emit("newOrder", data);
-      console.log(
-        `[SocketHandler] newOrder emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] newOrder: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
+    const destinataireId = data.destinataire;
+    io.emit("newOrder", data); 
+    if (destinataireId) {
+      io.to(destinataireId).emit("newNotification", {
+        ...data,
+        notificationType: "new_order",
+        destinataire: destinataireId,
+      });
     }
   },
 
   broadcastOrderStatusUpdate: (data) => {
-    console.log(
-      "[SocketHandler] broadcastOrderStatusUpdate called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
+    if (data.destinataire) {
+      console.log(`Destinataire  ${data.destinataire}`);
       io.to(data.destinataire).emit("orderStatusUpdate", data);
-      console.log(
-        `[SocketHandler] orderStatusUpdate emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] orderStatusUpdate: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
+      io.to(data.destinataire).emit("newNotification", {
+        ...data,
+        notificationType: "update_status",
+        destinataire: data.destinataire,
+      });
     }
   },
 
   broadcastNewFacture: (data) => {
-    console.log(
-      "[SocketHandler] broadcastNewFacture called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
-      io.to(data.destinataire).emit("newFacture", data);
-      console.log(
-        `[SocketHandler] newFacture emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] newFacture: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
+    const destinataireId = data.destinataire;
+    io.emit("newFacture", data);
+    console.log(`Destinataire  ${data.destinataire}`);
+    if (destinataireId) {
+      io.to(destinataireId).emit("newNotification", {
+        ...data,
+        notificationType: "new_facture",
+        destinataire: destinataireId,
+      });
     }
   },
 
   broadcastFactureStatusUpdate: (data) => {
-    console.log(
-      "[SocketHandler] broadcastFactureStatusUpdate called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
+    if (data.destinataire) {
+      console.log(`Destinataire  ${data.destinataire}`);
       io.to(data.destinataire).emit("factureStatusUpdate", data);
-      console.log(
-        `[SocketHandler] factureStatusUpdate emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] factureStatusUpdate: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
+      io.to(data.destinataire).emit("newNotification", {
+        ...data,
+        notificationType: "status_update_facture",
+        destinataire: data.destinataire,
+      });
     }
   },
 
@@ -192,18 +168,7 @@ const socketHandlers = {
     }
   },
 
-  // Fonction générique pour envoyer des notifications
   sendNotification: (userId, type, data) => {
-    if (!userId) {
-      console.warn(
-        `[SocketHandler] sendNotification: No userId provided for ${type} notification`
-      );
-      return;
-    }
-
-    console.log(
-      `[SocketHandler] Sending ${type} notification to user ${userId}`
-    );
     io.to(userId).emit("newNotification", {
       ...data,
       notificationType: type,

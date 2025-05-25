@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';  
-import { Injectable } from '@angular/core';  
+import { Inject, Injectable, PLATFORM_ID  } from '@angular/core';  
 import { catchError, Observable, of, Subject } from 'rxjs';  
 import { ToastrService } from 'ngx-toastr';
-import { io,Socket } from 'socket.io-client';
+import {io, Socket } from 'socket.io-client';
+import { isPlatformBrowser } from '@angular/common';  
 export interface Vol {
   _id?: string; 
   numVol: string;
@@ -52,23 +53,35 @@ export class CommandeServiceService {
   private newOrders= new Subject<Commande>();  
   private statusUpdates= new Subject<any>();  
   private notificationSubject = new Subject<any>();
+  private isBrowser: boolean;  
   private readonly apiUrl = 'http://localhost:5000/api/plat'; 
   private VolURL = "http://localhost:5000/api/vol"; 
-  constructor(private http: HttpClient,private toastr: ToastrService) {  
+  constructor(private http: HttpClient,private toastr:ToastrService,@Inject(PLATFORM_ID) private platformId: Object) {  
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    if(this.isBrowser){
     this.initializeSocket();
+    }
   } 
   private initializeSocket():void{
-    this.socket=io(SOCKET_URL,{auth:{token:localStorage.getItem('token')},transports:['websocket']});
-    this.setupSocketListeners();
+    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+      this.socket = io(SOCKET_URL, {
+        auth: { token: localStorage.getItem('token') },
+        transports: ['websocket']
+      });
+      this.setupSocketListeners();
+    }
   }
   private setupSocketListeners():void{
-    this.socket=io(SOCKET_URL,{auth:{token:localStorage.getItem('token')},transports:['websocket']});
     this.socket.on('connect', () => {
       console.log('Connecté à Socket.IO avec ID:', this.socket.id);
-      const matricule = localStorage.getItem('Matricule');
-      if (typeof window !== 'undefined' && localStorage.getItem('Matricule')) {
-        this.socket.emit('login', matricule);}
-    });  
+      if (typeof window !== 'undefined') {
+        const userId = localStorage.getItem('userId'); 
+        const role = localStorage.getItem('role');
+        if (userId && role) {
+          this.socket.emit('login', { userId, role });
+        }
+      }
+    });
     this.socket.on('newOrder', (data:Commande) => this.newOrders.next(data));
     this.socket.on('orderStatusUpdate', (data: any) => this.statusUpdates.next(data));
     this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
@@ -114,6 +127,9 @@ export class CommandeServiceService {
     );
   }
   getInitialOrders(): Observable<any[]> { 
+    if (!this.isBrowser) {
+      return of([]); 
+    }
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
@@ -121,6 +137,9 @@ export class CommandeServiceService {
     return this.http.get<any[]>(commandeURL,{headers})
   }
   getMyOrders(): Observable<any[]> {
+    if (!this.isBrowser) {
+      return of([]); 
+    }
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`

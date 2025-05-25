@@ -42,7 +42,7 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadFactures();
     this.setupWebSocketListeners();
-    this.monitorConnectionStatus();
+  
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -68,7 +68,7 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
   }
   setupWebSocketListeners() {
     this.subscriptions.add(
-      this.factureService.getNewFactures().subscribe({
+      this.factureService.onNewFacture().subscribe({
         next: (f: any) => {
           console.log('Nouvelle facture reçue:', f);
           this.factures.unshift(this.transformFacture(f));
@@ -79,13 +79,20 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
         }
       })
     );
-  }
-
-  monitorConnectionStatus() {
     this.subscriptions.add(
-      this.factureService.getConnectionStatus().subscribe((status: boolean) => {
-        this.connectionStatus = status;
-        this.error = status ? null : 'Connexion perdue. Reconnexion...';
+      this.factureService.onFactureStatusUpdate().subscribe({
+        next: (update: any) => {
+          const index = this.factures.findIndex(c => c._id === update._id);
+          if (index !== -1) {
+            this.factures[index] = this.transformFacture({
+              ...this.factures[index],
+              ...update
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des mises à jour:', err);
+        }
       })
     );
   }

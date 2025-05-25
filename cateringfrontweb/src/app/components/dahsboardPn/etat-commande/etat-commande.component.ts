@@ -49,16 +49,22 @@ setupWebSocketListeners() {
     this.subscriptions.add(
       this.commandeService.onNewOrder().subscribe({
         next: (commande: any) => {
-          console.log('Nouvelle commande reçue:', commande);
-          this.commandes.unshift(commande);
+          this.commandes.push(commande);
         },
         error: (err) => {
           console.error('Erreur dans le flux des nouvelles commandes:', err);
         }
       })
     );
-
-
+    this.subscriptions.add(
+      this.commandeService.onOrderStatusUpdate().subscribe(update => {
+        const index = this.commandes.findIndex(c => c._id === update._id);
+        if (index !== -1) {
+          this.commandes[index].Statut = update.statut;
+          this.commandes[index].updatedAt = update.updatedAt;
+        }
+      })
+    );
   }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

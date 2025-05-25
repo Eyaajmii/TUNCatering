@@ -8,7 +8,11 @@ const NotificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  user: {
+  emetteur: {
+    type: String,
+    required: true,
+  },
+  destinataire: {
     type: String,
     required: true,
   },

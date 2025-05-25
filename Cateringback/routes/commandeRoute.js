@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const user=require("../models/User");
-const personnelTunisair=require("../models/PersonnelTunisairModel");
+const pn=require("../models/PersonnelTunisairModel");
 const CommandeController = require("../controllers/commandeController");
 const { authenticateToken } = require("../middlware/auth");
+const notification = require("../models/NotificationModel");
 
 module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
   router.get("/", authenticateToken,async (req, res) => {
@@ -24,8 +25,6 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
     }
   });
 
-  router.get("/vol/:numVol", CommandeController.getCommandesByNumVol);//a supprimé apres verification avec wajih
-
   router.get("/Orders", authenticateToken, async (req, res) => {
     try {
       const Matricule = req.user.Matricule;
@@ -45,11 +44,20 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nom,
         Matricule
       );
+      const notifcreer = await notification.create({
+        message: `Nouvelle commande créée par${Matricule} pour le vol ${numVol}`,
+        emetteur: Matricule,
+        destinataire: "tunisie_catering",
+        notificationType: "new_order",
+      });
+      global.io.to("tunisie_catering").emit("newNotification", {
+        ...notifcreer._doc,
+        destinataire: "tunisie_catering",
+      });
       broadcastNewOrder({
         ...newcommande._doc,
         type: "menu",
         items: [{ nom, quantite: 1 }],
-        destinataire:Matricule
       });
 
       res.status(200).json(newcommande);
@@ -65,7 +73,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomPlatPrincipal,
         nomDessert,
         nomBoissons,
-        nomsPetitdejuner
+        nomsPetitdejuner,
       } = req.body;
       const Matricule = req.user.Matricule;
       const newCommande = await CommandeController.RequestCommandeMeal(
@@ -77,8 +85,17 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         nomsPetitdejuner,
         Matricule
       );
-
-      // Broadcast new order to all connected admin clients
+      // Send notification
+      const notifcreer = await notification.create({
+        message: `Nouvelle commande créée pour${Matricule} le vol ${numVol}`,
+        emetteur: Matricule,
+        destinataire: "tunisie_catering",
+        notificationType: "new_order",
+      });
+      global.io.to("tunisie_catering").emit("newNotification", {
+        ...notifcreer._doc,
+        destinataire: "tunisie_catering",
+      });
       broadcastNewOrder({
         ...newCommande._doc,
         type: "plat",
@@ -88,15 +105,12 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
           { nom: nomDessert, quantite: 1 },
           { nom: nomBoissons, quantite: 1 },
         ].filter((item) => item.nom),
-        destinataire:Matricule
       });
-
       res.status(200).json(newCommande);
     } catch (err) {
       res.status(500).send(err.message);
     }
   });
-
 
   router.get("/total", async (req, res) => {
     try {
@@ -132,20 +146,24 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         req.params.id,
         Statut.toLowerCase()
       );
-      const destinataireNotification = updateCommande
-        ? updateCommande.Matricule
-        : null;
-      if (!destinataireNotification) {
-        console.error(
-          `[CommandeRoute /updateStatut/:id] ERREUR: updateCommande.Matricule (créateur de la commande ${req.params.id}) est indéfini ou la réponse du contrôleur est invalide. La notification de mise à jour ne sera pas ciblée.`
-        );
-      }
+      const User = await pn.findOne({ Matricule: updateCommande.Matricule });
+      const userId = User.userId.toString();
+      const notifcreer = await notification.create({
+        message: `Statut de la commande par ${updateCommande.Matricule} mis à jour en ${Statut}`,
+        emetteur: "tunisie_catering",
+        destinataire: userId,
+        notificationType: "update_status",
+      });
+       
+      global.io.to(userId).emit("newNotification", {
+        ...notifcreer._doc,
+        destinataire: userId,
+      });
       // Broadcast
       broadcastOrderStatusUpdate({
         _id: req.params.id,
         statut: Statut,
         updatedAt: new Date(),
-        destinataire: destinataireNotification,
       });
 
       res.status(200).json(updateCommande);

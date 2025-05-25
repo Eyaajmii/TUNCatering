@@ -4,8 +4,6 @@ const plat = require("../models/Plat");
 const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
 const Vol = require("../models/vol");
-const notification = require("../models/NotificationModel");
-
 class CommandeController {
   // Return all orders
   static async getAllCommands() {
@@ -140,27 +138,14 @@ class CommandeController {
       const newCmd = await commande.create({
         vol: volId,
         menu: menuId,
-        plats:arrayplat,
-        dateCommnade: date,
+        plats: arrayplat,
+        dateCommande: date,
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
-        montantsTotal:2.5,
+        montantsTotal: 2.5,
         Matricule: Matricule || undefined,
       });
-      await menucontroller.miseajourmenuCommande(nom);
-      const notifcreer = await notification.create({
-        message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: Matricule,
-        notificationType: "commande",
-      });
-      global.io.emit("newNotification", {
-        _id: notifcreer._id,
-        message: notifcreer.message,
-        createdAt: notifcreer.createdAt,
-        user: notifcreer.user,
-        notificationType: notifcreer.notificationType,
-        destinataire: Matricule,
-      });
+      await menucontroller.miseajourmenuCommande(nom);      
       return newCmd;
     } catch (err) {
       throw new Error("Error creating command: " + err.message);
@@ -303,22 +288,7 @@ class CommandeController {
         await platcontroller.miseajourquantite(Entree, PlatPrincipal, Dessert);
       }
 
-      // Send notification
-      const notifcreer = await notification.create({
-        message: `Nouvelle commande créée pour le vol ${numVol}`,
-        user: Matricule,
-        notificationType: "commande",
-      });
-
-      global.io.emit("newNotification", {
-        _id: notifcreer._id,
-        message: notifcreer.message,
-        createdAt: notifcreer.createdAt,
-        user: notifcreer.user,
-        notificationType: notifcreer.notificationType,
-        destinataire: Matricule,
-      });
-
+      
       console.log("Commande bien enregistrée");
       return newCmd;
     } catch (err) {
@@ -338,20 +308,6 @@ class CommandeController {
       if (!updatedCommande) {
         throw new Error("Commande not found");
       }
-      const notifcreer = await notification.create({
-        message: `Statut de la commande mis à jour en ${newStatus}`,
-        user:
-          updatedCommande.Matricule,
-        notificationType: "commande",
-      });
-      global.io.emit("newNotification", {
-          _id: notifcreer._id,
-          message: notifcreer.message,
-          createdAt: notifcreer.createdAt,
-          user: notifcreer.user,
-          notificationType: notifcreer.notificationType,
-          destinataire: updatedCommande.Matricule,
-      });
       return updatedCommande;
     } catch (error) {
       throw error;
@@ -377,15 +333,7 @@ class CommandeController {
       const finAutorise = new Date(deadline);
       finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
       if (date < debutAutorise || date > finAutorise) {
-        throw new Error(
-          `Modification autorisée uniquement entre ${debutAutorise.toLocaleTimeString(
-            [],
-            { hour: "2-digit", minute: "2-digit" }
-          )} et ${finAutorise.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })} avant le départ du vol`
-        );
+        throw new Error(`Modification autorisée uniquement entre avant le départ du vol`);
       }
       const cmdUpdate = await commande.findByIdAndUpdate(id, data, {
         new: true,
@@ -417,15 +365,7 @@ class CommandeController {
       const finAutorise = new Date(deadline);
       finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
       if (date < debutAutorise || date > finAutorise) {
-        throw new Error(
-          `Modification autorisée uniquement entre ${debutAutorise.toLocaleTimeString(
-            [],
-            { hour: "2-digit", minute: "2-digit" }
-          )} et ${finAutorise.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })} avant le départ du vol`
-        );
+        throw new Error(`Annulation autorisée uniquement entre avant le départ du vol`);
       }
       cmd.Statut = "annulé";
       await cmd.save();

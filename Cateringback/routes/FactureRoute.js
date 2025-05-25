@@ -1,11 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const facturecontroller=require("../controllers/FactureController");
+const notification = require("../models/NotificationModel");
+const { authenticateToken } = require("../middlware/auth");
 
 module.exports=function(broadcastNewFacture,broadcastFactureStatusUpdate){
-router.post("/addFacture",async(req,res)=>{
+router.post("/addFacture",authenticateToken,async(req,res)=>{
     try{
         const facture = await facturecontroller.creerFacture();
+        const notifcreer = await notification.create({
+          message: `Nouvelle factire créée`,
+          emetteur: "tunisie_catering",
+          destinataire: "Direction_Catering_Tunisair",
+          notificationType: "new_facture",
+        });
+        global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
+          ...notifcreer._doc,
+          destinataire: "Direction_Catering_Tunisair",
+        });
         broadcastNewFacture({
           ...facture._doc,
           type: "Facture",
@@ -16,24 +28,34 @@ router.post("/addFacture",async(req,res)=>{
         res.status(400).json({message:err.message});
     }
 })
-router.get("/tousfactures",async(req,res)=>{
-    try{
-        const factures = await facturecontroller.TousLesFacture();
-        res.status(200).json(factures);
-    }catch(err){
-        res.status(400).json({message:err.message});
-    }
-})
-router.put("/updateStatusFacture/:id",async(req,res)=>{
+router.get("/tousfactures", authenticateToken, async (req, res) => {
+  try {
+    const factures = await facturecontroller.TousLesFacture();
+    res.status(200).json(factures);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+router.put("/updateStatusFacture/:id",authenticateToken,async(req,res)=>{
     try{
         const {Statut}=req.body;
         const update = await facturecontroller.updateFactureStatus(
           req.params.id,
           Statut.toLowerCase()
         );
+        const notifcreer = await notification.create({
+          message: `Facture bien mise a jour `,
+          emetteur: "Direction_Catering_Tunisair",
+          destinataire: "tunisie_catering",
+          notificationType: "status_update_facture",
+        });
+        global.io.to("tunisie_catering").emit("newNotification", {
+          ...notifcreer._doc,
+          destinataire: "tunisie_catering",
+        });
         broadcastFactureStatusUpdate({
           _id: req.params.id,
-          statut: Statut,
+          Statut: Statut,
           updatedAt: new Date(),
         });
         res.status(200).json(update);
@@ -46,7 +68,7 @@ router.put("/updateStatusFacture/:id",async(req,res)=>{
         }
     }
 });
-router.put("/Annuler/:id", async (req, res) => {
+router.put("/Annuler/:id", authenticateToken, async (req, res) => {
   try {
     const update = await facturecontroller.AnnulerFacture(req.params.id);
     res.status(200).json(update);

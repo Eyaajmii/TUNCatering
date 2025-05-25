@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';  
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';  
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ReclamationServiceService } from '../../../services/reclamation-service.service';
@@ -11,11 +11,11 @@ import { ReclamationServiceService } from '../../../services/reclamation-service
   templateUrl: './dashboard-direction.component.html',
   styleUrl: './dashboard-direction.component.css'
 })
-export class DashboardDirectionComponent implements OnInit {
+export class DashboardDirectionComponent implements OnInit ,AfterViewInit{
   NavOpen: boolean = true;
   notifications: any[] = [];
   selectedItem: string = '';
-  constructor(private reclamationService:ReclamationServiceService, private toastr: ToastrService){}
+  constructor(private reclamationService:ReclamationServiceService, private toastr: ToastrService, @Inject(PLATFORM_ID) private platformId: Object){}
 
   ngOnInit(): void {
    this.reclamationService.getNewReclamation().subscribe(notification => {
@@ -24,7 +24,7 @@ export class DashboardDirectionComponent implements OnInit {
    });
  }
  ngAfterViewInit(): void {
-  const dropdowns = document.getElementsByClassName("dropdown-btn") as HTMLCollectionOf<HTMLElement>;
+  if (isPlatformBrowser(this.platformId)) {const dropdowns = document.getElementsByClassName("dropdown-btn") as HTMLCollectionOf<HTMLElement>;
 
   for (let i = 0; i < dropdowns.length; i++) {
     const btn = dropdowns[i];
@@ -38,7 +38,7 @@ export class DashboardDirectionComponent implements OnInit {
         dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
       }
     });
-  }
+  }}
 }
 selectItem(item: string) {
   this.selectedItem = item;

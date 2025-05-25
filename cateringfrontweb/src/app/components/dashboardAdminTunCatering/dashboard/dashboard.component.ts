@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private commandeService: CommandeServiceService,
-    private toastr: ToastrService,@Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {

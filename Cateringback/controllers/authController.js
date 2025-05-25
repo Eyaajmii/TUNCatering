@@ -94,53 +94,57 @@ class AuthController {
 
       let TypePersonnel = null;
       let Matricule = null;
-
+      let roleTunisair = null;
       if (
         Finduser.role === "Personnel Tunisair" ||
         Finduser.role === "Personnel navigant"
       ) {
-        console.log(
-          "🔍 Looking for personnelTunisair with userId:",
-          Finduser._id
-        );
-
         const personnelTunisair = await userTunisair.findOne({
           userId: Finduser._id,
         });
-        console.log("🔍 PersonnelTunisair result:", personnelTunisair);
-
         if (personnelTunisair) {
+          roleTunisair = personnelTunisair.roleTunisair;
           Matricule = personnelTunisair.Matricule;
         } else {
-          console.log("❌ No personnelTunisair record found for user");
+          console.log("No personnelTunisair record found for user");
         }
-
-        // ✅ Correction ici : utiliser userId dans personnelnavigant
-        const pnData = await pn.findOne({ userId: Finduser._id });
+        const pnData = await pn.findOne({ PersonnelTunisiarId: personnelTunisair._id });
         if (pnData) {
           TypePersonnel = pnData.TypePersonnel;
-          if (!Matricule) Matricule = pnData.Matricule; // fallback
-          console.log("🔍 Personnel navigant data:", pnData);
+          if (!Matricule) Matricule = pnData.Matricule; 
+          console.log("Personnel navigant data:", pnData);
         }
       } else {
-        console.log("⚠️ No additional data fetched for role:", Finduser.role);
+        console.log("No additional data fetched for role:", Finduser.role);
       }
 
-      console.log("🎯 Final token data:", {
+      console.log("Final token data:", {
         username: Finduser.username,
         role: Finduser.role,
         TypePersonnel,
         Matricule,
+        roleTunisair,
       });
 
       const token = generateAccesToken(
         Finduser.username,
         Finduser.role,
         TypePersonnel,
-        Matricule
+        Matricule,
+        roleTunisair
       );
 
-      return { token };
+      return {
+        token,
+        user: {
+          _id: Finduser._id,
+          username: Finduser.username,
+          role: Finduser.role,
+          Matricule,
+          roleTunisair
+        },
+      };
+
     } catch (err) {
       throw new Error(err.message || "Erreur lors de la connexion");
     }

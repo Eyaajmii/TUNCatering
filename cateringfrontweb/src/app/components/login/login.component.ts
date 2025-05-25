@@ -18,6 +18,11 @@ export class LoginComponent {
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe({
       next: (res) => {
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("userId", res.user._id); 
+        localStorage.setItem("role", res.user.role);
+        localStorage.setItem("Matricule", res.user.Matricule);
+        localStorage.setItem("RoleTunisair", res.user.roleTunisair);
         this.authService.saveToken(res.token);
         const decoded = this.authService.decodeToken(res.token);
         const role = decoded.role;
