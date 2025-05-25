@@ -1,6 +1,4 @@
 const reclamation=require("../models/ReclamationModel")
-const notification = require("../models/NotificationModel");
-
 class reclamationController {
   //pn
   static async MesReclamations(MatriculePn) {
@@ -32,18 +30,6 @@ class reclamationController {
         { MessageReponse, MatriculeDirTunCater, Statut: newStatut },
         { new: true, runValidators: true }
       );
-      const notifcreer = await notification.create({
-        message: `Statut de la réclamation mis à jour en ${newStatut}`,
-        user: updatedReclamation.MatriculePn,
-        notificationType: "reclamation",
-      });
-        global.io.emit("newNotification", {
-          _id: notifcreer._id,
-          message: notifcreer.message,
-          createdAt: notifcreer.createdAt,
-          user: notifcreer.user,
-          notificationType: notifcreer.notificationType,
-        });
       return updatedReclamation;
     } catch (err) {
       throw err;

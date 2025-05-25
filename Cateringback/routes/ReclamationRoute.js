@@ -3,7 +3,7 @@ const router = express.Router();
 const reclamation=require("../models/ReclamationModel");
 const notification=require("../models/NotificationModel");
 const user = require("../models/User");
-const personnelTunisair = require("../models/PersonnelTunisairModel");
+const pn = require("../models/PersonnelTunisairModel");
 const reclamationController=require("../controllers/ReclamationController");
 const { authenticateToken } = require("../middlware/auth");
 const upload = require("../middlware/upload");
@@ -26,24 +26,21 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
       Statut: "en attente",
       imageUrl: req.file ? req.file.filename : null,
     });
-
     const notifcreer = await notification.create({
       message: `Nouvelle réclamation créée pour le personnel navigant ${Matricule}`,
-      user:Matricule,
-      notificationType: "reclamation",
+      emetteur: Matricule,
+      destinataire: "Direction_Catering_Tunisair",
+      notificationType: "new_reclamation",
     });
-    global.io.emit("newNotification", {
-      _id: notifcreer._id,
-      message: notifcreer.message,
-      createdAt: notifcreer.createdAt,
-      user: notifcreer.user,
-      notificationType: notifcreer.notificationType,
-    });
+    /*global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
+      ...notifcreer._doc,
+      destinataire: "Direction_Catering_Tunisair",
+    });*/
     broadcastNewReclamation({
-      ...newReclamation._doc,
+      ...notifcreer._doc,
+      destinataire: "Direction_Catering_Tunisair",
       type: "Reclamation",
       items: [{ newReclamation, quantite: 1 }],
-      destinataire: Matricule,
     });
     res.status(200).json(newReclamation);
   } catch (err) {
@@ -54,7 +51,7 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
 router.get("/reclamation",authenticateToken,async(req,res)=>{
     try{
         const Matricule = req.user.Matricule;
-        const reclamations = await reclamationController.MesReclamations(MatriculePn);
+        const reclamations = await reclamationController.MesReclamations(Matricule);
         res.status(200).json({ reclamations });
     }catch(err){
         res.status(500).json({message:err.message});
@@ -72,20 +69,29 @@ router.get("/reclamation/detail/:id",async (req,res)=>{
 router.put("/repondre/:id", authenticateToken, async (req, res) => {
   try {
     const { newStatut, MessageReponse } = req.body;
-    const Matricule = req.user.Matricule;
+    const MatriculeDirTunCater = req.user.Matricule;
+    const rec = await reclamation.findById(req.params.id);
     const reponse = await reclamationController.reponseReclamation(
       req.params.id,
       newStatut,
       MessageReponse,
       MatriculeDirTunCater
     );
+    const User = await pn.findOne({ Matricule: rec.MatriculePn });
+    const userId = User.userId.toString();
+    const notifcreer = await notification.create({
+      message: `Statut de la réclamation mis à jour en ${newStatut}`,
+      emetteur: MatriculeDirTunCater,
+      destinataire: userId,
+      notificationType: "update_reclamation",
+    });
+    /*global.io.to(userId).emit("newNotification", {
+      ...notifcreer._doc,
+      destinataire: userId,
+    });*/
     broadcastReclamationStatusUpdate({
-      _id: req.params.id,
-      statut: newStatut,
-      MessageReponse,
-      MatriculeDirTunCater,
-      updatedAt: new Date().toISOString(),
-      destinataire: reponse.MatriculePn,
+      ...notifcreer._doc,
+      destinataire: userId,
     });
     res.status(200).json({ message: "Reponse envoyee avec succes", reponse });
   } catch (err) {

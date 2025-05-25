@@ -131,40 +131,27 @@ const socketHandlers = {
   },
 
   broadcastNewReclamation: (data) => {
-    console.log(
-      "[SocketHandler] broadcastNewReclamation called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
-      io.to(data.destinataire).emit("newReclamation", data);
-      console.log(
-        `[SocketHandler] newReclamation emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] newReclamation: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
-    }
+    const destinataireId = data.destinataire;
+    io.emit("NewReclamation", data);
+    console.log(`Destinataire  ${data.destinataire}`);
+    /*if (destinataireId) {
+      io.to(destinataireId).emit("newNotification", {
+        ...data,
+        notificationType: "new_reclamation",
+        destinataire: destinataireId,
+      });
+    }*/
   },
 
   broadcastReclamationStatusUpdate: (data) => {
-    console.log(
-      "[SocketHandler] broadcastReclamationStatusUpdate called. Data:",
-      JSON.stringify(data, null, 2)
-    );
-    if (data && data.destinataire) {
-      io.to(data.destinataire).emit("reclamationStatusUpdate", data);
-      console.log(
-        `[SocketHandler] reclamationStatusUpdate emitted to user: ${data.destinataire}`
-      );
-    } else {
-      console.warn(
-        `[SocketHandler] reclamationStatusUpdate: 'destinataire' is missing or invalid. Data: ${JSON.stringify(
-          data
-        )}`
-      );
+    if (data.destinataire) {
+      console.log(`Destinataire  ${data.destinataire}`);
+      io.to(data.destinataire).emit("ReclamationStatusUpdate", data);
+      /*io.to(data.destinataire).emit("newNotification", {
+        ...data,
+        notificationType: "update_reclamation",
+        destinataire: data.destinataire,
+      });*/
     }
   },
 
