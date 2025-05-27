@@ -11,7 +11,7 @@ class PrelevementController {
       const factures = await facture.find({
         DateFacture: { $gte: debut, $lte: fin },
         Statut: "confirmé",
-        Preleve:false
+        Preleve: false,
       });
 
       console.log("Nombre de factures trouvées :", factures.length);
@@ -42,7 +42,7 @@ class PrelevementController {
         console.log("Prélevement créé :", created);
         result.push(created);
       }
-      const fct=factures.map(f=>f._id);
+      const fct = factures.map((f) => f._id);
       if (fct.length > 0) {
         await facture.updateMany(
           { _id: { $in: fct } },
@@ -67,15 +67,61 @@ class PrelevementController {
       throw err;
     }
   }
-  static async AnnulerPrelevement(id){
-    try{
+  static async AnnulerPrelevement(id) {
+    try {
       const preleve = await prelevement.findById(id);
-      if(!preleve){
+      if (!preleve) {
         throw new Error("Aucun prelevement trouvé ! ");
       }
-      preleve.annulation=true;
+      preleve.annulation = true;
       await preleve.save();
-    }catch(err){
+    } catch (err) {
+      throw err;
+    }
+  }
+  static async MesPrelevement(Matricule) {
+    try {
+      const pv = await prelevement.find({ personnel: Matricule });
+      return pv;
+    } catch (err) {
+      throw err;
+    }
+  }
+  static async DetailPrelevement(prelevementId) {
+    try {
+      const preleve = await prelevement.findById(prelevementId);
+      if (!preleve) {
+        throw new Error("Prélevement introuvable.");
+      }
+      const { personnel, dateDebut, dateFin } = preleve;
+      const factures = await facture.find({
+        DateFacture: { $gte: dateDebut, $lte: dateFin },
+        Statut: "confirmé",
+        Preleve: true,
+        "montantParPn.personnel": personnel,
+      });
+      const details = {};
+      for (const f of factures) {
+        const vol = f.NumVol || f.vol || "Vol inconnu"; 
+        const montantPourPn = f.montantParPn.find(
+          (m) => m.personnel.toString() === personnel
+        );
+        if (montantPourPn) {
+          if (!details[vol]) {
+            details[vol] = 0;
+          }
+          details[vol] += montantPourPn.montant;
+        }
+      }
+
+      return {
+        personnel,
+        dateDebut,
+        dateFin,
+        detailsParVol: details,
+      };
+    } catch (err) {
+      console.error("Erreur dans DetailPrelevement :", err);
       throw err;
     }
   }

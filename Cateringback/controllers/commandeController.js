@@ -4,6 +4,7 @@ const plat = require("../models/Plat");
 const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
 const Vol = require("../models/vol");
+const pn=require('../models/personnelnavigant');
 class CommandeController {
   // Return all orders
   static async getAllCommands() {
@@ -114,6 +115,25 @@ class CommandeController {
       }
 
       const menuId = menu._id;
+      const personnel = await pn.findOne({ Matricule});
+      console.log(personnel)
+      if (personnel && personnel.TypePersonnel === "Technique") {
+        const autreCommande = await commande.findOne({
+          vol: volId,
+          menu: menuId,
+        });
+        console.log(autreCommande);
+        if (autreCommande) {
+          const autrePN = await commande.findOne({
+            Matricule: autreCommande.Matricule,
+          });
+          if (autrePN && autrePN.TypePersonnel === "Technique") {
+            throw new Error(
+              "Ce menu a déjà été commandé par un autre personnel technique sur ce vol. Veuillez commander un menu différent."
+            );
+          }
+        }
+      }
       const now = new Date();
       const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
       const limitdate = new Date(vol.dateVolDep);

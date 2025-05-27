@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const prelevementcontroller=require("../controllers/PrelevementController");
+const { authenticateToken } = require("../middlware/auth");
 
 router.post("/creer",async(req,res)=>{
     try{
@@ -34,4 +35,27 @@ router.put("/annule/:id",async(req,res)=>{
       res.status(500).send("Erreur interne du serveur.");
     }
 })
+router.get("/MesPrelevement",authenticateToken,async(req,res)=>{
+    try{
+        const Matricule = req.user.Matricule;
+        const preleve = await prelevementcontroller.MesPrelevement(Matricule);
+        res.status(200).json(preleve);
+    }catch(err){
+      if (err.message === "Prélevement not found") {
+        return res.status(404).send("Prélevement introuvable.");
+      }
+      console.error("Erreur interne:", err);
+      res.status(500).send("Erreur interne du serveur.");
+    }
+})
+router.get("/detail/:id", authenticateToken, async (req, res) => {
+  try {
+    const detail = await prelevementcontroller.DetailPrelevement(req.params.id);
+    res.status(200).json(detail);
+  } catch (err) {
+    console.error("Erreur dans /detail/:id", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports=router;
