@@ -32,6 +32,14 @@ export class EtatCommandeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadCommandes();
     this.setupWebSocketListeners();
+    this.subscriptions.add(
+      this.commandeService.onOrderStatusUpdate().subscribe((update) => {
+        const index = this.commandes.findIndex(cmd => cmd._id === update.commandeId);
+        if (index !== -1) {
+          this.commandes[index].Statut = update.Statut;
+        }
+      })
+    );
   }
 
   loadCommandes(): void {
@@ -56,15 +64,15 @@ setupWebSocketListeners() {
         }
       })
     );
-    this.subscriptions.add(
+    /*this.subscriptions.add(
       this.commandeService.onOrderStatusUpdate().subscribe(update => {
         const index = this.commandes.findIndex(c => c._id === update._id);
         if (index !== -1) {
-          this.commandes[index].Statut = update.statut;
+          this.commandes[index].Statut = update.Statut;
           this.commandes[index].updatedAt = update.updatedAt;
         }
       })
-    );
+    );*/
   }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

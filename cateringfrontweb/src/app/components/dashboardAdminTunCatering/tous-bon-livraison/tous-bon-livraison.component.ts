@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BonLivraisonService } from '../../../services/bon-livraison.service';
+import { BonLivraison, BonLivraisonService } from '../../../services/bon-livraison.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tous-bon-livraison',
@@ -11,17 +12,26 @@ import { Router } from '@angular/router';
   styleUrl: './tous-bon-livraison.component.css'
 })
 export class TousBonLivraisonComponent implements OnInit {
-  bonsLivraison: any[] = [];
+  bonsLivraison: BonLivraison[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
+  private subscriptions: Subscription = new Subscription(); 
 
   constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
     this.loadBonsLivraison();
+    this.setupWebSocketListeners();
+    this.subscriptions.add(
+      this.bonLivraisonService.getStatusUpdate().subscribe(update => {
+        const index = this.bonsLivraison.findIndex(bn => bn._id === update.bnId);
+        if (index !== -1) {
+          this.bonsLivraison[index].Statut = update.Statut;
+        }
+      })
+    );
   }
-
 
   loadBonsLivraison(): void {
     this.isLoading = true;
@@ -43,6 +53,24 @@ export class TousBonLivraisonComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+  setupWebSocketListeners() {
+    this.subscriptions.add(
+      this.bonLivraisonService.getNewBN().subscribe({
+        next: (r: any) => {
+          console.log('Nouvelle bon de livraison reçu:', r);
+          this.bonsLivraison.unshift(this.transformBn(r));
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles factures:', err);
+        }
+      })
+    );
+  }
+  private transformBn(bn:any):BonLivraison{
+    return {
+      ...bn
+    }
   }
 
   downloadPdf(numeroBon: string): void {

@@ -141,7 +141,8 @@ class AuthController {
           username: Finduser.username,
           role: Finduser.role,
           Matricule,
-          roleTunisair
+          roleTunisair,
+          TypePersonnel,
         },
       };
 

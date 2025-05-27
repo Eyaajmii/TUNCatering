@@ -9,7 +9,6 @@ const mealRoutes = require("./routes/mealRoute");
 const menuRoute = require("./routes/menuRoute");
 const volRoute = require("./routes/volRoute");
 const CarnetSanteRoute = require("./routes/CarnetSanteRouter");
-const bonLivraisonRouter = require("./routes/bonLivraisonRoute");
 const authRouter = require("./routes/auth");
 const chatRoute = require("./routes/ChatbotNLPRoute");
 const prelevementRoute = require("./routes/Prelevementroute");
@@ -36,9 +35,10 @@ io.on("connection", (socket) => {
   console.log(`Client connected avec: ${socket.id}`);
 
   // Événement login pour que l'utilisateur rejoigne sa propre room (basée sur son ID)
-  socket.on("login", ({ userId, role, roleTunisair }) => {
+  socket.on("login", ({ userId, role, roleTunisair, TypePersonnel }) => {
     if (userId) {
       socket.join(userId);
+       console.log(`Socket ${socket.id} rejoint la room ${userId}`);
     }
     if (role === "Personnel Tunisie Catering") {
       socket.join("tunisie_catering");
@@ -48,7 +48,15 @@ io.on("connection", (socket) => {
       roleTunisair === "Personnel de Direction du Catering Tunisiar"
     ) {
       socket.join("Direction_Catering_Tunisair");
-      console.log(`User ${userId} joined Direction_Catering_Tunisair room`);
+      console.log(`User ${socket.id} joined Direction_Catering_Tunisair room`);
+    }
+    if (
+      role === "Personnel Tunisair" &&
+      roleTunisair === "Personnel navigant" &&
+      TypePersonnel === "Chef de cabine"
+    ) {
+      socket.join("chef_cabine");
+      onsole.log(`Socket ${socket.id} a rejoint la room chef_cabine`);
     }
     // Confirmer la connexion à l'utilisateur
     socket.emit("loginConfirmed", { userId, socketId: socket.id });
@@ -81,9 +89,32 @@ io.on("connection", (socket) => {
 
 // Gestionnaires de notifications centralisés avec ciblage par room
 const socketHandlers = {
+  broadcastNewBonLivraison: (data) => {
+    io.emit("NewBonLivraison", data);
+    console.log(`Destinataire  ${data.destinataire}`);
+    if (data.destinataire) {
+      io.to(data.destinataire).emit("newNotification", {
+        ...data,
+        notificationType: "new_bonLivraison",
+        destinataire: data.destinataire,
+      });
+    }
+  },
+
+  broadcastBonLivraisonStatusUpdate: (data) => {
+    if (data.destinataire) {
+      console.log(`Destinataire  ${data.destinataire}`);
+      io.to(data.destinataire).emit("BonLivraisonStatusUpdate", data);
+      io.to(data.destinataire).emit("newNotification", {
+        ...data,
+        notificationType: "statut_bonLivraison",
+        destinataire: data.destinataire,
+      });
+    }
+  },
   broadcastNewOrder: (data) => {
     const destinataireId = data.destinataire;
-    io.emit("newOrder", data); 
+    io.emit("newOrder", data);
     if (destinataireId) {
       io.to(destinataireId).emit("newNotification", {
         ...data,
@@ -97,36 +128,36 @@ const socketHandlers = {
     if (data.destinataire) {
       console.log(`Destinataire  ${data.destinataire}`);
       io.to(data.destinataire).emit("orderStatusUpdate", data);
-      io.to(data.destinataire).emit("newNotification", {
+      /*io.to(data.destinataire).emit("newNotification", {
         ...data,
         notificationType: "update_status",
         destinataire: data.destinataire,
-      });
+      });*/
     }
   },
 
   broadcastNewFacture: (data) => {
     const destinataireId = data.destinataire;
-    io.emit("newFacture", data);
+    io.to(destinataireId).emit("newFacture", data);
     console.log(`Destinataire  ${data.destinataire}`);
-    if (destinataireId) {
+    /*if (destinataireId) {
       io.to(destinataireId).emit("newNotification", {
         ...data,
         notificationType: "new_facture",
         destinataire: destinataireId,
       });
-    }
+    }*/
   },
 
   broadcastFactureStatusUpdate: (data) => {
     if (data.destinataire) {
       console.log(`Destinataire  ${data.destinataire}`);
       io.to(data.destinataire).emit("factureStatusUpdate", data);
-      io.to(data.destinataire).emit("newNotification", {
+      /*io.to(data.destinataire).emit("newNotification", {
         ...data,
         notificationType: "status_update_facture",
         destinataire: data.destinataire,
-      });
+      });*/
     }
   },
 
@@ -134,13 +165,13 @@ const socketHandlers = {
     const destinataireId = data.destinataire;
     io.emit("NewReclamation", data);
     console.log(`Destinataire  ${data.destinataire}`);
-    /*if (destinataireId) {
+    if (destinataireId) {
       io.to(destinataireId).emit("newNotification", {
         ...data,
         notificationType: "new_reclamation",
         destinataire: destinataireId,
       });
-    }*/
+    }
   },
 
   broadcastReclamationStatusUpdate: (data) => {
@@ -181,11 +212,14 @@ app.use("/api/menu", menuRoute);
 app.use("/api/vol", volRoute);
 app.use("/api/carnetsante", CarnetSanteRoute);
 app.use("/api/chatbot", chatRoute);
-app.use("/api/bonLivraison", bonLivraisonRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/prelevement", prelevementRoute);
 app.use("/api/personnelTunisair", personnelTunisairRoute);
-
+const bonLivraisonRouter = require("./routes/bonLivraisonRoute")(
+  socketHandlers.broadcastNewBonLivraison,
+  socketHandlers.broadcastBonLivraisonStatusUpdate
+);
+app.use("/api/bonLivraison", bonLivraisonRouter);
 // Import and configure routes with socket handlers
 const reclamationRouter = require("./routes/ReclamationRoute")(
   socketHandlers.broadcastNewReclamation,

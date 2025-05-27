@@ -50,14 +50,13 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         destinataire: "tunisie_catering",
         notificationType: "new_order",
       });
-      global.io.to("tunisie_catering").emit("newNotification", {
+     global.io.to("tunisie_catering").emit("newNotification", {
         ...notifcreer._doc,
         destinataire: "tunisie_catering",
       });
       broadcastNewOrder({
-        ...newcommande._doc,
-        type: "menu",
-        items: [{ nom, quantite: 1 }],
+        ...notifcreer._doc,
+        destinataire: "tunisie_catering",
       });
 
       res.status(200).json(newcommande);
@@ -97,14 +96,8 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         destinataire: "tunisie_catering",
       });
       broadcastNewOrder({
-        ...newCommande._doc,
-        type: "plat",
-        items: [
-          { nom: nomEntree, quantite: 1 },
-          { nom: nomPlatPrincipal, quantite: 1 },
-          { nom: nomDessert, quantite: 1 },
-          { nom: nomBoissons, quantite: 1 },
-        ].filter((item) => item.nom),
+        ...notifcreer._doc,
+        destinataire: "tunisie_catering",
       });
       res.status(200).json(newCommande);
     } catch (err) {
@@ -155,15 +148,16 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
         notificationType: "update_status",
       });
        
-      global.io.to(userId).emit("newNotification", {
+      /*global.io.to(userId).emit("newNotification", {
         ...notifcreer._doc,
         destinataire: userId,
-      });
+      });*/
       // Broadcast
       broadcastOrderStatusUpdate({
-        _id: req.params.id,
-        statut: Statut,
-        updatedAt: new Date(),
+        ...notifcreer._doc,
+        destinataire: userId,
+        commandeId: updateCommande._id,
+        Statut: updateCommande.Statut,
       });
 
       res.status(200).json(updateCommande);

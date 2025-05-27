@@ -1,17 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ReclamationServiceService } from '../../../services/reclamation-service.service';
+import { Reclamation, ReclamationServiceService } from '../../../services/reclamation-service.service';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-export interface Reclamation{
-  _id:string,
-  Objet:string,
-  MessageEnvoye:string,
-  MessageReponse:string,
-  Statut: string,
-  MatriculePn: string,
-  MatriculeDirTunCater: string,
-}
 @Component({
   selector: 'app-tousreclamation',
   imports: [CommonModule,FormsModule],
@@ -32,7 +23,6 @@ connectionStatus: boolean = false;
   ngOnInit(): void {
     this.loadReclamation();
     this.setupWebSocketListeners();
-    this.monitorConnectionStatus();
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -69,13 +59,13 @@ connectionStatus: boolean = false;
         }
       })
     );
-  }
-
-  monitorConnectionStatus() {
     this.subscriptions.add(
-      this.reclamationService.getConnectionStatus().subscribe((status: boolean) => {
-        this.connectionStatus = status;
-        this.error = status ? null : 'Connexion perdue. Reconnexion...';
+      this.reclamationService.getStatusUpdate().subscribe(update => {
+        const index = this.reclamations.findIndex(c => c._id === update._id);
+        if (index !== -1) {
+          this.reclamations[index].Statut = update.statut;
+          this.reclamations[index].updatedAt = update.updatedAt;
+        }
       })
     );
   }

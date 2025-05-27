@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { BonLivraisonService } from '../../../services/bon-livraison.service';
+import { BonLivraison, BonLivraisonService } from '../../../services/bon-livraison.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 @Component({
@@ -12,17 +12,40 @@ import { Router } from '@angular/router';
   styleUrl: './listebonslivraisons.component.css'
 })
 export class ListebonslivraisonsComponent implements OnInit {
-  bonsLivraison: any[] = [];
+  bonsLivraison: BonLivraison[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
-  private realTimeSub!: Subscription;
+  private subscriptions: Subscription = new Subscription(); 
 
   constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
+    this.bonLivraisonService.joinRoom('chef_cabine');
     this.loadBonsLivraison();
-    
+    this.subscriptions.add(
+      this.bonLivraisonService.getNewBN().subscribe({
+        next: (r: any) => {
+          console.log('Nouvelle bon de livraison reçu:', r);
+          this.bonsLivraison.unshift(r);
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles factures:', err);
+        }
+      })
+    ); 
+    this.subscriptions.add(
+      this.bonLivraisonService.getStatusUpdate().subscribe(update => {
+        const index = this.bonsLivraison.findIndex(bn => bn._id === update.bnId);
+        if (index !== -1) {
+          this.bonsLivraison[index] = {
+            ...this.bonsLivraison[index],
+            Statut: update.Statut,
+            conformite: update.conformite,
+          };
+        }
+      })
+    );
   }
 
   loadBonsLivraison(): void {
@@ -46,7 +69,12 @@ export class ListebonslivraisonsComponent implements OnInit {
       }
     });
   }
-
+ 
+  private transformBn(bn:any):BonLivraison{
+    return {
+      ...bn
+    }
+  }
   downloadPdf(numeroBon: string): void {
     this.bonLivraisonService.downloadPdf(numeroBon).subscribe({
       next: (blob: Blob) => {

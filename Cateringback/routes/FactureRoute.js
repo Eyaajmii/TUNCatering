@@ -9,19 +9,21 @@ router.post("/addFacture",authenticateToken,async(req,res)=>{
     try{
         const facture = await facturecontroller.creerFacture();
         const notifcreer = await notification.create({
-          message: `Nouvelle factire créée`,
+          message: `Nouvelle facture créée`,
           emetteur: "tunisie_catering",
           destinataire: "Direction_Catering_Tunisair",
           notificationType: "new_facture",
         });
-        global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
+        /*global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
           ...notifcreer._doc,
           destinataire: "Direction_Catering_Tunisair",
-        });
+        });*/
         broadcastNewFacture({
           ...facture._doc,
+          ...notifcreer._doc,
           type: "Facture",
           items: [{ facture, quantite: 1 }],
+          destinataire: "Direction_Catering_Tunisair",
         });
         res.status(200).json(facture);
     }catch(err){
@@ -49,14 +51,16 @@ router.put("/updateStatusFacture/:id",authenticateToken,async(req,res)=>{
           destinataire: "tunisie_catering",
           notificationType: "status_update_facture",
         });
-        global.io.to("tunisie_catering").emit("newNotification", {
+        /*global.io.to("tunisie_catering").emit("newNotification", {
           ...notifcreer._doc,
           destinataire: "tunisie_catering",
-        });
+        });*/
         broadcastFactureStatusUpdate({
+          ...update._doc,
           _id: req.params.id,
+          ...notifcreer._doc,
           Statut: Statut,
-          updatedAt: new Date(),
+          destinataire: "tunisie_catering",
         });
         res.status(200).json(update);
     }catch(err){

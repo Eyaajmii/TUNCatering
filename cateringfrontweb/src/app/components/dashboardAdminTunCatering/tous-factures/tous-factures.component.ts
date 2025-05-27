@@ -43,6 +43,14 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.loadFactures();
     this.setupWebSocketListeners();
+    this.subscriptions.add(
+      this.factureService.onFactureStatusUpdate().subscribe(update => {
+        const index = this.factures.findIndex(c => c._id === update._id);
+        if (index !== -1) {
+          this.factures[index].Statut = update.Statut;
+        }
+      })
+    );
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -100,22 +108,6 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
         error: (err) => {
           console.error('Erreur dans le flux des nouvelles factures:', err);
           this.errorMessage = 'Erreur de réception des nouvelles factures';
-        }
-      })
-    );
-    this.subscriptions.add(
-      this.factureService.onFactureStatusUpdate().subscribe({
-        next: (update: any) => {
-          const index = this.factures.findIndex(c => c._id === update._id);
-          if (index !== -1) {
-            this.factures[index] = this.transformFacture({
-              ...this.factures[index],
-              ...update
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des mises à jour:', err);
         }
       })
     );

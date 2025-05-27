@@ -35,7 +35,7 @@ export class FactureService {
   private socket!:Socket; 
   private newfacture = new Subject<Facture>();  
   private statusUpdates= new Subject<any>();  
-  private notificationSubject = new Subject<any>();
+  //private notificationSubject = new Subject<any>();
   private isBrowser: boolean;  
   constructor(private http: HttpClient,@Inject(PLATFORM_ID) private platformId: Object,private toastr:ToastrService) { 
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -64,9 +64,9 @@ export class FactureService {
         }
       }
     });
-    this.socket.on('newFacture', (data:Facture) => this.newfacture.next(data));
-    this.socket.on('factureStatusUpdate', (data: any) => this.statusUpdates.next(data));
-    this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
+    this.socket.on('newFacture', (data:any) =>{ this.newfacture.next(data);this.toastr.info(data.message);});
+    this.socket.on('factureStatusUpdate', (data: any) => {this.statusUpdates.next(data);this.toastr.info(data.message);});
+    //this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
   ajouterFacture():Observable<any>{
     const token = localStorage.getItem('token'); 
@@ -118,9 +118,9 @@ onNewFacture(): Observable<Facture> {
 onFactureStatusUpdate(): Observable<any> {
 return this.statusUpdates.asObservable();
 }
-onNotification(): Observable<any> {
+/*onNotification(): Observable<any> {
   return this.notificationSubject.asObservable();
-}
+}*/
 // Pour rejoindre une room spécifique
 joinRoom(roomName: string): void {
   this.socket.emit('joinRoom', roomName);

@@ -40,6 +40,7 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription(); 
   constructor(private factureService:FactureService){}
   ngOnInit(): void {
+    this.factureService.joinRoom('Direction_Catering_Tunisair');
     this.loadFactures();
     this.setupWebSocketListeners();
   
@@ -80,18 +81,10 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
       })
     );
     this.subscriptions.add(
-      this.factureService.onFactureStatusUpdate().subscribe({
-        next: (update: any) => {
-          const index = this.factures.findIndex(c => c._id === update._id);
-          if (index !== -1) {
-            this.factures[index] = this.transformFacture({
-              ...this.factures[index],
-              ...update
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des mises à jour:', err);
+      this.factureService.onFactureStatusUpdate().subscribe(update => {
+        const index = this.factures.findIndex(c => c._id === update._id);
+        if (index !== -1) {
+          this.factures[index].Statut = update.Statut;
         }
       })
     );

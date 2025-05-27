@@ -32,12 +32,12 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
       destinataire: "Direction_Catering_Tunisair",
       notificationType: "new_reclamation",
     });
-    /*global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
+    global.io.to("Direction_Catering_Tunisair").emit("newNotification", {
       ...notifcreer._doc,
       destinataire: "Direction_Catering_Tunisair",
-    });*/
+    });
     broadcastNewReclamation({
-      ...notifcreer._doc,
+      ...newReclamation._doc,
       destinataire: "Direction_Catering_Tunisair",
       type: "Reclamation",
       items: [{ newReclamation, quantite: 1 }],
@@ -91,6 +91,9 @@ router.put("/repondre/:id", authenticateToken, async (req, res) => {
     });*/
     broadcastReclamationStatusUpdate({
       ...notifcreer._doc,
+      ...reponse._doc,
+      Statut:newStatut,
+      MessageReponse:MessageReponse,
       destinataire: userId,
     });
     res.status(200).json({ message: "Reponse envoyee avec succes", reponse });

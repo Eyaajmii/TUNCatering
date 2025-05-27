@@ -1,19 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ReclamationServiceService } from '../../../services/reclamation-service.service';
+import { Reclamation, ReclamationServiceService } from '../../../services/reclamation-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-export interface Reclamation{
-  _id:string,
-  Objet:string,
-  MessageEnvoye:string,
-  MessageReponse:string,
-  Statut: string,
-  MatriculePn: string,
-  MatriculeDirTunCater: string,
-  dateSoumission:string
-}
+
 
 @Component({
   selector: 'app-consulter-reclamation',
@@ -24,33 +15,49 @@ export interface Reclamation{
 export class ConsulterReclamationComponent implements OnInit,OnDestroy{
   reclamations:Reclamation[]=[];
   MatriculePn:string='';
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription = new Subscription(); 
   constructor(private reclamationservice:ReclamationServiceService,private route:ActivatedRoute,private router:Router) { }
   ngOnInit(): void {
+    this.loadReclamation();
+    this.setupWebSocketListeners();
+  }
+  loadReclamation(){
     this.reclamationservice.getMesReclamations().subscribe({
       next:(response:any)=>{
         this.reclamations=response.reclamations;
       },
       error:(err)=>{
         console.error('Error loading reclamation:', err);
-        alert('erreurrrrr')
       }
-    });
-    const newReclamation=this.reclamationservice.getNewReclamation().subscribe(rec=>{
-      
-        this.reclamations.push(rec);
-
-    });
-    const updateReclamation=this.reclamationservice.getStatusUpdate().subscribe(update=>{
-      const i=this.reclamations.findIndex(r=>r._id===update._id);
-      if(i!==-1){
-        this.reclamations[i].Statut=update.statut;
-        this.reclamations[i].dateSoumission=update.updatedAt;
-      }
-    });
-    this.subscriptions.push(newReclamation,updateReclamation);
+    })
   }
-  
+  setupWebSocketListeners() {
+    this.subscriptions.add(
+      this.reclamationservice.getNewReclamation().subscribe({
+        next: (r: any) => {
+          console.log('Nouvelle reclamation reçue:', r);
+          this.reclamations.unshift(this.transformReclamation(r));
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles factures:', err);
+        }
+      })
+    );
+    this.subscriptions.add(
+      this.reclamationservice.getStatusUpdate().subscribe(update => {
+        const index = this.reclamations.findIndex(c => c._id === update._id);
+        if (index !== -1) {
+          this.reclamations[index].Statut = update.Statut;
+          this.reclamations[index].MessageReponse = update.MessageReponse;
+        }
+      })
+    );
+  }
+  private transformReclamation(reclamation:any):Reclamation{
+    return {
+      ...reclamation
+    }
+  }
   voirDetails(id: string) {
     this.router.navigate(['/AccueilPersonnel/reponse/', id]);
   }
@@ -73,6 +80,6 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
     this.router.navigate(['/AccueilPersonnel/Ajoutreclamation'])
   }
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.unsubscribe();
   }
 }

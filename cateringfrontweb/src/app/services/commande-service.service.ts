@@ -83,7 +83,7 @@ export class CommandeServiceService {
       }
     });
     this.socket.on('newOrder', (data:Commande) => this.newOrders.next(data));
-    this.socket.on('orderStatusUpdate', (data: any) => this.statusUpdates.next(data));
+    this.socket.on('orderStatusUpdate', (data: any) =>{ this.statusUpdates.next(data);this.toastr.info(data.message)});
     this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
   
