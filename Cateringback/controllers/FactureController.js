@@ -3,18 +3,25 @@ const BonLivraison = require("../models/bonLivraison");
 const Vol = require("../models/vol");
 
 class FactureController {
-  static async creerFacture() {
+  static async creerFacture(mois,annee) {
   try {
+    if(!mois || mois<1 || mois>12){
+      throw new Error("Mois invalide. Veuillez fournir un mois entre 1 et 12.");
+    }
+    annee=new Date().getFullYear();
+    const DebutDate=new Date(annee,mois-1,1);
+    const FinDate = new Date(annee, mois,0,23,59,59,999);
     const bonsLivraison = await BonLivraison.find({
       Facturé: false,
       Statut: "Validé",
+      dateCreation: { $gte: DebutDate, $lte: FinDate },
     }).populate({
       path: "commandes.commande",
       select: "montantsTotal Matricule",
     });
 
     if (bonsLivraison.length === 0) {
-      return { success: false, message: "Aucun bon de livraison non facturé trouvé." };
+      throw new Error("Aucun bon de livraison non facturé trouvé.");
     }
     const bonsIds = bonsLivraison.map((bn) => bn._id);
 
@@ -24,7 +31,7 @@ class FactureController {
     });
 
     if (factureExistante) {
-      return { success: false, message: "Certains bons de livraison sont déjà inclus dans une facture active." };
+      throw new Error ("Certains bons de livraison sont déjà inclus dans une facture active.");
     }
     const newFacture = new Facture({
       numeroFacture: "FCT-" + Date.now(),
@@ -83,7 +90,7 @@ class FactureController {
 
   } catch (err) {
     console.error("Erreur dans creerFactureSansDate:", err);
-    return { success: false, message: err.message };
+    throw err;
   }
 }
 

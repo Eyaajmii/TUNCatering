@@ -14,7 +14,7 @@ const bonLivraisonSchema = new mongoose.Schema(
     Statut: {
       //par chef de cabine
       type: String,
-      enum: ["En attente", "En retard", "Annulé", "Validé"],
+      enum: ["En attente", "Annulé", "Validé"],
       default: "En attente",
     },
     vol: {
@@ -62,6 +62,9 @@ const bonLivraisonSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    Commantaire:{
+      type:String
+    }
   },
   {
     timestamps: true,

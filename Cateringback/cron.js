@@ -1,5 +1,6 @@
 const cron = require("node-cron");
 const bn=require('./models/bonLivraison');
+const cmdController=require('./controllers/commandeController')
 cron.schedule("* * * * *", async() => {
     try {
       const now = new Date();
@@ -24,4 +25,9 @@ cron.schedule("* * * * *", async() => {
     } catch (error) {
       console.error(" Erreur lors de l'exécution de la tâche CRON :", error);
     }
+});
+cron.schedule("*/5 * * * *", async () => {
+  console.log("Mise a jour automatique des commandes");
+  await cmdController.updateeStautAuto();
+  console.log("Mise a jour a terminée ! ")
 });

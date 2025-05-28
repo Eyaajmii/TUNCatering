@@ -36,6 +36,9 @@ const ReclamationSchema = new mongoose.Schema(
     MatriculeDirTunCater: {
       type: String,
     },
+    Commande:{
+      type:String
+    }
   },
   {
     timestamps: true,

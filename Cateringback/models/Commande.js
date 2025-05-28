@@ -10,6 +10,9 @@ const validStatuses = [
 ];
 
 const commandeSchema = new mongoose.Schema({
+  numeroCommande:{
+    type:String
+  },
   NombreCommande: {
     type: Number,
     required: true,

@@ -180,5 +180,21 @@ class AuthController {
       throw new Error(err.message);
     }
   }
+  static async consulterUser(){
+    try{
+      const users=await user.find();
+      return users;
+    }catch(err){
+      throw new Error('Erreur lors de la consultation des utilisateurs : ' + err.message);
+    }
+  }
+  static async supprimerUser(id){
+    try{
+      const userSupprimer=await user.findByIdAndDelete(id);
+      return userSupprimer;
+    }catch(err){
+      throw new Error('Erreur lors de la supprimation d utilisateur : ' + err.message);
+    }
+  }
 }
 module.exports = AuthController;

@@ -258,7 +258,7 @@ module.exports = function (
   const updateStatutBonLivraison = async (req, res) => {
     try {
       const { id } = req.params;
-      const { confirmerConformite, commandesConfirmées } = req.body;
+      const { confirmerConformite, commandesConfirmées,Commantaire } = req.body;
       const username = req.user.username;
       const User = await user.findOne({ username });
       const pn = await personnelTunisair.findOne({ userId: User._id });
@@ -269,8 +269,6 @@ module.exports = function (
         return res
           .status(404)
           .json({ message: "Bon de livraison introuvable" });
-      let conformite = bn.conformite;
-      let statut = bn.Statut;
       //confirmation manuelle des commandes
       if (
         Array.isArray(commandesConfirmées) &&
@@ -287,24 +285,18 @@ module.exports = function (
         bn.commandes.forEach((cmd) => {
           cmd.confirme = true;
         });
-        conformite = "Confirmé";
-        statut = "Validé";
-      } else {
-        // vérifie si toutes les commandes sont confirmées
-        const toutesConfirmées = bn.commandes.every(
-          (cmd) => cmd.confirme === true
-        );
-        if (toutesConfirmées) {
-          conformite = "Confirmé";
-          statut = "Validé";
-        }
       }
-
-      bn.conformite = conformite;
-      bn.Statut = statut;
+      const auMoinsUneConfirme = bn.commandes.some((c) => c.confirme === true);
+      if (auMoinsUneConfirme) {
+        bn.conformite = "Confirmé";
+        bn.Statut = "Validé";
+      }
       bn.personnelLivraison = personnelLivraison;
+      if (Commantaire) {
+        bn.Commantaire = Commantaire;
+      }
       await bn.save();
-      if (statut === "Validé") {
+      if (bn.Statut === "Validé") {
         for (const c of bn.commandes) {
           if (c.commande && c.commande._id) {
             await Commande.findByIdAndUpdate(c.commande._id, {
@@ -330,8 +322,8 @@ module.exports = function (
         items: [{ bn, quantite: 1 }],
         //destinataire: "tunisie_catering",
         bnId: bn._id,
-        Statut: statut,
-        conformite:conformite,
+        Statut: bn.Statut,
+        conformite:bn.conformite,
       });
       res.status(200).json({
         success: true,
@@ -421,7 +413,7 @@ module.exports = function (
       res.status(500).send("Erreur interne du serveur.");
     }
   };
-  const getBonsNonFacture = async (req, res) => {
+  /*const getBonsNonFacture = async (req, res) => {
     try {
       const bns = await BonLivraison.find({ Facturé: false });
       if (!bns) {
@@ -433,7 +425,7 @@ module.exports = function (
     } catch (err) {
       res.status(500);
     }
-  };
+  };*/
   return {
     createBonLivraison,
     getBonByVolId,
@@ -443,6 +435,5 @@ module.exports = function (
     updateBonLivraison,
     getAllBonsLivraisons,
     AnnulerBn,
-    getBonsNonFacture,
   };
 };

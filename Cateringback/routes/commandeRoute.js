@@ -170,6 +170,36 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       }
     }
   });
+  router.put("/annulationVol/:id", authenticateToken, async (req, res) => {
+    try {
+      const cmdAnnule = await CommandeController.annulationCommandeVol(
+        req.params.id
+      );
+      const User = await pn.findOne({ Matricule: cmdAnnule.Matricule });
+      const userId = User.userId.toString();
+      const notifcreer = await notification.create({
+        message: `Annulation du vol :Commande de ${cmdAnnule.Matricule} a été annulée`,
+        emetteur: "Direction_Catering_Tunisair",
+        destinataire: userId,
+        notificationType: "update_status",
+      });
+
+      /*global.io.to(userId).emit("newNotification", {
+        ...notifcreer._doc,
+        destinataire: userId,
+      });*/
+      // Broadcast
+      broadcastOrderStatusUpdate({
+        ...notifcreer._doc,
+        destinataire: userId,
+        commandeId: cmdAnnule._id,
+        Statut: cmdAnnule.Statut,
+      });
+      res.status(200).json(cmdAnnule);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  });
   router.put("/ModifierMaCommande/:id", authenticateToken, async (req, res) => {
     try {
       const updatcmd = await CommandeController.updateCommande(

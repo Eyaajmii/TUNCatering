@@ -25,6 +25,12 @@ class reclamationController {
   //tunisair
   static async reponseReclamation(id,newStatut,MessageReponse,MatriculeDirTunCater) {
     try {
+      const rec = await reclamation.findById(id);
+      const now = new Date();
+      const diffInDays =(now - new Date(rec.dateSoumission)) / (1000 * 60 * 60 * 24);
+      if (diffInDays > 5) {
+        throw new Error("Impossible de traiter une réclamation après 5 jours de soumission.");
+      }
       const updatedReclamation = await reclamation.findByIdAndUpdate(
         id,
         { MessageReponse, MatriculeDirTunCater, Statut: newStatut },

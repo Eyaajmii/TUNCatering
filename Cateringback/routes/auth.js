@@ -34,7 +34,7 @@ router.post("/authentification", async(req, res)=>{
 });
 router.post("/logout", async (req, res) => {
   try {
-    const result = await authcontroller.logout(req.body.token);
+    const result = authcontroller.logout(req.body.token);
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -48,4 +48,21 @@ router.put('/update', authenticateToken,async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+router.get("/AllUser", authenticateToken,async(req,res)=>{
+  try {
+    const user=await authcontroller.consulterUser();
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+router.delete('/supprimer/:id',authenticateToken,async(req,res)=>{
+  try {
+    const userSupprimer = await authcontroller.supprimerUser(req.params.id);
+    res.status(200).json({message: "Utilisateur supprimé avec succès",user: userSupprimer,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+})
 module.exports = router;

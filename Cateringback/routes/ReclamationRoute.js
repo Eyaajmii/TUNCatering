@@ -4,6 +4,7 @@ const reclamation=require("../models/ReclamationModel");
 const notification=require("../models/NotificationModel");
 const user = require("../models/User");
 const pn = require("../models/PersonnelTunisairModel");
+const commande=require("../models/Commande");
 const reclamationController=require("../controllers/ReclamationController");
 const { authenticateToken } = require("../middlware/auth");
 const upload = require("../middlware/upload");
@@ -14,17 +15,27 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
     const Matricule = req.user.Matricule;
     const randomPart=Math.floor(Math.random()*1000).toString().padStart(3,'0');
     const NumeroReclamation = `REC-${randomPart}`;
-    const { Objet, MessageEnvoye, imageUrl } = req.body;
+    const { Objet, MessageEnvoye, numeroCommande } = req.body;
+    const cmd = await commande.findOne({ numeroCommande: numeroCommande ,Matricule:Matricule});
+    if (!cmd) {
+      return res.status(404).json({ message: "Commande non trouvée ou ne vous appartient pas." });
+    }
+    const now = new Date();
+    const diffInDays = (now - new Date(cmd.dateCommnade)) / (1000 * 60 * 60 * 24);
+    if (diffInDays > 5) {
+      return res.status(400).json({ message: "La réclamation ne peut pas être soumise après 5 jours de la commande." });
+    }
     const newReclamation = await reclamation.create({
       NumeroReclamation,
       Objet,
       MessageEnvoye,
       MessageReponse: null,
-      MatriculePn:Matricule,
+      MatriculePn: Matricule,
       MatriculeDirTunCater: null,
       dateSoumission: Date.now(),
       Statut: "en attente",
       imageUrl: req.file ? req.file.filename : null,
+      Commande: numeroCommande,
     });
     const notifcreer = await notification.create({
       message: `Nouvelle réclamation créée pour le personnel navigant ${Matricule}`,

@@ -185,7 +185,9 @@ const socketHandlers = {
       });*/
     }
   },
-
+  broadcastNewNotification:(data)=>{
+    io.emit("NotificationProbeleme", data);
+  },
   sendNotification: (userId, type, data) => {
     io.to(userId).emit("newNotification", {
       ...data,
@@ -238,7 +240,10 @@ const commandeRoute = require("./routes/commandeRoute")(
   socketHandlers.broadcastOrderStatusUpdate
 );
 app.use("/api/commande", commandeRoute);
-
+const notificationRoute = require("./routes/NotificationRoute")(
+  socketHandlers.broadcastNewNotification
+);
+app.use("/api/notification", notificationRoute);
 // MongoDB Connection
 mongoose
   .connect("mongodb://localhost:27017/Tuncatering")

@@ -5,6 +5,7 @@ const menucontroller = require("./menuController");
 const platcontroller = require("./mealController");
 const Vol = require("../models/vol");
 const pn=require('../models/personnelnavigant');
+const PersonnelTunisair=require('../models/PersonnelTunisairModel')
 class CommandeController {
   // Return all orders
   static async getAllCommands() {
@@ -89,7 +90,9 @@ class CommandeController {
   // Order Menu
   static async RequestCommandeMenu(numVol, nom, Matricule) {
     try {
-      const vol = await Vol.findOne({ numVol: numVol, dateVolDep: { $gte: new Date() } });
+      const randomPart = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+      const numeroCommande = `CMD-${randomPart}`;
+      const vol = await Vol.findOne({numVol: numVol, dateVolDep: { $gte: new Date() },});
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -111,22 +114,30 @@ class CommandeController {
 
       const menu = await Menu.findOne({ nom: nom });
       if (!menu || !menu.Disponible) {
-        throw new Error("Menu not available");
+        throw new Error("Menu non disponible");
       }
 
       const menuId = menu._id;
-      const personnel = await pn.findOne({ Matricule});
-      console.log(personnel)
+      const persTunisair = await PersonnelTunisair.findOne({ Matricule });
+      if (!persTunisair) throw new Error("Matricule invalide");
+      const personnel = await pn.findOne({
+        PersonnelTunisiarId: persTunisair._id,
+      });
+      console.log("Personnel courant :", personnel);
       if (personnel && personnel.TypePersonnel === "Technique") {
         const autreCommande = await commande.findOne({
           vol: volId,
           menu: menuId,
         });
-        console.log(autreCommande);
-        if (autreCommande) {
-          const autrePN = await commande.findOne({
+
+        if (autreCommande && autreCommande.Matricule !== Matricule) {
+          const autrePers = await PersonnelTunisair.findOne({
             Matricule: autreCommande.Matricule,
           });
+          const autrePN = await pn.findOne({
+            PersonnelTunisiarId: autrePers._id,
+          });
+
           if (autrePN && autrePN.TypePersonnel === "Technique") {
             throw new Error(
               "Ce menu a déjà été commandé par un autre personnel technique sur ce vol. Veuillez commander un menu différent."
@@ -134,20 +145,19 @@ class CommandeController {
           }
         }
       }
-      const now = new Date();
-      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      const limitdate = new Date(vol.dateVolDep);
-      if (date > limitdate) {
-        throw new Error("Commande not allowed after the flight departure time");
+      // Vérification des délais de commande
+      const now = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+      const dateVol = new Date(vol.dateVolDep);
+      const diffMs = dateVol - now;
+      const diffH = diffMs / (1000 * 60 * 60);
+      if (diffH > 72) {
+        throw new Error("Les commandes ne sont autorisées qu'à partir de 72 heures avant le vol.");
       }
-
-      const deadline = new Date(limitdate);
-      if (["Tunis", "Monastir", "Djerba"].includes(vol.Depart)) {
-        deadline.setHours(deadline.getHours() - 3);
-      } else if (
-        ["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart)
+      if (
+        (["Tunis", "Monastir", "Djerba"].includes(vol.Depart) && diffH <= 3) ||
+        (["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart) &&diffH <= 12)
       ) {
-        deadline.setHours(deadline.getHours() - 12);
+        throw new Error(`Les commandes pour les vols au départ de ${ vol.Depart} doivent être passées plus de ${vol.Depart === "Tunis" ? "3" : "12" } heures à l'avance.`);
       }
       const arrayplat = [
         ...menu.PlatsPrincipaux,
@@ -156,16 +166,17 @@ class CommandeController {
         ...menu.Boissons,
       ];
       const newCmd = await commande.create({
+        numeroCommande,
         vol: volId,
         menu: menuId,
         plats: arrayplat,
-        dateCommande: date,
+        dateCommande: new Date(),
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
         montantsTotal: 2.5,
         Matricule: Matricule || undefined,
       });
-      await menucontroller.miseajourmenuCommande(nom);      
+      await menucontroller.miseajourmenuCommande(nom);
       return newCmd;
     } catch (err) {
       throw new Error("Error creating command: " + err.message);
@@ -183,7 +194,14 @@ class CommandeController {
     Matricule
   ) {
     try {
-      const vol = await Vol.findOne({ numVol: numVol,dateVolDep: { $gte: new Date() } });
+      const randomPart = Math.floor(Math.random() * 1000)
+        .toString()
+        .padStart(3, "0");
+      const numeroCommande = `CMD-${randomPart}`;
+      const vol = await Vol.findOne({
+        numVol: numVol,
+        dateVolDep: { $gte: new Date() },
+      });
       if (!vol) {
         throw new Error("Flight not found");
       }
@@ -262,37 +280,44 @@ class CommandeController {
       ) {
         throw new Error("One or more plats are unavailable");
       }
-      const now = new Date();
-      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      const limitdate = new Date(vol.dateVolDep);
-      const deadline = new Date(limitdate);
-
-      // Adjust deadline based on destination
-      if (["Tunis", "Monastir", "Djerba"].includes(vol.Destination)) {
-        deadline.setHours(deadline.getHours() - 3);
-      } else if (
-        ["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Destination)
-      ) {
-        deadline.setHours(deadline.getHours() - 12);
+      // Vérification des délais de commande
+      const now = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
+      const dateVol = new Date(vol.dateVolDep);
+      const diffMs = dateVol - now;
+      const diffH = diffMs / (1000 * 60 * 60);
+      if (diffH > 72) {
+        throw new Error(
+          "Les commandes ne sont autorisées qu'à partir de 72 heures avant le vol."
+        );
       }
-
-      if (date > limitdate) {
-        throw new Error("Order not allowed after the flight departure time");
+      if (
+        (["Tunis", "Monastir", "Djerba"].includes(vol.Depart) && diffH <= 3) ||
+        (["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart) &&
+          diffH <= 12)
+      ) {
+        throw new Error(
+          `Les commandes pour les vols au départ de ${
+            vol.Depart
+          } doivent être passées plus de ${
+            vol.Depart === "Tunis" ? "3" : "12"
+          } heures à l'avance.`
+        );
       }
       let platsArray = [];
-        platsArray = [
-          ...(Entree ? [Entree._id] : []),
-          ...(PlatPrincipal ? [PlatPrincipal._id] : []),
-          ...(Dessert ? [Dessert._id] : []),
-          ...(Boissons ? [Boissons._id] : []),
-        ];
+      platsArray = [
+        ...(Entree ? [Entree._id] : []),
+        ...(PlatPrincipal ? [PlatPrincipal._id] : []),
+        ...(Dessert ? [Dessert._id] : []),
+        ...(Boissons ? [Boissons._id] : []),
+      ];
       const newCmd = await commande.create({
+        numeroCommande,
         vol: volId,
         plats: platsArray,
-        dateCommande: date,
+        dateCommande: new Date(),
         Statut: "En attente",
         NombreCommande: cmdExist + 1,
-        montantsTotal:2.5,
+        montantsTotal: 2.5,
         Matricule: Matricule || undefined,
       });
       if (Boissons) {
@@ -308,7 +333,6 @@ class CommandeController {
         await platcontroller.miseajourquantite(Entree, PlatPrincipal, Dessert);
       }
 
-      
       console.log("Commande bien enregistrée");
       return newCmd;
     } catch (err) {
@@ -338,28 +362,38 @@ class CommandeController {
     //ici peut modifier data  cmd only if status=en attente(controle statut sur html) et il faut respecter les delais
     try {
       const cmd = await commande.findById(id).populate("vol");
-      if (!cmd) {
-        throw new Error("Command request not found");
+      if (cmd.Statut !== "en attente") {
+      throw new Error("Seules les commandes en attente peuvent être modifiées.");
       }
       const vol = cmd.vol;
       if (!vol) {
         throw new Error("Aucun vol associé à la commande");
       }
-      const now = new Date();
-      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      const deadline = new Date(vol.dateVolDep);
-      const debutAutorise = new Date(deadline);
-      debutAutorise.setHours(deadline.getHours() - 4, 0, 0, 0);
-      const finAutorise = new Date(deadline);
-      finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
-      if (date < debutAutorise || date > finAutorise) {
-        throw new Error(`Modification autorisée uniquement entre avant le départ du vol`);
+      const now = new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      );
+      const dateVol = new Date(vol.dateVolDep);
+      const diffH = (dateVol - now) / (1000 * 60 * 60); // Différence en heures
+      if ( (["Tunis", "Monastir", "Djerba"].includes(vol.Depart) && diffH <= 3) ||(["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart) &&diffH <= 12)) {
+        const heuresLimite = ["Tunis", "Monastir", "Djerba"].includes(vol.Depart) ? 3 : 12;
+        throw new Error(`Les commandes pour les vols au départ de ${ vol.Depart } doivent être modifiées  plus de ${heuresLimite} heures à l'avance.`);
       }
-      const cmdUpdate = await commande.findByIdAndUpdate(id, data, {
-        new: true,
-      });
+      const cmdUpdate = await commande.findByIdAndUpdate(id, data, {new: true});
       return cmdUpdate;
     } catch (err) {
+      throw err;
+    }
+  }
+  static async annulationCommandeVol(id){
+    try{
+      const cmd=await commande.findById(id);
+      if (!cmd) {
+        throw new Error("Command request not found");
+      }
+      cmd.Statut="annulé";
+      await cmd.save();
+      return cmd;
+    }catch(err){
       throw err;
     }
   }
@@ -377,21 +411,46 @@ class CommandeController {
       if (!vol) {
         throw new Error("Aucun vol associé à la commande");
       }
-      const now = new Date();
-      const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-      const deadline = new Date(vol.dateVolDep);
-      const debutAutorise = new Date(deadline);
-      debutAutorise.setHours(deadline.getHours() - 4, 0, 0, 0);
-      const finAutorise = new Date(deadline);
-      finAutorise.setHours(deadline.getHours() - 1, 0, 0, 0);
-      if (date < debutAutorise || date > finAutorise) {
-        throw new Error(`Annulation autorisée uniquement entre avant le départ du vol`);
+      const now = new Date(
+        new Date().getTime() - new Date().getTimezoneOffset() * 60000
+      );
+      const dateVol = new Date(vol.dateVolDep);
+      const diffH = (dateVol - now) / (1000 * 60 * 60); // Différence en heures
+      if ( (["Tunis", "Monastir", "Djerba"].includes(vol.Depart) && diffH <= 3) ||(["Enfidha", "Sfax", "Tozeur", "Tabarka"].includes(vol.Depart) &&diffH <= 12)) {
+        const heuresLimite = ["Tunis", "Monastir", "Djerba"].includes(vol.Depart) ? 3 : 12;
+        throw new Error(`Les commandes pour les vols au départ de ${ vol.Depart } doivent être annulées  plus de ${heuresLimite} heures à l'avance.`);
       }
       cmd.Statut = "annulé";
       await cmd.save();
     } catch (err) {
       throw err;
     }
+  }
+  //Des status automatque
+  static async updateeStautAuto(){
+    const now=new Date();
+    const cmd = await commande
+      .find({
+        Statut: { $in: ["en attente"] },
+      })
+      .populate({
+        path: "vol",
+        select: "dateVolDep",
+      });
+      for(let c of cmd){
+        const dateDep = new Date(c.vol.dateVolDep);//exempl:21h
+        const heurFerm = new Date(dateDep.getTime()-60*60*1000);//les commandes se ferme apres 1Heurs
+        const heurPreparation = new Date(heurFerm.getTime()+20*60*1000);//dans 15 min etre prepare les commandes +5 min retard 
+        if (now > heurPreparation && now < dateDep &&c.Statut === "en attente"){
+          c.Statut = "en retard";
+          await c.save();
+          continue;
+        }
+        if(now > dateDep && c.Statut !== "livré" && c.Statut !== "prêt" ){
+          c.Statut="annulé"
+          await c.save();
+        }
+      }
   }
 }
 
