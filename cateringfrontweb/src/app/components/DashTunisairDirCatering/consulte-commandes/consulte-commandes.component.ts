@@ -50,7 +50,8 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
   constructor(private commandeService: CommandeServiceService) {}  
 
   ngOnInit(): void {  
-      this.fetchCommandes();  
+    this.loadOrders();
+    this.setupWebSocketListeners();
   }  
 
   exportToExcel(): void {
@@ -80,7 +81,7 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
     saveAs(data, 'commandes_' + new Date().toISOString().slice(0,10) + '.xlsx');
   }
 
-  fetchCommandes(): void {  
+  loadOrders(): void {  
       this.loading = true;  
       this.subscriptions.add(  
           this.commandeService.getInitialOrders().subscribe({  
@@ -94,25 +95,49 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
               }  
           })  
       );  
-  }  
+    }  
+    setupWebSocketListeners() {
+        this.subscriptions.add(
+          this.commandeService.onNewOrder().subscribe({
+            next: (commande: any) => {
+              console.log('Nouvelle commande reçue:', commande);
+              this.commands.unshift(commande);
+            },
+            error: (err) => {
+              console.error('Erreur dans le flux des nouvelles commandes:', err);
+              this.error = 'Erreur de réception des nouvelles commandes';
+            }
+          })
+        );
+    
+        this.subscriptions.add(
+          this.commandeService.onOrderStatusUpdate().subscribe((update) => {
+            const index = this.commands.findIndex(cmd => cmd._id === update.commandeId);
+            if (index !== -1) {
+              this.commands[index].Statut = update.Statut;
+            }
+          })
+        );
+      }
 
   
 
-  changerStatut(commandeId: string, nouveauStatut: string): void {  
-      this.subscriptions.add(  
-          this.commandeService.updateOrderStatus(commandeId, nouveauStatut).subscribe({  
-              next: () => {  
-                  const commande = this.commands.find(c => c._id === commandeId);  
-                  if (commande) {  
-                      commande.Statut = nouveauStatut;  
-                  }  
-              },  
-              error: (error: Error) => {  
-                  this.error = error.message;  
-              }  
-          })  
-      );  
-  }  
+  annuler(id?: string): void {
+    if (id) {
+      const confirmation = confirm("Voulez-vous vraiment annuler cette commande ?");
+      if (confirmation) {
+        this.commandeService.AnnulationOrder(id).subscribe({
+          next: () => {
+            this.loadOrders();
+          },
+          error: (error) => {
+            alert('Erreur lors de l\'annulation.');
+            console.error(error);
+          }
+        });
+      }
+    }
+  }
 
   formatId(id: string): string {  
       return id.substring(0, 8).toUpperCase();  

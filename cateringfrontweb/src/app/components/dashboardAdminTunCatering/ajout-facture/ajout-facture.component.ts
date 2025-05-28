@@ -12,10 +12,12 @@ import { BonLivraisonService } from '../../../services/bon-livraison.service';
 })
 export class AjoutFactureComponent {
   facture: any = null;
+  selectedMonth: number = new Date().getMonth() + 1;
+  selectedYear: number = new Date().getFullYear();
   erreur: string = "";
   bons:any[]=[];
   constructor(private factureService: FactureService,private bonLivraisonService: BonLivraisonService ) {}
-  rechercher(){
+  /*rechercher(){
     this.bonLivraisonService.BonsLivraisonNonFacture().subscribe({
       next: (response) => {
           this.bons = response;
@@ -25,12 +27,12 @@ export class AjoutFactureComponent {
         this.bons = [];
       }
     });
-  }
+  }*/
   onSubmit() {
     this.facture = null;
     this.erreur = "";
 
-    this.factureService.ajouterFacture().subscribe({
+    this.factureService.ajouterFacture(this.selectedMonth,this.selectedYear).subscribe({
       next: (res) => {
         this.facture = res.data;
       },

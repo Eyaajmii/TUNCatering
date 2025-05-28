@@ -51,7 +51,7 @@
             <td>{{ commande.NombreCommande }}</td>
             <td>
               <select
-                [(ngModel)]="commande.Statut"  [disabled]="commande.Statut === 'annulé'"
+                [(ngModel)]="commande.Statut"  [disabled]="commande.Statut === 'annulé' || commande.Statut==='prêt' "
                 [ngClass]="getStatusClass(commande.Statut)"
                 (change)="changerStatut(commande._id, commande.Statut)"
                 class="form-control">

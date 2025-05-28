@@ -18,6 +18,7 @@ export class ConfirmerBnComponent implements OnInit {
   successMessage = '';
   commandesConfirmées: string[] = [];
   confirmerConformite = false;
+  commantaire:string='';
 
   constructor(
     private route: ActivatedRoute,
@@ -85,6 +86,7 @@ export class ConfirmerBnComponent implements OnInit {
     const payload = {
       confirmerConformite: this.confirmerConformite,
       commandesConfirmées: this.commandesConfirmées,
+      Commantaire:this.commantaire
     };
 
     this.bnService.updateStatutBonLivraison(id, payload).subscribe({

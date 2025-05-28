@@ -28,9 +28,10 @@ export class TousBonLivraisonComponent implements OnInit {
         const index = this.bonsLivraison.findIndex(bn => bn._id === update.bnId);
         if (index !== -1) {
           this.bonsLivraison[index].Statut = update.Statut;
+          this.bonsLivraison[index].conformite = update.conformite;
         }
       })
-    );
+    );    
   }
 
   loadBonsLivraison(): void {

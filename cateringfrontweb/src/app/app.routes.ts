@@ -42,6 +42,7 @@ import { ModifierCarnetComponent } from './components/dahsboardPn/modifier-carne
 import { ModifierInfoComponent } from './components/dahsboardPn/modifier-info/modifier-info.component';
 import { ModifierReclamtionComponent } from './components/dahsboardPn/modifier-reclamtion/modifier-reclamtion.component';
 import { ConfirmerBnComponent } from './components/dashboardChefCabine/confirmer-bn/confirmer-bn.component';
+import { EnvoieNotificationComponent } from './components/DashTunisairDirCatering/envoie-notification/envoie-notification.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -85,6 +86,7 @@ export const routes: Routes = [
         {path:'ControleFacture',title:'Controler facture',component:ControleFactureComponent},
         {path:'TousReclamations',title:'Tous Reclamations',component:TousreclamationComponent},
         {path:'TousBonsLivraion',title:'Les bons de livraison',component:AllbonslivraisonsComponent},
+        {path:'Notification',title:'Envoyer notification',component:EnvoieNotificationComponent}
     ]},
     //Dashboard admin direcetion personnel
     {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent,children:[

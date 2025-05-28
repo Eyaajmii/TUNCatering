@@ -19,6 +19,7 @@ export interface BonLivraison {
   conformite:string;
   qrCodeImage?: string;
   updatedAt?: Date;
+  Commantaire:string;
 }
 @Injectable({
   providedIn: 'root'
@@ -87,9 +88,7 @@ export class BonLivraisonService {
   ModifierBonLivraison(id:string,bn:BonLivraison):Observable<BonLivraison>{
     return this.http.put<BonLivraison>(`${this.apiUrl}/modifier/${id}`, bn)
   }
-  BonsLivraisonNonFacture():Observable<BonLivraison[]>{
-    return this.http.get<BonLivraison[]>(`${this.apiUrl}/Nonfacture`,)
-  }
+  
   downloadPdf(numeroBon: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/pdf/${numeroBon}`, { 
       responseType: 'blob',

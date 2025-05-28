@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';  
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';  
 import { Inject, Injectable, PLATFORM_ID  } from '@angular/core';  
 import { catchError, Observable, of, Subject } from 'rxjs';  
 import { ToastrService } from 'ngx-toastr';
@@ -68,12 +68,15 @@ export class FactureService {
     this.socket.on('factureStatusUpdate', (data: any) => {this.statusUpdates.next(data);this.toastr.info(data.message);});
     //this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
-  ajouterFacture():Observable<any>{
+  ajouterFacture(month: number, year: number = new Date().getFullYear()):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-    return this.http.post<any>(`${FactureURL}/addFacture`,{},{headers});
+  const params = new HttpParams()
+      .set('month', month.toString())
+      .set('year', year.toString());
+    return this.http.post<any>(`${FactureURL}/addFacture`,{},{headers,params});
   }
   AnnulerFacture(id:string):Observable<Facture>{
     const token = localStorage.getItem('token'); 

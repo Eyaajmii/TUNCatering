@@ -28,6 +28,7 @@
               <th scope="col">Commande</th>
               <th scope="col">Nombre</th>
               <th scope="col">Statut</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody *ngIf="!loading && !error">
@@ -49,16 +50,11 @@
                 </ul>
               </td>
               <td>{{ commande.NombreCommande }}</td>
+              <td [ngClass]="getStatusClass(commande.Statut)">
+                {{commande.Statut}}
+              </td>
               <td>
-                <select
-                [(ngModel)]="commande.Statut"
-                [ngClass]="getStatusClass(commande.Statut)"
-                (change)="changerStatut(commande._id, commande.Statut)"
-                class="form-control">
-                <option *ngFor="let status of availableStatuses" [value]="status.value" >
-                  {{ status.display }}
-                </option>
-              </select>
+                <button type="submit" (click)="annuler(commande._id)"> Annuler </button>
               </td>                      
             </tr>
           </tbody>

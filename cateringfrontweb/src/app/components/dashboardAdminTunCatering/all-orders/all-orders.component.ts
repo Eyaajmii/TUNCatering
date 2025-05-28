@@ -20,9 +20,6 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
     { value: 'prêt', display: 'Prêt', class: 'pret' },
-    { value: 'annulé', display: 'Annulé', class: 'annule' },
-    { value: 'en retard', display: 'En retard', class: 'en-retard' },
-    { value: 'livré', display: 'Livré', class: 'livre' }
   ];
   private subscriptions: Subscription = new Subscription();
   constructor(private commandeService: CommandeServiceService) {}
@@ -60,19 +57,10 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
     );
 
     this.subscriptions.add(
-      this.commandeService.onOrderStatusUpdate().subscribe({
-        next: (update: any) => {
-          const index = this.commandes.findIndex(c => c._id === update._id);
-          if (index !== -1) {
-            this.commandes[index] = this.transformCommande({
-              ...this.commandes[index],
-              ...update
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des mises à jour:', err);
-          this.error = 'Erreur de réception des mises à jour';
+      this.commandeService.onOrderStatusUpdate().subscribe((update) => {
+        const index = this.commandes.findIndex(cmd => cmd._id === update.commandeId);
+        if (index !== -1) {
+          this.commandes[index].Statut = update.Statut;
         }
       })
     );

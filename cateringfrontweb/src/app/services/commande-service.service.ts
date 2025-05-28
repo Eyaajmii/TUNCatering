@@ -168,6 +168,13 @@ export class CommandeServiceService {
       })
     );  
   }
+  AnnulationOrder(orderId: string): Observable<any> {  
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.put<any>(`${commandeURL}/annulationVol/${orderId}`, {  },{headers});
+  }
 /**** Observables pour Socket.IO*** */
   onNewOrder(): Observable<Commande> {
     return this.newOrders.asObservable();

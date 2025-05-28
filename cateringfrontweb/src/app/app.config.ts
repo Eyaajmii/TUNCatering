@@ -10,6 +10,6 @@ import {SocketIoConfig, provideSocketIo } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:5000', options: {} };
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay()), provideHttpClient(withFetch()),provideAnimations(),BrowserAnimationsModule,
-    provideToastr({positionClass: 'toast-top-right',timeOut: 5000,progressBar: true,closeButton: true,tapToDismiss: true,}),provideSocketIo(config)
+    provideToastr({positionClass: 'toast-top-right',timeOut: 15000,progressBar: true,closeButton: true,tapToDismiss: true,}),provideSocketIo(config)
   ]
 };
