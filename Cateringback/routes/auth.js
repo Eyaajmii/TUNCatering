@@ -65,4 +65,4 @@ router.delete('/supprimer/:id',authenticateToken,async(req,res)=>{
     res.status(400).json({ message: err.message });
   }
 })
-module.exports = router;
+module.exports = router; 

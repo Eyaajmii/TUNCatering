@@ -1,38 +1,38 @@
 <div class="container">
-  <h2>Créer un bon de livraison</h2>
-
+  <h5>CRÉER UN BON DE LIVRAISON</h5>
   <form [formGroup]="BnFrom">
-    <div class="form-group"> 
+    <div> 
       <label>Numéro de vol</label>
       <div *ngIf="vols.length === 0">Chargement des vols...</div>
-      <select class="form-control" formControlName="numVol">
-        <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
-      </select>
-      <button (click)="searchCommandes()" type="button" class="btn btn-primary mt-2">Rechercher</button>
+      <div class="select-button-group">
+        <select class="form-control" formControlName="numVol">
+          <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}-{{ vol.dateVolDep | date:'short':'UTC' }}
+          </option>
+        </select>
+        <button (click)="searchCommandes()" type="button" class="btn">Rechercher</button>
+      </div>
     </div>
   </form>
-
   <div *ngIf="errorMessage" class="alert alert-danger mt-3">
     {{ errorMessage }}
   </div>
-
-  <div *ngIf="commandes.length > 0" class="card mt-3">
+  <div class="tab">
+  <div *ngIf="commandes.length > 0" class="card">
     <div class="card-header">Commandes associées au vol</div>
     <div class="card-body">
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>ID Commande</th>
-            <th>Menu</th>
-            <th>Plats</th>
-            <th>Personnel Navigant / Personnel de Direction du Catering</th>
+            <th>N°Commande</th>
+            <th>Commande</th>
+            <th>Matricule Personnel</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let commande of commandes">
-            <td>{{ commande._id | slice:0:6 }}</td>
-            <td>{{ commande.menu?.nom }}</td>
+            <td>{{ commande.numeroCommande}}</td>
             <td>
+              <strong>{{commande.menu?.nom}}</strong>
               <ul>
                 <li *ngFor="let plat of commande.plats">{{ plat.nom }}</li>
               </ul>
@@ -43,8 +43,8 @@
           </tr>
         </tbody>
       </table>
-
-      <button (click)="createBonLivraison()" class="btn btn-success mt-3">Créer Bon de Livraison</button>
+      <button (click)="createBonLivraison()" class="btn">Créer Bon de Livraison</button>
     </div>
+  </div>
   </div>
 </div>

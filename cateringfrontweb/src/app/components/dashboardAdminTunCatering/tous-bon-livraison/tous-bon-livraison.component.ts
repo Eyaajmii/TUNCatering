@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 })
 export class TousBonLivraisonComponent implements OnInit {
   bonsLivraison: BonLivraison[] = [];
+  selectedStatut: string = 'Tous';
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
@@ -120,15 +121,14 @@ export class TousBonLivraisonComponent implements OnInit {
   }
   modifierBn(id: string){
     if (id) {
-      this.router.navigate(['/DashAdmin/ModifierBonLivraison', id]);
+      this.router.navigate(['/DashAdmin/Livraison/ModifierBonLivraison', id]);
     }
   }
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'En attente': return 'bg-warning';
       case 'Annulé': return 'bg-danger';
-      case 'Livré': return 'bg-success';
-      case 'En retard': return 'bg-secondary';
+      case 'Validé': return 'bg-success';
       default: return 'bg-info';
     }
   }
@@ -140,5 +140,11 @@ export class TousBonLivraisonComponent implements OnInit {
       case 'En attente': return 'bg-warning';
       default: return 'bg-info';
     }
+  }
+  get bonsLivraisonFiltres(): BonLivraison[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.bonsLivraison;
+    }
+    return this.bonsLivraison.filter(bon => bon.Statut === this.selectedStatut);
   }
 }

@@ -1,64 +1,87 @@
-.reclamation-container {
-    padding: 20px;
-    max-width: 100%;
-    overflow-x: auto;
-  }
-  
-  .reclamation-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  .reclamation-table th, .reclamation-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-    vertical-align: top;
-  }
-  
-  .reclamation-table th {
-    background-color: #f5f5f5;
-  }
-  
-  textarea {
-    width: 100%;
-    resize: vertical;
-  }
-  
-  select, input[type="text"] {
-    width: 100%;
-    padding: 5px;
-  }
-  
-  button {
-    margin-top: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .en-attente {
-    color: orange;
-    font-weight: bold;
-  }
-  
-  .traité {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .loading {
-    color: #007bff;
-    font-weight: bold;
-  }
-  
-  .error {
-    color: red;
-    margin-bottom: 10px;
-  }
-  
-  .empty {
-    color: #888;
-    font-style: italic;
-  }
-  
+.container {
+  max-width: 1300px;
+  margin-left:13%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h3{
+  font-family: inherit;
+  font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: .5rem;
+    color: #32325d;
+    font-size: 1.0625rem;
+    font-family: Open Sans,sans-serif;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.alert {
+  margin-top: 20px;
+}
+thead th {
+  background-color: #134187 !important; 
+  color: white; 
+}
+.card {
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+  background-color: #eaeaea;
+}
+
+
+.filters select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.status-en-attente {
+  color: #ffc107;
+  background-color: transparent;
+  border: none;
+}
+
+.status-traite {
+  color: #28a745;
+  background-color: transparent;
+  border: none;
+}
+
+.status-annulee {
+  color: #dc3545;
+  background-color: transparent;
+  border: none;
+}

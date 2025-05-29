@@ -1,5 +1,6 @@
 <div class="container">
-    <h3>Modification des Commandes du Bon de Livraison</h3>
+    <h5>MODIFIER UN BON DE LIVRAISON</h5>
+    <button class="btn btn-secondary" (click)="retour()">Retour</button>
     <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
   
@@ -13,13 +14,12 @@
           <h5>Liste des Commandes :</h5>
           <ul class="list-group">
             <li *ngFor="let commande of bonLivraison.commandes; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-              Commande ID: {{ commande._id }}
+              N° commande: {{ commande._id }}
               <button class="btn btn-danger btn-sm" (click)="supprimerCommande(i)">Supprimer</button>
             </li>
           </ul>
         </div>
       </div>
-      <button class="btn btn-secondary" (click)="retour()">Retour</button>
     </div>
   </div>
   

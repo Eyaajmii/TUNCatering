@@ -32,7 +32,7 @@ export class AllMealsComponent implements OnInit{
   }
   modifier(id: string | undefined) {
     if (id) {
-      this.router.navigate(['/DashAdmin/ModifierPlat', id]);
+      this.router.navigate(['/DashAdmin/Plat/ModifierPlat', id]);
     }
   }
   supprimer(id: string | undefined) {
@@ -53,6 +53,6 @@ export class AllMealsComponent implements OnInit{
     }
   }
   retour(){
-    this.router.navigate(['/DashAdmin/TousMenu'])
+    this.router.navigate(['/DashAdmin/Menu/TousMenu'])
   }
 }

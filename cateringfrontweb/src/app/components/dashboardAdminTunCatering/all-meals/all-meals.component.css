@@ -3,7 +3,7 @@
 }
 
 .container {
-  width: 1200px;
+  width: 1300px;
   margin: 0 auto;
 }
 .table-responsive {
@@ -22,7 +22,7 @@ h3{
     font-family: Open Sans,sans-serif;
 }
 .custom-table thead th {
-  background-color: #8759bf !important; 
+  background-color: #6698dd !important; 
   color: white; 
 }
 
@@ -35,8 +35,7 @@ h3{
 .table th,
 .table td {
   padding: 10px;
-  text-align: left;
-  
+  text-align: center;
 }
 
 
@@ -59,6 +58,23 @@ ul li {
   object-fit: cover;
   border-radius: 5px;
   border: 1px solid #ddd;
+}
+.btn-retour {
+  background-color: #3b597a;
+  color: #ffffff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-retour:hover {
+  background-color: #2f4962;
+  transform: translateY(-2px);
 }
 
 

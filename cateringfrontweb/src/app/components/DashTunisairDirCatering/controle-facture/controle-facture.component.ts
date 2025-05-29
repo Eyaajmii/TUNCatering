@@ -28,11 +28,12 @@ export interface Facture {
 })
 export class ControleFactureComponent implements OnInit, OnDestroy {
   factures:Facture[]=[];
+  selectedStatut: string = 'Tous';
   connectionStatus: boolean = false;
   loading: boolean = true;
   error: string | null = null;
   readonly availableStatuses = [
-    { value: 'En attente', display: 'En attente', class: 'en-attente' },
+    { value: 'en attente', display: 'En attente', class: 'en-attente' },
     { value: 'confirmé', display: 'confirmé', class: 'confirmé' },
     { value: 'annulé', display: 'annulé', class: 'annule' },
   ];
@@ -140,12 +141,14 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
   
     return `${formattedDate} à ${formattedTime}`;
   }
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'En attente': return 'bg-warning';
-      case 'Annulé': return 'bg-danger';
-      case 'confirmé': return 'bg-success';
-      default: return 'bg-info';
+  getStatusClass(status: string): string {
+    const found = this.availableStatuses.find(s => s.value === status);
+    return found ? 'status-' + found.class : '';
+  }
+  get FacturesFiltres(): Facture[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.factures;
     }
+    return this.factures.filter(f => f.Statut === this.selectedStatut);
   }
 }

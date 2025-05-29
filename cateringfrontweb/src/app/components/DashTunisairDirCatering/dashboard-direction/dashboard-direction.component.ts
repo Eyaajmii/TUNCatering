@@ -1,45 +1,54 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';  
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { ReclamationServiceService } from '../../../services/reclamation-service.service';
+import { CommonModule } from '@angular/common';
+import { Component,OnInit } from '@angular/core';
+import { Router, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
 
 
 @Component({
   selector: 'app-dashboard-direction',
-  imports: [RouterOutlet,CommonModule,RouterLink],
+  imports: [RouterOutlet,CommonModule,RouterLink,RouterLinkActive],
   templateUrl: './dashboard-direction.component.html',
   styleUrl: './dashboard-direction.component.css'
 })
-export class DashboardDirectionComponent implements OnInit ,AfterViewInit{
+export class DashboardDirectionComponent implements OnInit {
   NavOpen: boolean = true;
-  notifications: any[] = [];
   selectedItem: string = '';
-  constructor(private reclamationService:ReclamationServiceService, private toastr: ToastrService, @Inject(PLATFORM_ID) private platformId: Object){}
+  activeDropdown: string | null = null;
+  dropdownRoutes = {
+    Options: ['/TunisairCatering/ControleFacture', '/TunisairCatering/ControleFacture',"/TunisairCatering/TousReclamations","/TunisairCatering/TousBonsLivraion","/TunisairCatering/Notification"],
+  };
+  email:string | null = null;
+  username:string | null = null;
+  constructor(private router: Router){}
 
   ngOnInit(): void {
-   this.reclamationService.getNewReclamation().subscribe(notification => {
-    // this.notifications.push(notification);
-     this.toastr.success(notification.message,"Nouvelle réclamation recu");
-   });
- }
- ngAfterViewInit(): void {
-  if (isPlatformBrowser(this.platformId)) {const dropdowns = document.getElementsByClassName("dropdown-btn") as HTMLCollectionOf<HTMLElement>;
-
-  for (let i = 0; i < dropdowns.length; i++) {
-    const btn = dropdowns[i];
-
-    btn.addEventListener("click", function (this: HTMLElement) {
-      this.classList.toggle("active");
-
-      const dropdownContent = this.nextElementSibling as HTMLElement | null;
-
-      if (dropdownContent) {
-        dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
-      }
+   this.checkActiveRoute();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkActiveRoute();
     });
-  }}
+    this.email=localStorage.getItem('email');
+    this.username=localStorage.getItem('username');
+ }
+ checkActiveRoute() {
+  const currentRoute = this.router.url;
+  this.activeDropdown = null;
+
+  for (const [key, routes] of Object.entries(this.dropdownRoutes)) {
+    if (routes.some(route => currentRoute.includes(route))) {
+      this.activeDropdown = key;
+      break;
+    }
+  }
 }
+
+toggleDropdown(dropdownId: string, event: Event) {
+  event.stopPropagation();
+  this.activeDropdown = this.activeDropdown === dropdownId ? null : dropdownId;
+}
+
 selectItem(item: string) {
   this.selectedItem = item;
 }

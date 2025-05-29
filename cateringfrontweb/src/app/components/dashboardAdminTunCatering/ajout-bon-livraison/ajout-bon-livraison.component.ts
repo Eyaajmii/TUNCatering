@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BonLivraisonService } from '../../../services/bon-livraison.service';
-import { CommandeServiceService } from '../../../services/commande-service.service';
+import { Commande, CommandeServiceService } from '../../../services/commande-service.service';
 
 @Component({
   selector: 'app-ajout-bon-livraison',
@@ -13,7 +13,7 @@ import { CommandeServiceService } from '../../../services/commande-service.servi
 export class AjoutBonLivraisonComponent implements OnInit {
   //numVol: string = '';
   vols:any[]=[];
-  commandes: any[] = [];
+  commandes: Commande[] = [];
   errorMessage: string = '';
   selectedCommandes: string[] = [];
   personnelLivraisonId: string = ''; 

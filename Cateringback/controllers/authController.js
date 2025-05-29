@@ -80,18 +80,10 @@ class AuthController {
       if (!Finduser) {
         throw new Error("Utilisateur non trouvé");
       }
-
-      console.log("🔍 User found:", {
-        id: Finduser._id,
-        username: Finduser.username,
-        role: Finduser.role,
-      });
-
       const isValidPassword = await bcrypt.compare(password, Finduser.password);
       if (!isValidPassword) {
         throw new Error("Mot de passe incorrect");
       }
-
       let TypePersonnel = null;
       let Matricule = null;
       let roleTunisair = null;
@@ -124,6 +116,7 @@ class AuthController {
         TypePersonnel,
         Matricule,
         roleTunisair,
+        email: Finduser.email,
       });
 
       const token = generateAccesToken(
@@ -131,7 +124,8 @@ class AuthController {
         Finduser.role,
         TypePersonnel,
         Matricule,
-        roleTunisair
+        roleTunisair,
+        Finduser.email
       );
 
       return {
@@ -143,6 +137,7 @@ class AuthController {
           Matricule,
           roleTunisair,
           TypePersonnel,
+          email: Finduser.email,
         },
       };
 

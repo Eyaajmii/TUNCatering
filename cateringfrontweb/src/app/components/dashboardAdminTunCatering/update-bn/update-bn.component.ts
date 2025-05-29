@@ -51,6 +51,6 @@ export class UpdateBnComponent implements OnInit {
     }
   }
   retour(){
-    this.router.navigate(['/DashAdmin/bonslivraison'])
+    this.router.navigate(['/DashAdmin/Livraison/bonslivraison'])
   }
 }

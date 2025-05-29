@@ -1,94 +1,90 @@
 <div class="layout">
-    <!-- Notifications -->
-    <div *ngFor="let notif of notifications" class="notification-item">
-        {{ notif.message }}
-    </div>
-
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="navbar-top">
+        <div>
             <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="nav-right"  [class.sidebar-closed]="!NavOpen" >
-                <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="user-profile">
-                    <img src="./assets/img/theme/team-1-800x800.jpg" alt="Profile">
-                </div>
+            <div class="notification-icon"  [class.sidebar-closed]="!NavOpen" >
+                <i class="fa-regular fa-user"></i>
+                <p>{{username}}</p>
+                <i class="fa-regular fa-bell"></i>
+                <i class="fa-solid fa-gear"></i>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <div class="layout-content">
+        <div class="background"></div>
         <!-- Sidebar -->
         <div class="sidebar" [class.collapsed]="!NavOpen" >
             <div class="sidebar-header">
                 <img src="logotun.png" alt="Logo" class="logo">
             </div>
+            <div class="sidebar-header user-info">
+                <h3>Hello, Tunisie Catering</h3>
+                <p>{{email}}</p>
+            </div>
             <ul class="nav-menu">
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/dash" (click)="selectItem('Dashboard')">
+                <li class="nav-item "  routerLinkActive="active" routerLink="/DashAdmin/Dash" (click)="selectItem('Dashboard')" [routerLinkActiveOptions]="{ exact: true }">
                     <i class="fas fa-home"></i> Dashboard
                 </li>
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/TousCommandes" (click)="selectItem('Commandes')">
+                <li class="nav-item "  routerLinkActive="active" routerLink="/DashAdmin/TousCommandes" (click)="selectItem('Commandes')">
                     <i class="fas fa-box"></i> Commandes
                 </li>
                <!--Plat-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                    <i class="fas fa-utensils"></i>
-                    Plat
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </button>
-                <div class="dropdown-container">
-                    <li>
-                        <a routerLink="/DashAdmin/TousPlats" (click)="selectItem('Consulter les plats')">Consulter </a>
-                    </li>
-                    <li>
-                        <a routerLink="/DashAdmin/ajoutplat">Ajouter</a>
-                    </li>
+               <div class=" nav-item dropdown-btn"  [class.active]="activeDropdown === 'Plat'" (click)="toggleDropdown('Plat', $event)"  >
+                    <i class="fas fa-utensils"></i>Plat
+                    <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Plat'"></i>
                 </div>
+                <ul class="dropdown-container" *ngIf="activeDropdown === 'Plat'">
+                    <li>
+                        <a routerLink="/DashAdmin/Plat/TousPlats" routerLinkActive="active" >Consulter les plats</a>
+                    </li>
+                    <li>
+                        <a routerLink="/DashAdmin/Plat/ajoutplat" routerLinkActive="active">Ajouter un plat</a>
+                    </li>
+                </ul>
                 <!--Menu-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                   <i class="fas fa-list"></i>
-                   Menu
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                <button class="dropdown-btn nav-item" [class.active]="activeDropdown === 'Menu'" (click)="toggleDropdown('Menu', $event)" >
+                    <i class="fas fa-list"></i>Menu
+                    <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Menu'"></i>
                 </button>
-                <div class="dropdown-container">
+                <ul class="dropdown-container" *ngIf="activeDropdown === 'Menu'">
                     <li>
-                        <a routerLink="/DashAdmin/TousMenu">Consulter </a>
+                        <a routerLink="/DashAdmin/Menu/TousMenu" routerLinkActive="active"> Consulter les menus </a>
                     </li>
                     <li>
-                        <a routerLink="/DashAdmin/ajoutmenu">Ajouter</a>
+                        <a routerLink="/DashAdmin/Menu/ajoutmenu" routerLinkActive="active">Ajouter un menu</a>
                     </li>
-                </div>
+                </ul>
                 <!--livraison-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                <i class="fas fa-truck"></i>Livraison
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                <button class="dropdown-btn nav-item" [class.active]="activeDropdown === 'Livraison'" (click)="toggleDropdown('Livraison', $event)" >
+                    <i class="fas fa-truck"></i>Livraison
+                    <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Livraison'"></i>
                 </button>
-                <div class="dropdown-container">
+                <ul class="dropdown-container" *ngIf="activeDropdown === 'Livraison'">
                     <li>
-                        <a routerLink="/DashAdmin/bonslivraison">Consulter </a>
+                        <a routerLink="/DashAdmin/Livraison/bonslivraison" routerLinkActive="active">Consulter les bons de livraison </a>
                     </li>
                     <li>
-                        <a routerLink="/DashAdmin/CreateBonLivraison">Ajouter</a>
+                        <a routerLink="/DashAdmin/Livraison/CreateBonLivraison" routerLinkActive="active">Ajouter un bon de livraison</a>
                     </li>
-                </div>
+                </ul>
                 <!--facture-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                <i class="fas fa-file-invoice"></i>Facture
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                <button class="dropdown-btn nav-item" [class.active]="activeDropdown === 'Facture'" (click)="toggleDropdown('Facture', $event)" >
+                    <i class="fas fa-file-invoice"></i>Facture
+                    <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Facture'"></i>
                 </button>
-                <div class="dropdown-container">
+                <ul class="dropdown-container" *ngIf="activeDropdown === 'Facture'">
                     <li>
-                        <a routerLink="/DashAdmin/TousFactures">Consulter </a>
+                        <a routerLink="/DashAdmin/Facture/TousFactures" routerLinkActive="active">Consulter les factures</a>
                     </li>
                     <li>
-                        <a routerLink="/DashAdmin/createFacture">Ajouter</a>
+                        <a routerLink="/DashAdmin/Facture/createFacture"routerLinkActive="active">Ajouter une facture</a>
                     </li>
-                </div>
+                </ul>
             </ul>
         </div>
 

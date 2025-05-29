@@ -33,7 +33,7 @@
         <tbody *ngIf="!loading && !error">
           <tr *ngFor="let commande of filteredCommands">
             <td class="fw-semibold text-primary">
-              #{{ formatId(commande._id) }}
+              {{ commande.numeroCommande }}
             </td>
             <td>{{ commande.vol.numVol }}</td>
             <td>
@@ -41,7 +41,7 @@
             </td>            
           
             <td>
-              {{ commande.menu?.nom  }}
+              <strong>{{commande.menu?.nom}}</strong>
               <ul>
                 <li *ngFor="let plat of commande.plats">
                   {{ plat.nom }}
@@ -50,16 +50,26 @@
             </td>
             <td>{{ commande.NombreCommande }}</td>
             <td>
-              <select
-                [(ngModel)]="commande.Statut"  [disabled]="commande.Statut === 'annulé' || commande.Statut==='prêt' "
-                [ngClass]="getStatusClass(commande.Statut)"
-                (change)="changerStatut(commande._id, commande.Statut)"
-                class="form-control">
-                <option *ngFor="let status of availableStatuses" [value]="status.value" [disabled]="status.value=== 'annulé'">
-                  {{ status.display }}
-                </option>
-              </select>
-            </td>                      
+              <ng-container *ngIf="commande.Statut === 'en attente' || commande.Statut === 'prêt' ||commande.Statut==='en retard'; else readOnlyStatut">
+                <select
+                  [(ngModel)]="commande.Statut"
+                  [ngClass]="getStatusClass(commande.Statut)"
+                  (change)="changerStatut(commande._id, commande.Statut)"
+                  class="form-control">
+                  <option
+                    *ngFor="let status of availableStatuses"
+                    [value]="status.value"
+                    [disabled]="status.value !== 'en attente' && status.value !== 'prêt'">
+                    {{ status.display }}
+                  </option>
+                </select>
+              </ng-container>
+              <ng-template #readOnlyStatut>
+                <span [ngClass]="getStatusClass(commande.Statut)">
+                  {{ getStatusDisplayText(commande.Statut) }}
+                </span>
+              </ng-template>
+            </td>                                
           </tr>
         </tbody>
       </table>

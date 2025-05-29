@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BonLivraisonService } from '../../../services/bon-livraison.service';
+import { BonLivraison, BonLivraisonService } from '../../../services/bon-livraison.service';
 
 @Component({
   selector: 'app-allbonslivraisons',
@@ -11,6 +11,7 @@ import { BonLivraisonService } from '../../../services/bon-livraison.service';
 })
 export class AllbonslivraisonsComponent implements OnInit {
   bonsLivraison: any[] = [];
+  selectedStatut: string = 'Tous';
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
@@ -107,5 +108,11 @@ export class AllbonslivraisonsComponent implements OnInit {
       case 'En attente': return 'bg-warning';
       default: return 'bg-info';
     }
+  }
+  get bonsLivraisonFiltres(): BonLivraison[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.bonsLivraison;
+    }
+    return this.bonsLivraison.filter(bon => bon.Statut === this.selectedStatut);
   }
 }

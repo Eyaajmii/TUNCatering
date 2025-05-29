@@ -1,5 +1,5 @@
-<div class="container mt-4">
-  <h3>Modifier le Menu</h3>
+<div class="form-container">
+  <h5>MODIFIER UN MENU</h5>
   <form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label>Nom</label>
@@ -37,11 +37,10 @@
       </select>
     </div>
 
-    <div class="form-group form-check mt-3">
-      <input type="checkbox" class="form-check-input" formControlName="Disponible">
-      <label class="form-check-label">Disponible</label>
+    <div class="form-check">
+      Disponible?<input type="checkbox" class="form-check-input" formControlName="Disponible">
     </div>
 
-    <button type="submit" class="btn btn-success mt-3">Mettre à jour</button>
+    <button type="submit" class="btn-submit">Mettre à jour</button>
   </form>
 </div>

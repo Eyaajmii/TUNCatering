@@ -1,66 +1,56 @@
 <div class="layout">
-    <!-- Notifications -->
-    <div *ngFor="let notif of notifications" class="notification-item">
-        {{ notif.message }}
-    </div>
-
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="navbar-top">
+        <div>
             <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="nav-right"  [class.sidebar-closed]="!NavOpen" >
-                <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="user-profile">
-                    <img src="./assets/img/theme/team-1-800x800.jpg" alt="Profile">
-                </div>
+            <div class="notification-icon"  [class.sidebar-closed]="!NavOpen" >
+                <i class="fa-regular fa-user"></i>
+                <p>{{username}}</p>
+                <i class="fa-regular fa-bell"></i>
+                <i class="fa-solid fa-gear"></i>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <div class="layout-content">
+        <div class="background"></div>
         <!-- Sidebar -->
         <div class="sidebar" [class.collapsed]="!NavOpen" >
             <div class="sidebar-header">
                 <img src="logotun.png" alt="Logo" class="logo">
             </div>
+            <div class="sidebar-header user-info">
+                <h3>Hello, Direction Catering Tunisair</h3>
+                <p>{{email}}</p>
+            </div>
             <ul class="nav-menu">
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashAdmin/dash" (click)="selectItem('Dashboard')">
+                <li class="nav-item " routerLinkActive="active" routerLink="/TunisairCatering/Dashboard" (click)="selectItem('Dashboard')">
                     <i class="fas fa-home"></i> Dashboard
                 </li>
                <!--Commande-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                    <i class="fas fa-utensils"></i>
-                    Commandes
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </button>
-                <div class="dropdown-container">
-                    <li>
-                        <a routerLink="/TunisairCatering/TousCommande" (click)="selectItem('Commandes')">Consulter les commandes</a>
-                    </li>
-                </div>
+                <li class="nav-item "  routerLinkActive="active" routerLink="/TunisairCatering/TousCommande" (click)="selectItem('Commandes')">
+                    <i class="fas fa-box"></i>Consulter les commandes
+                </li>
                 <!--Autre options-->
-                <button class="dropdown-btn nav-item"  routerLinkActive="active">
-                   <i class="fa-solid fa-box"></i>
-                   Autre options
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </button>
-                <div class="dropdown-container">
+                <div class=" nav-item dropdown-btn"  [class.active]="activeDropdown === 'Options'" (click)="toggleDropdown('Options', $event)"  >
+                   <i class="fa-solid fa-box"></i>Autre options
+                   <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Options'"></i>
+                </div>
+                <div class="dropdown-container" *ngIf="activeDropdown === 'Options'">
                     <li>
-                        <a routerLink="/TunisairCatering/TousBonsLivraion" (click)="selectItem('bn')">Bons de livraison</a>
+                        <a routerLink="/TunisairCatering/TousBonsLivraion" routerLinkActive="active">Bons de livraison</a>
                     </li>
                     <li>
-                        <a routerLink="/TunisairCatering/ControleFacture" (click)="selectItem('facture')">Factures</a>
+                        <a routerLink="/TunisairCatering/ControleFacture" routerLinkActive="active">Factures</a>
                     </li>
                     <li>
-                        <a routerLink="/TunisairCatering/TousReclamations" (click)="selectItem('reclamation')">Réclamations</a>
+                        <a routerLink="/TunisairCatering/TousReclamations"routerLinkActive="active" >Réclamations</a>
                     </li>
                     <li>
-                        <a routerLink="/TunisairCatering/Notification" (click)="selectItem('notification')">Notification</a>
+                        <a routerLink="/TunisairCatering/Notification"routerLinkActive="active" >Notifications</a>
                     </li>
                 </div>
             </ul>

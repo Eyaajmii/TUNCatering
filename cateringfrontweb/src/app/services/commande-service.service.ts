@@ -34,6 +34,7 @@ export interface Plat {
 
 export interface Commande {
   _id: string;
+  numeroCommande:string,
   Statut: string;
   plats: Plat[];
   dateCommnade: Date;

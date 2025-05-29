@@ -7,8 +7,8 @@
   <p><span><a href="DashAdmin"><i class="fa-solid fa-house" style="color: #000000;"></i></a></span>/Plats/Consulter les plats</p>-->
 <div class="content">
     <div class="container">
-      <div *ngIf="PlatFiltre" class="mb-3">
-        <button (click)="retour()">Retour a la liste des menus</button>
+      <div *ngIf="PlatFiltre">
+        <button (click)="retour()" class="btn-retour ">Retour a la liste des menus</button>
       </div>
       <div class="card ">
         <div class="card-header bg-white border-bottom-0 ">

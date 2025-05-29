@@ -85,7 +85,7 @@ export class UpdateMenuComponent implements OnInit {
       this.menuService.modifierMenu(this.menuId, menuPayload).subscribe({
         next: () => {
           alert('Menu mis à jour avec succès.');
-          this.router.navigate(['/DashAdmin/TousMenu']);
+          this.router.navigate(['/DashAdmin/Menu/TousMenu']);
         },
         error: (err) => {
           alert('Erreur lors de la mise à jour.');

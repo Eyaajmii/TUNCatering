@@ -13,6 +13,7 @@ const authRouter = require("./routes/auth");
 const chatRoute = require("./routes/ChatbotNLPRoute");
 const prelevementRoute = require("./routes/Prelevementroute");
 const personnelTunisairRoute = require("./routes/PersonnelTunisairRoute");
+const statistiqueRoute=require('./routes/StatisticsRoute');
 const methodOverride = require("method-override");
 const cors = require("cors");
 const socketIo = require("socket.io");
@@ -217,6 +218,7 @@ app.use("/api/chatbot", chatRoute);
 app.use("/api/auth", authRouter);
 app.use("/api/prelevement", prelevementRoute);
 app.use("/api/personnelTunisair", personnelTunisairRoute);
+app.use("/api/statistique", statistiqueRoute);
 const bonLivraisonRouter = require("./routes/bonLivraisonRoute")(
   socketHandlers.broadcastNewBonLivraison,
   socketHandlers.broadcastBonLivraisonStatusUpdate

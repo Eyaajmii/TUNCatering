@@ -1,10 +1,11 @@
+
 .container {
-  max-width: 1200px;
-  margin-left:30%;
+  width: 1300px;
+  margin-left:50px;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px #0000001a;
 }
 
 h3{
@@ -31,7 +32,7 @@ h3{
   margin-top: 20px;
 }
 thead th {
-  background-color: #4c7abe !important; 
+  background-color: #113e82 !important; 
   color: white; 
 }
 .table {
@@ -43,8 +44,9 @@ thead th {
 .table th,
 .table td {
   padding: 12px;
-  text-align: center;
+  text-align: left;
   border: 1px solid #ddd;
+  text-align: center;
 }
 
 .table th {
@@ -63,16 +65,30 @@ thead th {
 .btn {
   margin-right: 5px;
 }
-
-.bg-warning {
-  background-color: #ffc107;
+.status-en-attente {
+  color: #ffc107;
+  background-color: transparent;
+  border: none;
 }
 
-.bg-danger {
-  background-color: #dc3545;
+.status-confirmé {
+  color: #28a745;
+  background-color: transparent;
+  border: none;
 }
 
-.bg-success {
-  background-color: #28a745;
+.status-annule {
+  color: #dc3545;
+  background-color: transparent;
+  border: none;
 }
 
+.filters select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+td select{
+  text-align: center;
+}

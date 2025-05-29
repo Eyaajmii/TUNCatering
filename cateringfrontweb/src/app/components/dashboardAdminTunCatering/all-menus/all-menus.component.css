@@ -3,7 +3,7 @@
 }
 
 .container {
-  width: 1200px;
+  width: 1300px;
   margin: 0 auto;
 }
 .table-responsive {
@@ -22,8 +22,8 @@ h3{
     font-family: Open Sans,sans-serif;
 }
 .custom-table thead th {
-  background-color: #8759bf !important; 
-  color: white; 
+  background-color: #cbd6e2	 !important; 
+  color: rgb(41, 41, 41); 
 }
 
 .table {
@@ -35,8 +35,7 @@ h3{
 .table th,
 .table td {
   padding: 10px;
-  text-align: left;
-  
+  text-align: center;
 }
 
 

@@ -3,9 +3,11 @@
       <div *ngIf="loading" class="loading-indicator">
         Chargement des commandes...
       </div>
-      <button (click)="exportToExcel()" class="export-button">  
-        Exporter en Excel  
-    </button>  
+      <div class="export-container">
+        <button (click)="exportToExcel()" class="export-button">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i> Exporter en Excel
+        </button>
+      </div>
       <div class="filters mb-3">
         <select [(ngModel)]="filtres.statut" class="form-control">
           <option value="tous">Toutes les commandes</option>
@@ -22,7 +24,7 @@
         <table class="table table-striped custom-table">
           <thead class="thead">
             <tr>
-              <th scope="col">Numéro commande</th>
+              <th scope="col">N° commande</th>
               <th scope="col">Vol</th>
               <th scope="col">Matricule </th>
               <th scope="col">Commande</th>
@@ -34,7 +36,7 @@
           <tbody *ngIf="!loading && !error">
             <tr *ngFor="let commande of filteredCommands">
               <td class="fw-semibold text-primary">
-                #{{ formatId(commande._id) }}
+                {{commande.numeroCommande  }}
               </td>
               <td>{{ commande.vol?.numVol }}</td>
               <td>                
@@ -42,7 +44,7 @@
               </td>            
             
               <td>
-                {{ commande.menu?.nom  }}
+                <strong>{{ commande.menu?.nom  }}</strong>
                 <ul>
                   <li *ngFor="let plat of commande.plats">
                     {{ plat.nom }}
@@ -54,7 +56,7 @@
                 {{commande.Statut}}
               </td>
               <td>
-                <button type="submit" (click)="annuler(commande._id)"> Annuler </button>
+                <button type="submit" (click)="annuler(commande._id)" class="btn btn-sm btn-danger"> Annuler </button>
               </td>                      
             </tr>
           </tbody>

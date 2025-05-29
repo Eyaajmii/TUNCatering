@@ -52,7 +52,7 @@ export class UpdatePlatComponent implements OnInit {
       this.platService.updatePlat(this.platId, this.platForm.value).subscribe({
         next: () => {
           alert('Plat mis à jour avec succès.');
-          this.router.navigate(['/DashAdmin/TousPlats']);
+          this.router.navigate(['/DashAdmin/Plat/TousPlats']);
         },
         error: (err) => {
           alert('Erreur lors de la mise à jour.');

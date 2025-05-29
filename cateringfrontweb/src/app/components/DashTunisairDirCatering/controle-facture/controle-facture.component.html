@@ -1,12 +1,19 @@
   <div class="container">
-    <h3>CONTROLE DES FACTURES</h3>
     <div *ngIf="loading" class="text-center mt-3">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    <div *ngIf="factures.length > 0" class="card mt-3">
-      <div class="card-header">Factures enregistrés</div>
+    <div class=" filters mb-3">
+      <select id="filtreStatut"  [(ngModel)]="selectedStatut">
+        <option value="Tous">Tous</option>
+        <option value="en attente">En attente</option>
+        <option value="confirmé">Confirmée</option>
+        <option value="annulé">Annulée</option>
+      </select>
+    </div>
+    <div  class="card mt-3">
+      <div class="card-header"><h3>CONTROLE DES FACTURES</h3></div>
       <div class="card-body">
         <table class="table table-bordered table-hover">
           <thead>
@@ -19,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let f of factures" [class.table-secondary]="f.Statut === 'annulé'">
+            <tr *ngFor="let f of FacturesFiltres" [class.table-secondary]="f.Statut === 'annulé'">
               <td class="fw-semibold text-primary">{{ f.numeroFacture }}</td>
               <td>{{ f.DateFacture | date:'shortDate' }}</td>
               <td>{{ f.BonsLivraison?.length || 0 }}</td>
@@ -27,18 +34,24 @@
                 {{ f.montantTotal | currency:'TND':'symbol':'1.3-3'}}
               </td>
               <td>
-                <select [(ngModel)]="f.Statut" (change)="changerStatut(f._id, f.Statut)" class="form-control" lass="badge" [ngClass]="getStatusBadgeClass(f.Statut)" [disabled]="f.Statut === 'confirmé'">
+                <select 
+                  [(ngModel)]="f.Statut" 
+                  (change)="changerStatut(f._id, f.Statut)" 
+                  class="form-control"
+                  [ngClass]="getStatusClass(f.Statut)"
+                  [disabled]="f.Statut === 'confirmé' || f.Statut === 'annulé'">
+                  
                   <option *ngFor="let status of availableStatuses" [value]="status.value">
                     {{ status.display }}
                   </option>
                 </select>
-              </td>
+              </td>               
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
-    <div *ngIf="!loading && factures.length === 0 && !loading" class="alert alert-info mt-3">
-      Aucun bon de livraison trouvé.
+      <div *ngIf="!loading && factures.length === 0 && !loading" class="alert alert-info mt-3">
+        Aucune facture trouvée.
+      </div>
     </div>
   </div>

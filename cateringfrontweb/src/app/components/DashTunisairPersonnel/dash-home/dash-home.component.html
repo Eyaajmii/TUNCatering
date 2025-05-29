@@ -1,41 +1,50 @@
 <div class="layout">
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="navbar-top">
+        <div>
             <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="nav-right"  [class.sidebar-closed]="!NavOpen" >
-                <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="user-profile">
-                    <img src="./assets/img/theme/team-1-800x800.jpg" alt="Profile">
-                </div>
+            <div class="notification-icon"  [class.sidebar-closed]="!NavOpen" >
+                <i class="fa-regular fa-user"></i>
+                <p>{{username}}</p>
+                <i class="fa-regular fa-bell"></i>
+                <i class="fa-solid fa-gear"></i>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <div class="layout-content">
+        <div class="background"></div>
         <!-- Sidebar -->
         <div class="sidebar" [class.collapsed]="!NavOpen" >
             <div class="sidebar-header">
-                <img src="logotun.png.png" alt="Logo" class="logo">
+                <img src="logotun.png" alt="Logo" class="logo">
+            </div>
+            <div class="sidebar-header user-info">
+                <h3>Hello, Tunisie Catering</h3>
+                <p>{{email}}</p>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel" >
+                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel/Dashboard" (click)="selectItem('Dashboard')" [routerLinkActiveOptions]="{ exact: true }">
                     <i class="fas fa-home"></i> Dashboard
                 </li>
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel/prelevement" >
-                    <i class="fas fa-home"></i> Ajouter des prélevements
+                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel/Lesfactures" (click)="selectItem('Facture')" >
+                    <i class="fas fa-file-invoice"></i> Factures
                 </li>
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel/TousPrelevement" >
-                    <i class="fas fa-home"></i> Consulter les prélevements
-                </li>
-                <li class="nav-item " routerLinkActive="active" routerLink="/DashTunisairPersonnel/Lesfactures" >
-                    <i class="fas fa-file-invoice"></i> Consulter les factures
-                </li>
+                <div class=" nav-item dropdown-btn"  [class.active]="activeDropdown === 'Prelevement'" (click)="toggleDropdown('Prelevement', $event)"  >
+                    <i class="fa-solid fa-money-check"></i>Prélevements
+                    <i class="fas fa-chevron-down dropdown-icon" [class.rotate]="activeDropdown === 'Prelevement'"></i>
+                </div>
+                <ul class="dropdown-container" *ngIf="activeDropdown === 'Prelevement'">
+                    <li>
+                        <a  routerLinkActive="active" routerLink="/DashTunisairPersonnel/Prelevement/TousPrelevement"> Consulter les prélevements</a>
+                    </li>
+                    <li>
+                    <a routerLinkActive="active" routerLink="/DashTunisairPersonnel/Prelevement/Ajoutprelevement"> Ajouter des prélevements</a>
+                    </li>
+                </ul>
             </ul>
         </div>
 

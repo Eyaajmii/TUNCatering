@@ -23,7 +23,7 @@ export class AllMenusComponent implements OnInit {
   }
   modifier(id: string | undefined) {
     if (id) {
-      this.router.navigate(['/DashAdmin/ModifierMenu', id]);
+      this.router.navigate(['/DashAdmin/Menu/ModifierMenu', id]);
     }
   }
   supprimer(id: string | undefined) {
@@ -45,7 +45,7 @@ export class AllMenusComponent implements OnInit {
   }
   voir(id:string |undefined){
     if(id){
-      this.router.navigate(['/DashAdmin/TousPlats'],{queryParams:{platId:id}})
+      this.router.navigate(['/DashAdmin/Plat/TousPlats'],{queryParams:{platId:id}})
     }
   }
 }

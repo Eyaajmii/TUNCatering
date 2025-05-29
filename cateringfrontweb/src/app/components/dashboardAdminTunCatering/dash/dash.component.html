@@ -1,0 +1,41 @@
+<div class="container">
+    <h2>Tableau de bord administratif</h2>
+  
+    <div class="total-orders">
+      <h3>Total Commandes</h3>
+      <p class="total-orders-number">{{ stats?.allOrders }}</p>
+    </div>
+  
+    <div class="doughnut-container">
+      <h3>Menus & Plats disponibles</h3>
+      <p-chart 
+        type="doughnut" 
+        [data]="doughnutChart" 
+        [options]="{ responsive: true, maintainAspectRatio: false }" 
+        style="height: 300px;">
+      </p-chart>
+    </div>
+  
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Top 2 menus les plus commandés</h3>
+        <p-chart 
+          type="bar" 
+          [data]="menuChart" 
+          [options]="{ responsive: true, maintainAspectRatio: false }" 
+          style="height: 300px;">
+        </p-chart>
+      </div>
+  
+      <div class="chart-card">
+        <h3>Top 4 plats les plus commandés</h3>
+        <p-chart 
+          type="pie" 
+          [data]="platChart" 
+          [options]="{ responsive: true, maintainAspectRatio: false }" 
+          style="height: 300px;">
+        </p-chart>
+      </div>
+    </div>
+  </div>
+  

@@ -24,6 +24,8 @@ export class LoginComponent {
         localStorage.setItem("Matricule", res.user.Matricule);
         localStorage.setItem("RoleTunisair", res.user.roleTunisair);
         localStorage.setItem("TypePersonnel", res.user.TypePersonnel);
+        localStorage.setItem("email", res.user.email);
+        localStorage.setItem("username", res.user.username);
         this.authService.saveToken(res.token);
         const decoded = this.authService.decodeToken(res.token);
         const role = decoded.role;

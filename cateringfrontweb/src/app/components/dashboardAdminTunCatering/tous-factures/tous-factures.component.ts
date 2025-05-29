@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/facture.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 export interface Facture {
   _id?: string;
@@ -23,12 +24,13 @@ export interface Facture {
 
 @Component({
   selector: 'app-tous-factures',
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './tous-factures.component.html',
   styleUrl: './tous-factures.component.css'
 })
 export class TousFacturesComponent implements OnInit, OnDestroy{
   factures:Facture[]=[];
+  selectedStatut: string = 'Tous';
   errorMessage: string | null = null;
   isLoading: boolean = false;
   successMessage: string = '';
@@ -114,11 +116,16 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
   }
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'En attente': return 'bg-warning';
-      case 'Annulé': return 'bg-danger';
+      case 'en attente': return 'bg-warning';
+      case 'annulé': return 'bg-danger';
       case 'confirmé': return 'bg-success';
       default: return 'bg-info';
     }
   }
-
+  get FacturesFiltres(): Facture[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.factures;
+    }
+    return this.factures.filter(f => f.Statut === this.selectedStatut);
+  }
 }

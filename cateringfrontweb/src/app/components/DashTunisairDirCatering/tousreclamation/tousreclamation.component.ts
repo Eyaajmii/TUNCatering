@@ -11,12 +11,14 @@ import { FormsModule } from '@angular/forms';
 })
 export class TousreclamationComponent implements OnInit,OnDestroy{
 reclamations:Reclamation[]=[];
+selectedStatut: string = 'Tous';
 connectionStatus: boolean = false;
-  loading: boolean = true;
+  loading: boolean = false;
   error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'traité', display: 'traité', class: 'traité' },
+    { value: 'traité', display: 'traité', class: 'traite' },
+    {value:'annulée',display:'annulee',class:'annulee'}
   ];
   private subscriptions: Subscription = new Subscription(); 
   constructor(private reclamationService:ReclamationServiceService){}
@@ -88,34 +90,14 @@ connectionStatus: boolean = false;
       }
     })
   }
-  formatId(id: string): string {
-    return id?.substring(0, 8) || 'N/A';
+  getStatusClass(status: string): string {
+    const found = this.availableStatuses.find(s => s.value === status);
+    return found ? 'status-' + found.class : '';
   }
-  formatDateTime(dateString: string | Date): string {
-    if (!dateString) return 'Date invalide';
-    
-    const date = new Date(dateString);
-    
-    if (isNaN(date.getTime())) {
-      return 'Date invalide';
+  get ReclamationFiltres(): Reclamation[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.reclamations;
     }
-  
-    // Options pour le formatage
-    const dateOptions: Intl.DateTimeFormatOptions = { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
-    };
-    
-    const timeOptions: Intl.DateTimeFormatOptions = { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    };
-  
-    const formattedDate = date.toLocaleDateString('fr-FR', dateOptions);
-    const formattedTime = date.toLocaleTimeString('fr-FR', timeOptions);
-  
-    return `${formattedDate} à ${formattedTime}`;
+    return this.reclamations.filter(f => f.Statut === this.selectedStatut);
   }
 }

@@ -43,6 +43,9 @@ import { ModifierInfoComponent } from './components/dahsboardPn/modifier-info/mo
 import { ModifierReclamtionComponent } from './components/dahsboardPn/modifier-reclamtion/modifier-reclamtion.component';
 import { ConfirmerBnComponent } from './components/dashboardChefCabine/confirmer-bn/confirmer-bn.component';
 import { EnvoieNotificationComponent } from './components/DashTunisairDirCatering/envoie-notification/envoie-notification.component';
+import { DashComponent } from './components/dashboardAdminTunCatering/dash/dash.component';
+import { DashTunisairComponent } from './components/DashTunisairDirCatering/dash-tunisair/dash-tunisair.component';
+import { DashPersonnelComponent } from './components/DashTunisairPersonnel/dash-personnel/dash-personnel.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -64,24 +67,39 @@ export const routes: Routes = [
     ]},
     //Dashboard admin tunisie catering
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent,children:[
-        //{path:'',redirectTo:'Dashboard Admin',pathMatch:'full'},
-        { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
-        {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
+        {path:'',redirectTo:'Dash',pathMatch:'full'},
+        {path:'Dash',title:'Dashboard',component:DashComponent},
         {path:"TousCommandes",title:"Tous Commandes",component:AllOrdersComponent},
-        {path:'TousPlats',title:'Tous Plats',component:AllMealsComponent},
-        {path:'TousMenu',title:'Tous Menu',component:AllMenusComponent},
-        {path:'CreateBonLivraison',title:'Ajouter bonLivraison',component:AjoutBonLivraisonComponent},
-        {path:'ModifierBonLivraison/:id',title:'Modifier bonLivraison',component:UpdateBnComponent},
-        { path: 'bonslivraison',title:'Tous les bons de livraisons', component:TousBonLivraisonComponent },
-        {path:'createFacture',title:'Ajouter facture',component:AjoutFactureComponent},
-        {path:'TousFactures',title:'Tous factures',component:TousFacturesComponent},
-        {path:'ModifierPlat/:id',title:'Modifier un plat',component:UpdatePlatComponent},
-        {path:'ModifierMenu/:id',title:'Modifier un menu',component:UpdateMenuComponent}
+        {path:"Plat",children:[
+            {path:'TousPlats',title:'Tous Plats',component:AllMealsComponent},
+            { path: 'ajoutplat', title:"Ajouter plat",component:AjoutPlatComponent },
+            {path:'ModifierPlat/:id',title:'Modifier un plat',component:UpdatePlatComponent},
+
+        ]},
+        {path:"Menu",children:[
+            {path:'TousMenu',title:'Tous Menu',component:AllMenusComponent},
+            {path:'ajoutmenu',title:"Ajouter menu",component:AjoutMenuComponent},
+            {path:'ModifierMenu/:id',title:'Modifier un menu',component:UpdateMenuComponent}
+
+        ]},
+        {path:"Livraison",children:[
+            { path: 'bonslivraison',title:'Tous les bons de livraisons', component:TousBonLivraisonComponent },
+            {path:'CreateBonLivraison',title:'Ajouter bonLivraison',component:AjoutBonLivraisonComponent},
+            {path:'ModifierBonLivraison/:id',title:'Modifier bonLivraison',component:UpdateBnComponent},
+
+        ]},
+        {path:"Facture",children:[
+            {path:'createFacture',title:'Ajouter facture',component:AjoutFactureComponent},
+            {path:'TousFactures',title:'Tous factures',component:TousFacturesComponent},
+
+        ]},
     ]},
     /*{path:"navbaritem",title:'navbaritem',component:NavbarItemsComponent},
     {path:"navbarAdmin",title:'navbaritemAdmin',component:NavbarComponent},*/
     //Dashboard admin direcetion catering
     {path:'TunisairCatering',title:'Tunisair Catering',component:DashboardDirectionComponent,children:[
+        {path:'',redirectTo:'Dashboard',pathMatch:'full'},
+        {path:'Dashboard',title:'Dashboard',component:DashTunisairComponent},
         {path:'TousCommande',title:'Les commandes',component:ConsulteCommandesComponent},
         {path:'ControleFacture',title:'Controler facture',component:ControleFactureComponent},
         {path:'TousReclamations',title:'Tous Reclamations',component:TousreclamationComponent},
@@ -90,8 +108,12 @@ export const routes: Routes = [
     ]},
     //Dashboard admin direcetion personnel
     {path:'DashTunisairPersonnel',title:'DashTunisairPersonnel',component:DashHomeComponent,children:[
-        {path:'prelevement',title:'Création prélevement',component:CreerPrelevemntComponent},
-        {path:'TousPrelevement',title:'Tous les prélevements',component:TousPrelevementsComponent},
+        {path:'',redirectTo:'Dashboard',pathMatch:'full'},
+        {path:'Dashboard',title:'Dashboard',component:DashPersonnelComponent},
+        {path:'Prelevement',children:[
+            {path:'Ajoutprelevement',title:'Création prélevement',component:CreerPrelevemntComponent},
+            {path:'TousPrelevement',title:'Tous les prélevements',component:TousPrelevementsComponent},
+        ]},
         {path:'Lesfactures',title:'Les factures',component:ConsultfactureComponent}
     ]},
     //Dashboard adminstarteurr
