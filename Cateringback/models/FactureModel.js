@@ -28,7 +28,7 @@ const FactureSchema = new mongoose.Schema(
     BonsLivraison: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "bonLivraison",
+        ref: "BonLivraison",
       },
     ],
     montantTotal: {
@@ -51,6 +51,9 @@ const FactureSchema = new mongoose.Schema(
         montant: Number,
       },
     ],
+    DureeFacture: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

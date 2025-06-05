@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-commande-menu',
+   standalone: true, // Add this line
   imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './commande-menu.component.html',
   styleUrl: './commande-menu.component.css'

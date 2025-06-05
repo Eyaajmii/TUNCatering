@@ -16,7 +16,7 @@
     </div>
   </aside>
   <div class="content">
-  <h2>Suivi de mes Commandes</h2>
+  <h2 class="commande-title">Suivi de mes Commandes</h2>
   <div *ngIf="commandes && commandes.length === 0" class="mt-3">
     Aucune commande trouvée.
   </div>
@@ -25,20 +25,24 @@
   </div>
   <div *ngIf="filtreCommande  && filtreCommande .length > 0" class="mt-3">
     <div *ngFor="let commande of filtreCommande " class="card my-2 p-3 shadow-sm">
-      <div><strong>Commande ID :</strong> {{ commande._id }}</div>
-
+      <div><strong>N° commande :</strong> {{ commande.numeroCommande}}</div>
+      <div><strong>N° vol :</strong> {{ commande.vol?.numVol}}</div>
       <div>
         <strong>Statut :</strong> 
         <span [ngClass]="{
           'text-warning': commande.Statut === 'en attente',
-          'text-success': commande.Statut === 'validée',
-          'text-danger': commande.Statut === 'refusée'
+          'text-success': commande.Statut === 'prêt',
+          'text-danger': commande.Statut === 'annulé'
         }">
           {{ commande.Statut }}
         </span>
       </div>
       <div *ngIf="commande.menu">
         <strong>Menu :</strong> {{ commande.menu.nom }}
+        <ul class="plat-list">
+          <strong>Liste des plats :</strong> 
+          <li *ngFor="let plat of commande.plats">{{ plat.nom }}</li>
+        </ul>
       </div>
       <div *ngIf="!commande.menu && commande.plats && commande.plats.length > 0">
         <p><strong>Plats :</strong></p>

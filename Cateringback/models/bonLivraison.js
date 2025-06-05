@@ -12,7 +12,6 @@ const bonLivraisonSchema = new mongoose.Schema(
       default: Date.now,
     },
     Statut: {
-      //par chef de cabine
       type: String,
       enum: ["En attente", "Annulé", "Validé"],
       default: "En attente",

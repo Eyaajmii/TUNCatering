@@ -1,0 +1,13 @@
+table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  th, td {
+    vertical-align: middle;
+  }
+  
+  th {
+    white-space: nowrap;
+  }
+  

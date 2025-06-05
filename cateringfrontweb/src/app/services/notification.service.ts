@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
 const NotificationURL = "http://localhost:5000/api/notification"; 
 const SOCKET_URL = "http://localhost:5000"; 
 export interface Notification{
-  _id?: string;
+  _id: string;
   createdAt?: Date;
   emetteur: string;
   destinataire: string;
@@ -57,6 +57,16 @@ export class NotificationService {
     'Authorization': `Bearer ${token}`
     });
     return this.http.post<Notification>(`${NotificationURL}/Probleme`,{ message },{headers});
+  }
+  ConsulterNotification():Observable<Notification[]>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Notification[]>(`${NotificationURL}/notifications`,{headers});
+  }
+  markAsRead(notificationId: string): Observable<any> {
+    return this.http.put(`${NotificationURL}/notifications/${notificationId}/read`, {});
   }
   onNewNotification(): Observable<Notification> {
     return this.newNotif.asObservable();

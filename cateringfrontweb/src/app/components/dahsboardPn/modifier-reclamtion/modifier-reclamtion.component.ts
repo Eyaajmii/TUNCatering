@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ReclamationServiceService } from '../../../services/reclamation-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-modifier-reclamtion',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './modifier-reclamtion.component.html',
   styleUrl: './modifier-reclamtion.component.css'
 })
@@ -45,5 +45,8 @@ export class ModifierReclamtionComponent implements OnInit {
         console.error(err);
       }
     })
+  }
+  retour(){
+    this.router.navigate(['/AccueilPersonnel/MesReclamations']);
   }
 }

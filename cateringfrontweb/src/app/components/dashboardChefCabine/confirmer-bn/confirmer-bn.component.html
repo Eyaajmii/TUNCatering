@@ -1,6 +1,6 @@
 <div *ngIf="bonLivraison">
-  <h2>Bon de Livraison : {{ bonLivraison.numeroBon }}</h2>
-
+  <h5>Bon de Livraison : {{ bonLivraison.numeroBon }}</h5>
+  <div class="bon-livraison-container ">
   <h3>Commandes</h3>
   <ul>
     <li *ngFor="let c of bonLivraison.commandes">
@@ -51,5 +51,6 @@
   <div *ngIf="bonLivraison.conformite">
     <p>Conformité : {{ bonLivraison.conformite }}</p>
     <p>Statut : {{ bonLivraison.Statut }}</p>
+  </div>
   </div>
 </div>

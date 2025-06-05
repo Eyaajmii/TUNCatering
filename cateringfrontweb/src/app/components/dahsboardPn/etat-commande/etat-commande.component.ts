@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { CommandeServiceService } from '../../../services/commande-service.service';
+import { Commande, CommandeServiceService } from '../../../services/commande-service.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./etat-commande.component.css']
 })
 export class EtatCommandeComponent implements OnInit, OnDestroy {
-  commandes: any[] = [];
+  commandes: Commande[] = [];
   private subscriptions: Subscription = new Subscription();
   statusFilters = [
     { name: 'en attente', selected: false, count: 0 },
@@ -88,7 +88,7 @@ setupWebSocketListeners() {
 
     if (this.selectedDate) {
       filtres = filtres.filter(c => {
-        const commandeDate = new Date(c.createdAt).toISOString().split('T')[0];
+        const commandeDate = new Date(c.dateCommnade).toISOString().split('T')[0];
         return commandeDate === this.selectedDate;
       });
     }

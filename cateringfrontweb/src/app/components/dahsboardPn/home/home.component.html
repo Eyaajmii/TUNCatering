@@ -1,217 +1,330 @@
-<div class="imgg">
-    <div class="container my-5 py-5">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6  text-lg-start">
-                <h1 class="display-3 text-black animated slideInLeft">Commandez<br>vos repas<br> à bord</h1>
-                <p class="text-white animated slideInLeft mb-4 pb-2">en toute simplicité.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-    <div class="restaurant-section">
-      <h2 class="menu-title">Liste des menus </h2>
-      <p class="description">Découvrez nos menus du jour avec <span style="font-weight: bold;">des plats frais.</span></p>
-      <p-carousel 
-        [value]="menus" 
-        [numVisible]="2" 
-        [numScroll]="2" 
-        [circular]="true" 
-        [responsiveOptions]="responsiveOptions" 
-        [autoplayInterval]="3000"
-        [showIndicators]="false"
-        [showNavigators]="true">
-    
-        <ng-template pTemplate="item" let-menu>
-          <div class="menu-card">
-                <div class="menu-image">
-                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsEntree[0].image" alt="{{menu.PlatsEntree[0].nom}}">
-                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsPrincipaux[0].image" alt="{{menu.PlatsPrincipaux[0].nom}}" />
-                  <img [src]="'http://localhost:5000/uploads/' + menu.PlatsDessert[0].image" alt="{{menu.PlatsDessert[0].nom}}" />
-                  <img [src]="'http://localhost:5000/uploads/' + menu.Boissons[0].image" alt="{{menu.Boissons[0].nom}}" />
-                </div>
-                <i class="fa-regular fa-heart heart-icon" (click)="commanderMenu(menu.nom)"></i>
-                <div class="availability-indicator">
-                  <div class="availability-dot" [class.available]="menu.Disponible"></div>
-                  <span class="availability-text">
-                    {{ menu.Disponible ? 'Disponible' : 'Indisponible' }}
-                  </span>
-                </div>
-            <div class="menu-content">
-              <h3>{{ menu.nom }}</h3>
-              <div class="menu-details">
-                <div>Entrée : {{menu.PlatsEntree[0].nom}}</div>
-                <div>Plat principal : {{menu.PlatsPrincipaux[0].nom}}</div>
-                <div>Dessert : {{menu.PlatsDessert[0].nom}}</div>
-                <div>Boisson : {{menu.Boissons[0].nom}}</div>
-              </div>
-              <div class="menu-price">
-                {{ menu.prixtotal ? (menu.prixtotal | currency: 'TND':'symbol':'1.2-2') : 'N/A' }}
-              </div>
-            </div>
-          </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-<!--PLaaaats-->
-<div class="container-xxl py-5">
-  <div class="container">
-    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-      <h5 class="section-title ff-secondary text-primary fw-normal">Liste des plats</h5>
-      <p class="mb-5" style="font-size: 20px;">Composez votre menu selon vos envies parmi notre sélection de plats variés.</p>
-    </div>
-
-    <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
-      <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-        <li class="nav-item">
-          <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill" href="#tab-1">
-            <i class="fas fa-utensils icon fa-2x text-primary"></i>
-            <div class="ps-3">
-              <h6 class="mt-n1 mb-0">Entrée</h6>
-            </div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="d-flex align-items-center text-start mx-3 pb-3" data-bs-toggle="pill" href="#tab-2">
-            <i class="fa fa-hamburger fa-2x text-primary"></i>
-            <div class="ps-3">
-              <h6 class="mt-n1 mb-0">Plat principal</h6>
-            </div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-3">
-            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-            <div class="ps-3">
-              <h6 class="mt-n1 mb-0">Dessert</h6>
-            </div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-4">
-            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-            <div class="ps-3">
-              <h6 class="mt-n1 mb-0">Boissons</h6>
-            </div>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" data-bs-toggle="pill" href="#tab-5">
-            <i class="fas fa-ice-cream icon fa-2x text-primary"></i>
-            <div class="ps-3">
-              <h6 class="mt-n1 mb-0">Petit déjuner</h6>
-            </div>
-          </a>
-        </li>
-      </ul>
-
-      <div class="tab-content">
-        <!-- Entrée -->
-        <div id="tab-1" class="tab-pane fade show active p-0">
-          <div class="row g-4">
-            <div class="col-lg-6" *ngFor="let entree of PlatsEntree">
-              <div class="d-flex align-items-center">
-                <img *ngIf="entree.image" [src]="'http://localhost:5000/uploads/' + entree.image" class="flex-shrink-0 img-fluid rounded" alt="{{entree.nom}}" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                  <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ entree.nom }}</span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(entree, 'Entrée')" [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree ) ">
-                      <i class="fa-solid fa-basket-shopping"></i>
-                    </button>
-                  </h5>
-                  <small class="fst-italic">{{ entree.description }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Plat principal -->
-        <div id="tab-2" class="tab-pane fade p-0">
-          <div class="row g-4">
-            <div class="col-lg-6" *ngFor="let principal of PlatsPrincipaux">
-              <div class="d-flex align-items-center">
-                <img *ngIf="principal.image" [src]="'http://localhost:5000/uploads/' + principal.image" class="flex-shrink-0 img-fluid rounded" alt="{{principal.nom}}" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                  <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ principal.nom }}</span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(principal, 'Plat Principal')" [disabled]=" !principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)">
-                      <i class="fa-solid fa-basket-shopping"></i>
-                    </button>
-                  </h5>
-                  <small class="fst-italic">{{ principal.description }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Dessert -->
-        <div id="tab-3" class="tab-pane fade p-0">
-          <div class="row g-4">
-            <div class="col-lg-6" *ngFor="let dessert of PlatsDessert">
-              <div class="d-flex align-items-center">
-                <img *ngIf="dessert.image" [src]="'http://localhost:5000/uploads/' + dessert.image" class="flex-shrink-0 img-fluid rounded" alt="{{dessert.nom}}" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                  <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ dessert.nom }}</span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dessert, 'Dessert')" [disabled]=" !dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)">
-                      <i class="fa-solid fa-basket-shopping"></i>
-                    </button>
-                  </h5>
-                  <small class="fst-italic">{{ dessert.description }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Boissons -->
-        <div id="tab-4" class="tab-pane fade p-0">
-          <div class="row g-4">
-            <div class="col-lg-6" *ngFor="let b of Boissons">
-              <div class="d-flex align-items-center">
-                <img *ngIf="b.image" [src]="'http://localhost:5000/uploads/' + b.image" class="flex-shrink-0 img-fluid rounded" alt="{{b.nom}}" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                  <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ b.nom }}</span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(b, 'Boisson')" [disabled]=" !b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)">
-                      <i class="fa-solid fa-basket-shopping"></i>
-                    </button>
-                  </h5>
-                  <small class="fst-italic">{{ b.description }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Petit déjuner -->
-        <div id="tab-5" class="tab-pane fade p-0">
-          <div class="row g-4">
-            <div class="col-lg-6" *ngFor="let dj of Petitdejuner">
-              <div class="d-flex align-items-center">
-                <img *ngIf="dj.image" [src]="'http://localhost:5000/uploads/' + dj.image" class="flex-shrink-0 img-fluid rounded" alt="{{dj.nom}}" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                  <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ dj.nom }}</span>
-                    <button class="btn btn-sm btn-outline-primary" (click)="SelectedMeal(dj, 'Petit déjuner')">
-                      <i class="fa-solid fa-basket-shopping"></i>
-                    </button>
-                  </h5>
-                  <small class="fst-italic">{{ dj.description }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="text-center mt-4" *ngIf="afficherButtonPanier()">
-          <button class="btn btn-primary px-4 py-2" (click)="allerAuPanier()">
-            <i class="fa fa-shopping-cart me-2"></i> Aller au panier
-          </button>
-        </div>
-      </div> 
+<div class="hero-section imgg">
+  <div class="container my-5 py-5">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 text-lg-start">
+        <h1 class="hero-title animated slideInLeft">Commandez vos repas à bord</h1>
+        <p class="hero-subtitle animated slideInLeft mb-4 pb-2">En toute simplicité.</p>
+        <button class="btn btn-primary btn-lg animated slideInLeft"  aria-label="Découvrir les menus" >
+        </button>
+      </div>
     </div>
   </div>
+</div>
+
+<div class="restaurant-section">
+  <div class="section-header">
+    <h2 class="section-title">Nos Menus Disponibles</h2>
+    <p class="section-description">
+      Découvrez nos menus du jour avec 
+      <span class="highlight-text">des plats frais et savoureux</span>
+    </p>
+  </div>
+
+  <div *ngIf="!menus.length" class="loading-container">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Chargement des menus...</p>
+    </div>
+  </div>
+
+  <div class="menus-grid" *ngIf="menus.length">
+    <div class="menu-card" *ngFor="let menu of menus" [class.unavailable]="!menu.Disponible">
+      <!-- Card Header -->
+      <div class="card-header">
+
+      <!-- Menu Images Grid -->
+      <div class="menu-images">
+        <div class="images-container">
+          <!-- Entrée -->
+          <div class="image-item" *ngIf="menu.PlatsEntree[0]">
+            <img 
+              [src]="getImageUrl(menu.PlatsEntree[0].image)" 
+              [alt]="menu.PlatsEntree[0].nom || 'Entrée'"
+              loading="lazy"
+              (error)="handleImageError($event, 'Entrée', menu.nom)"
+            />
+            <div class="image-overlay">
+              <span class="dish-category">Entrée</span>
+              <span class="dish-name">{{menu.PlatsEntree[0].nom}}</span>
+            </div>
+          </div>
+
+          <!-- Plat Principal -->
+          <div class="image-item" *ngIf="menu.PlatsPrincipaux[0]">
+            <img 
+              [src]="getImageUrl(menu.PlatsPrincipaux[0].image)" 
+              [alt]="menu.PlatsPrincipaux[0].nom || 'Plat Principal'"
+              loading="lazy"
+              (error)="handleImageError($event, 'Plat Principal', menu.nom)"
+            />
+            <div class="image-overlay">
+              <span class="dish-category">Plat Principal</span>
+              <span class="dish-name">{{menu.PlatsPrincipaux[0].nom}}</span>
+            </div>
+          </div>
+
+          <!-- Dessert -->
+          <div class="image-item" *ngIf="menu.PlatsDessert[0]">
+            <img 
+              [src]="getImageUrl(menu.PlatsDessert[0].image)" 
+              [alt]="menu.PlatsDessert[0].nom || 'Dessert'"
+              loading="lazy"
+              (error)="handleImageError($event, 'Dessert', menu.nom)"
+            />
+            <div class="image-overlay">
+              <span class="dish-category">Dessert</span>
+              <span class="dish-name">{{menu.PlatsDessert[0].nom}}</span>
+            </div>
+          </div>
+
+          <!-- Boisson -->
+          <div class="image-item" *ngIf="menu.Boissons[0]">
+            <img 
+              [src]="getImageUrl(menu.Boissons[0].image)" 
+              [alt]="menu.Boissons[0].nom || 'Boisson'"
+              loading="lazy"
+              (error)="handleImageError($event, 'Boisson', menu.nom)"
+            />
+            <div class="image-overlay">
+              <span class="dish-category">Boisson</span>
+              <span class="dish-name">{{menu.Boissons[0].nom}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Content -->
+      <div class="menu-content">
+        <div class="menu-header">
+          <h3 class="menu-name">{{ menu.nom }}</h3>
+          <div class="availability-status" [class.available]="menu.Disponible">
+            <div class="status-dot"></div>
+            <span class="status-text">
+              {{ menu.Disponible ? 'Disponible' : 'Indisponible' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="menu-composition">
+          <div class="composition-item" *ngIf="menu.PlatsEntree[0]">
+            <i class="fas fa-utensils composition-icon"></i>
+            <div class="composition-details">
+              <span class="composition-label">Entrée</span>
+              <span class="composition-value">{{menu.PlatsEntree[0].nom || 'Non spécifié'}}</span>
+            </div>
+          </div>
+
+          <div class="composition-item" *ngIf="menu.PlatsPrincipaux[0]">
+            <i class="fas fa-drumstick-bite composition-icon"></i>
+            <div class="composition-details">
+              <span class="composition-label">Plat Principal</span>
+              <span class="composition-value">{{menu.PlatsPrincipaux[0].nom || 'Non spécifié'}}</span>
+            </div>
+          </div>
+
+          <div class="composition-item" *ngIf="menu.PlatsDessert[0]">
+            <i class="fas fa-ice-cream composition-icon"></i>
+            <div class="composition-details">
+              <span class="composition-label">Dessert</span>
+              <span class="composition-value">{{menu.PlatsDessert[0].nom || 'Non spécifié'}}</span>
+            </div>
+          </div>
+
+          <div class="composition-item" *ngIf="menu.Boissons[0]">
+            <i class="fas fa-glass-whiskey composition-icon"></i>
+            <div class="composition-details">
+              <span class="composition-label">Boisson</span>
+              <span class="composition-value">{{menu.Boissons[0].nom || 'Non spécifié'}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button 
+            class="btn-select-menu"
+            [disabled]="!menu.Disponible"
+            (click)="commanderMenu(menu.nom)"
+            [attr.aria-label]="menu.Disponible ? 'Sélectionner le menu ' + menu.nom : 'Menu indisponible'">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ menu.Disponible ? 'Sélectionner ce menu' : 'Indisponible' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dish-list-section" id="plats">
+  <div class="dish-list-header">
+    <h5 class="dish-list-title">Liste des plats</h5>
+    <p class="dish-list-description">
+      Composez votre menu selon vos envies parmi notre sélection de <span class="highlight-text">plats variés</span>.
+    </p>
+  </div>
+
+  <ul class="tab-list" role="tablist">
+    <li role="presentation">
+      <a id="tab-1-tab" data-bs-toggle="pill" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true" class="active">
+        <i class="fas fa-utensils"></i>
+        <span>Entrée</span>
+      </a>
+    </li>
+    <li role="presentation">
+      <a id="tab-2-tab" data-bs-toggle="pill" href="#tab-2" role="tab" aria-controls="tab-2" aria-selected="false">
+        <i class="fas fa-drumstick-bite"></i>
+        <span>Plat principal</span>
+      </a>
+    </li>
+    <li role="presentation">
+      <a id="tab-3-tab" data-bs-toggle="pill" href="#tab-3" role="tab" aria-controls="tab-3" aria-selected="false">
+        <i class="fas fa-ice-cream"></i>
+        <span>Dessert</span>
+      </a>
+    </li>
+    <li role="presentation">
+      <a id="tab-4-tab" data-bs-toggle="pill" href="#tab-4" role="tab" aria-controls="tab-4" aria-selected="false">
+        <i class="fas fa-glass-whiskey"></i>
+        <span>Boissons</span>
+      </a>
+    </li>
+    <li role="presentation">
+      <a id="tab-5-tab" data-bs-toggle="pill" href="#tab-5" role="tab" aria-controls="tab-5" aria-selected="false">
+        <i class="fas fa-coffee"></i>
+        <span>Petit déjeuner</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- Entrée -->
+    <div id="tab-1" class="tab-pane fade show active" role="tabpanel" aria-labelledby="tab-1-tab">
+      <div class="dish-grid">
+        <div class="dish-item" *ngFor="let entree of PlatsEntree" [class.selected]="EntreeSelectionne === entree" [class.unavailable]="!entree.Disponibilite">
+          <div class="dish-image">
+            <img *ngIf="entree.image" [src]="getImageUrl(entree.image)" [alt]="entree.nom" loading="lazy" (error)="handleImageError($event, 'Entrée', entree.nom)" />
+          </div>
+          <div class="dish-content">
+            <div class="dish-header">
+              <h5 class="dish-name">{{ entree.nom }}</h5>
+              <button class="btn-add-dish" 
+                      (click)="SelectedMeal(entree, 'Entrée')" 
+                      [disabled]="!entree.Disponibilite || (EntreeSelectionne && EntreeSelectionne !== entree)"
+                      [attr.aria-label]="entree.Disponibilite ? 'Ajouter ' + entree.nom + ' au panier' : 'Plat indisponible'"
+                      [title]="entree.Disponibilite ? 'Ajouter au panier' : 'Indisponible'">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <small class="dish-description">{{ entree.description }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plat Principal -->
+    <div id="tab-2" class="tab-pane fade" role="tabpanel" aria-labelledby="tab-2-tab">
+      <div class="dish-grid">
+        <div class="dish-item" *ngFor="let principal of PlatsPrincipaux" [class.selected]="PrincipauxSelectionne === principal" [class.unavailable]="!principal.Disponibilite">
+          <div class="dish-image">
+            <img *ngIf="principal.image" [src]="getImageUrl(principal.image)" [alt]="principal.nom" loading="lazy" (error)="handleImageError($event, 'Plat Principal', principal.nom)" />
+          </div>
+          <div class="dish-content">
+            <div class="dish-header">
+              <h5 class="dish-name">{{ principal.nom }}</h5>
+              <button class="btn-add-dish" 
+                      (click)="SelectedMeal(principal, 'Plat Principal')" 
+                      [disabled]="!principal.Disponibilite || (PrincipauxSelectionne && PrincipauxSelectionne !== principal)"
+                      [attr.aria-label]="principal.Disponibilite ? 'Ajouter ' + principal.nom + ' au panier' : 'Plat indisponible'"
+                      [title]="principal.Disponibilite ? 'Ajouter au panier' : 'Indisponible'">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <small class="dish-description">{{ principal.description }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dessert -->
+    <div id="tab-3" class="tab-pane fade" role="tabpanel" aria-labelledby="tab-3-tab">
+      <div class="dish-grid">
+        <div class="dish-item" *ngFor="let dessert of PlatsDessert" [class.selected]="DessertSelectionne === dessert" [class.unavailable]="!dessert.Disponibilite">
+          <div class="dish-image">
+            <img *ngIf="dessert.image" [src]="getImageUrl(dessert.image)" [alt]="dessert.nom" loading="lazy" (error)="handleImageError($event, 'Dessert', dessert.nom)" />
+          </div>
+          <div class="dish-content">
+            <div class="dish-header">
+              <h5 class="dish-name">{{ dessert.nom }}</h5>
+              <button class="btn-add-dish" 
+                      (click)="SelectedMeal(dessert, 'Dessert')" 
+                      [disabled]="!dessert.Disponibilite || (DessertSelectionne && DessertSelectionne !== dessert)"
+                      [attr.aria-label]="dessert.Disponibilite ? 'Ajouter ' + dessert.nom + ' au panier' : 'Plat indisponible'"
+                      [title]="dessert.Disponibilite ? 'Ajouter au panier' : 'Indisponible'">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <small class="dish-description">{{ dessert.description }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boissons -->
+    <div id="tab-4" class="tab-pane fade" role="tabpanel" aria-labelledby="tab-4-tab">
+      <div class="dish-grid">
+        <div class="dish-item" *ngFor="let b of Boissons" [class.selected]="BoissonsSelectionne === b" [class.unavailable]="!b.Disponibilite">
+          <div class="dish-image">
+            <img *ngIf="b.image" [src]="getImageUrl(b.image)" [alt]="b.nom" loading="lazy" (error)="handleImageError($event, 'Boisson', b.nom)" />
+          </div>
+          <div class="dish-content">
+            <div class="dish-header">
+              <h5 class="dish-name">{{ b.nom }}</h5>
+              <button class="btn-add-dish" 
+                      (click)="SelectedMeal(b, 'Boisson')" 
+                      [disabled]="!b.Disponibilite || (BoissonsSelectionne && BoissonsSelectionne !== b)"
+                      [attr.aria-label]="b.Disponibilite ? 'Ajouter ' + b.nom + ' au panier' : 'Plat indisponible'"
+                      [title]="b.Disponibilite ? 'Ajouter au panier' : 'Indisponible'">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <small class="dish-description">{{ b.description }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Petit déjeuner -->
+    <div id="tab-5" class="tab-pane fade" role="tabpanel" aria-labelledby="tab-5-tab">
+      <div class="dish-grid">
+        <div class="dish-item" *ngFor="let dj of Petitdejuner" [class.selected]="DejunerSelectionne.includes(dj)" [class.unavailable]="!dj.Disponibilite">
+          <div class="dish-image">
+            <img *ngIf="dj.image" [src]="getImageUrl(dj.image)" [alt]="dj.nom" loading="lazy" (error)="handleImageError($event, 'Petit déjeuner', dj.nom)" />
+          </div>
+          <div class="dish-content">
+            <div class="dish-header">
+              <h5 class="dish-name">{{ dj.nom }}</h5>
+              <button class="btn-add-dish" 
+                      (click)="SelectedMeal(dj, 'Petit déjeuner')"
+                      [disabled]="!dj.Disponibilite"
+                      [attr.aria-label]="dj.Disponibilite ? 'Ajouter ' + dj.nom + ' au panier' : 'Plat indisponible'"
+                      [title]="dj.Disponibilite ? 'Ajouter au panier' : 'Indisponible'">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <small class="dish-description">{{ dj.description }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Go to Cart Button -->
+    <div class="dish-action" *ngIf="afficherButtonPanier()">
+      <button class="btn-go-to-cart" (click)="allerAuPanier()" aria-label="Aller au panier">
+        <i class="fas fa-shopping-cart"></i> Aller au panier
+      </button>
+    </div>
+  </div>
+</div>
+
 
 <!--Chatbot from codepen.io -->
 <button class="chat-toggle-btn" (click)="toggleChat()">
@@ -236,4 +349,5 @@
     <input type="text" [(ngModel)]="userInput" (keyup.enter)="send()" placeholder="Écrivez votre message...">
     <button (click)="send()">Envoyer</button>
   </div>
-</div>
+
+<p-toast></p-toast>

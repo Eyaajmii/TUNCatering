@@ -27,10 +27,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let f of FacturesFiltres" [class.table-secondary]="f.Statut === 'annulé'">
+            <ng-container *ngFor="let f of FacturesFiltres">
+            <tr  [class.table-secondary]="f.Statut === 'annulé'"  [class.table-secondary]="f.Statut === 'annulé'" 
+            (click)="toggleDetails(f._id)"  style="cursor: pointer;">
               <td class="fw-semibold text-primary">{{ f.numeroFacture }}</td>
               <td>{{ f.DateFacture | date:'shortDate' }}</td>
-              <td>{{ f.BonsLivraison?.length || 0 }}</td>
+              <td>{{ f.BonsLivraison.length || 0 }}</td>
               <td>
                 {{ f.montantTotal | currency:'TND':'symbol':'1.3-3'}}
               </td>
@@ -49,6 +51,39 @@
                 <button (click)="annulerFacture(f._id)" class="btn btn-sm btn-danger" [disabled]="f.Statut !== 'en attente'"> Annuler</button>
               </td>
             </tr>
+            <tr *ngIf="selectedFactureId === f._id && selectedFactureDetail">
+              <td colspan="6">
+                <div class="detail-card">
+                  <h5>Détails de la facture {{ selectedFactureDetail?.numeroFacture }}</h5>
+                  <p><strong>Date :</strong> {{ selectedFactureDetail?.DateFacture | date:'short' }}</p>
+                  <p><strong>Statut :</strong> {{ selectedFactureDetail?.Statut }}</p>
+                  <p><strong>Montant total :</strong> {{ selectedFactureDetail?.montantTotal }} TND</p>
+                  <p><strong>Prélevée :</strong> {{ selectedFactureDetail?.Preleve ? 'Oui' : 'Non' }}</p>
+            
+                  <h6>Bons de Livraison associés :</h6>
+                  <ul>
+                    <li *ngFor="let bl of selectedFactureDetail?.BonsLivraison">
+                      <strong>BL #{{ bl.numeroBon }}</strong> - {{ bl.dateCreation | date:'shortDate' }} - Statut : {{ bl.Statut }}
+                    </li>
+                  </ul>
+            
+                  <h6>Montant par vol :</h6>
+                  <ul>
+                    <li *ngFor="let vol of selectedFactureDetail?.montantParVol">
+                      <strong>Vol {{ vol.vol }} :</strong> {{ vol.montant }} TND
+                    </li>
+                  </ul>
+            
+                  <h6>Montant par personnel navigant :</h6>
+                  <ul>
+                    <li *ngFor="let pn of selectedFactureDetail?.montantParPn">
+                      <strong>{{ pn.personnel }} :</strong> {{ pn.montant }} TND
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>            
+            </ng-container>
           </tbody>
         </table>
       </div>

@@ -13,39 +13,27 @@ import { Router } from '@angular/router';
 })
 export class ListebonslivraisonsComponent implements OnInit {
   bonsLivraison: BonLivraison[] = [];
+  selectedStatut: string = 'Tous';
   errorMessage: string = '';
   isLoading: boolean = false;
   successMessage: string = '';
   private subscriptions: Subscription = new Subscription(); 
-
+  selectedBnId: string | null = null;
+  selectedBnDetail: any = null;
   constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
-    this.bonLivraisonService.joinRoom('chef_cabine');
     this.loadBonsLivraison();
-    this.subscriptions.add(
-      this.bonLivraisonService.getNewBN().subscribe({
-        next: (r: any) => {
-          console.log('Nouvelle bon de livraison reçu:', r);
-          this.bonsLivraison.unshift(r);
-        },
-        error: (err) => {
-          console.error('Erreur dans le flux des nouvelles factures:', err);
-        }
-      })
-    ); 
+    this.setupWebSocketListeners();
     this.subscriptions.add(
       this.bonLivraisonService.getStatusUpdate().subscribe(update => {
         const index = this.bonsLivraison.findIndex(bn => bn._id === update.bnId);
         if (index !== -1) {
-          this.bonsLivraison[index] = {
-            ...this.bonsLivraison[index],
-            Statut: update.Statut,
-            conformite: update.conformite,
-          };
+          this.bonsLivraison[index].Statut = update.Statut;
+          this.bonsLivraison[index].conformite = update.conformite;
         }
       })
-    );
+    );    
   }
 
   loadBonsLivraison(): void {
@@ -69,12 +57,25 @@ export class ListebonslivraisonsComponent implements OnInit {
       }
     });
   }
- 
+  setupWebSocketListeners() {
+    this.subscriptions.add(
+      this.bonLivraisonService.getNewBN().subscribe({
+        next: (r: any) => {
+          console.log('Nouvelle bon de livraison reçu:', r);
+          this.bonsLivraison.unshift(this.transformBn(r));
+        },
+        error: (err) => {
+          console.error('Erreur dans le flux des nouvelles factures:', err);
+        }
+      })
+    );
+  }
   private transformBn(bn:any):BonLivraison{
     return {
       ...bn
     }
   }
+
   downloadPdf(numeroBon: string): void {
     this.bonLivraisonService.downloadPdf(numeroBon).subscribe({
       next: (blob: Blob) => {
@@ -96,13 +97,11 @@ export class ListebonslivraisonsComponent implements OnInit {
       }
     });
   }
-
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'En attente': return 'bg-warning';
       case 'Annulé': return 'bg-danger';
-      case 'Livré': return 'bg-success';
-      case 'En retard': return 'bg-secondary';
+      case 'Validé': return 'bg-success';
       default: return 'bg-info';
     }
   }
@@ -113,6 +112,28 @@ export class ListebonslivraisonsComponent implements OnInit {
       case 'Non confirmé': return 'bg-danger';
       case 'En attente': return 'bg-warning';
       default: return 'bg-info';
+    }
+  }
+  get bonsLivraisonFiltres(): BonLivraison[] {
+    if (this.selectedStatut === 'Tous') {
+      return this.bonsLivraison;
+    }
+    return this.bonsLivraison.filter(bon => bon.Statut === this.selectedStatut);
+  }
+  toggleDetails(bnId: string) {
+    if (this.selectedBnId === bnId) {
+      this.selectedBnId = null;
+      this.selectedBnDetail = null;
+    } else {
+      this.selectedBnId = bnId;
+      this.bonLivraisonService.getBnById(bnId).subscribe({
+        next: (data) => {
+          this.selectedBnDetail = data;
+        },
+        error: () => {
+          this.selectedBnDetail = null;
+        }
+      });
     }
   }
   aller(id: string | undefined) {

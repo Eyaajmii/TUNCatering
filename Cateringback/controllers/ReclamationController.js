@@ -23,7 +23,7 @@ class reclamationController {
     }
   }
   //tunisair
-  static async reponseReclamation(id,newStatut,MessageReponse,MatriculeDirTunCater) {
+  static async reponseReclamation(id,newStatut,MessageReponse=null,MatriculeDirTunCater) {
     try {
       const rec = await reclamation.findById(id);
       const now = new Date();

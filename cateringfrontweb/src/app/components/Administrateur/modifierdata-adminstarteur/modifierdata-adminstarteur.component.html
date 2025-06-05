@@ -1,0 +1,26 @@
+<div class="update-user-container">
+    <h2>Modifier les informations</h2>
+  
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+      <label>Nom</label>
+      <input type="text" formControlName="nom" placeholder="Nom" />
+  
+      <label>Prénom</label>
+      <input type="text" formControlName="prenom" placeholder="Prénom" />
+  
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="Email" />
+  
+      <label>Téléphone</label>
+      <input type="text" formControlName="telephone" placeholder="Téléphone" />
+  
+      <label>Mot de passe</label>
+      <input type="password" formControlName="password" placeholder="Nouveau mot de passe" />
+  
+      <button type="submit">Mettre à jour</button>
+    </form>
+  
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>
+  

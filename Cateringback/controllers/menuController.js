@@ -74,10 +74,10 @@ class menuController {
   static async getAllMenu() {
     try {
       return Menu.find()
-        .populate("PlatsEntree", "nom description")
-        .populate("PlatsPrincipaux", "nom description")
-        .populate("PlatsDessert", "nom description")
-        .populate("Boissons", "nom description");
+        .populate("PlatsEntree", "nom description image")
+        .populate("PlatsPrincipaux", "nom description image ")
+        .populate("PlatsDessert", "nom description image")
+        .populate("Boissons", "nom description image");
     } catch (err) {
       console.error(err);
     }

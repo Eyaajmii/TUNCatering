@@ -100,10 +100,12 @@ class AuthController {
         } else {
           console.log("No personnelTunisair record found for user");
         }
-        const pnData = await pn.findOne({ PersonnelTunisiarId: personnelTunisair._id });
+        const pnData = await pn.findOne({
+          PersonnelTunisiarId: personnelTunisair._id,
+        });
         if (pnData) {
           TypePersonnel = pnData.TypePersonnel;
-          if (!Matricule) Matricule = pnData.Matricule; 
+          if (!Matricule) Matricule = pnData.Matricule;
           console.log("Personnel navigant data:", pnData);
         }
       } else {
@@ -125,7 +127,8 @@ class AuthController {
         TypePersonnel,
         Matricule,
         roleTunisair,
-        Finduser.email
+        Finduser.email,
+        Finduser._id.toString()
       );
 
       return {
@@ -140,7 +143,6 @@ class AuthController {
           email: Finduser.email,
         },
       };
-
     } catch (err) {
       throw new Error(err.message || "Erreur lors de la connexion");
     }
@@ -175,21 +177,37 @@ class AuthController {
       throw new Error(err.message);
     }
   }
-  static async consulterUser(){
-    try{
-      const users=await user.find();
+  static async consulterUser() {
+    try {
+      const users = await user.find().populate({
+        path: "personneltunisair",
+        populate: {
+          path: "navigant",
+        },
+      });
       return users;
-    }catch(err){
-      throw new Error('Erreur lors de la consultation des utilisateurs : ' + err.message);
+    } catch (err) {
+      throw new Error(
+        "Erreur lors de la consultation des utilisateurs : " + err.message
+      );
     }
   }
-  static async supprimerUser(id){
-    try{
-      const userSupprimer=await user.findByIdAndDelete(id);
-      return userSupprimer;
-    }catch(err){
-      throw new Error('Erreur lors de la supprimation d utilisateur : ' + err.message);
+
+  static async supprimerUser(id) {
+  try {
+    const userSupprime = await user.findByIdAndDelete(id);
+    if (!userSupprime) {
+      throw new Error("Utilisateur introuvable.");
     }
+    const personnel = await userTunisair.findOneAndDelete({ userId: id });
+    if (personnel) {
+      await pn.findOneAndDelete({ PersonnelTunisiarId: personnel._id });
+    }
+
+    return { message: "Utilisateur et données associées supprimés avec succès." };
+  } catch (err) {
+    throw new Error("Erreur lors de la suppression complète : " + err.message);
   }
+}
 }
 module.exports = AuthController;

@@ -65,10 +65,10 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
     this.router.navigate(['/AccueilPersonnel/modifierReclamation/', id]);
   }
   Annuler(id:string){
-    if (confirm('Voulez-vous vraiment supprimer cette réclamation ?')) {
+    if (confirm('Voulez-vous vraiment annuler cette réclamation ?')) {
       this.reclamationservice.annulerReclamation(id).subscribe({
         next: () => {
-          alert('Reclamtion annulée avec succès.');
+          alert('Réeclamtion annulée avec succès.');
         },
         error: (err) => {
           console.error('Erreur de suppression :', err);

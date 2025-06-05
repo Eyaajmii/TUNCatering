@@ -18,7 +18,7 @@ export interface MontantParPn {
   montant: number;
 }
 export interface Facture {
-  _id?: string; 
+  _id: string; 
   numeroFacture: string;
   dateCreation?: Date; 
   DateFacture: Date;
@@ -103,6 +103,9 @@ export class FactureService {
   });
   return this.http.get<any>(`${FactureURL}/tousfactures`,{headers});
   }
+  DetailFacture(id:string):Observable<any>{
+    return this.http.get<any>(`${FactureURL}/factureDetail/${id}`,)
+  }
   /*Partie prelevement*/ 
 ajouterPrelevement(dateDebut:string,dateFin:string):Observable<any>{
   return this.http.post<any>(`${PrelevementURL}/creer`, { dateDebut, dateFin });
@@ -112,6 +115,13 @@ lesPrelevement():Observable<any>{
 }
 annulerPrelevement(id:string):Observable<any>{
   return this.http.put<any>(`${PrelevementURL}/annule/${id}`,{});
+}
+MesPrelevelment():Observable<any>{
+  const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  return this.http.get<any>(`${PrelevementURL}/MesPrelevement/`,{headers})
 }
 /**** Observables pour Socket.IO*** */
 onNewFacture(): Observable<Facture> {

@@ -1,0 +1,55 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Liste des Utilisateurs</h2>
+  
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger text-center">
+      {{ error }}
+    </div>
+  
+    <div *ngIf="!loading && users.length > 0" class="table-responsive">
+      <table class="table table-bordered table-hover table-striped shadow-sm">
+        <thead class="table-dark text-center">
+          <tr>
+            <th>#</th>
+            <th>Nom d'utilisateur</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Rôle</th>
+            <th>Matricule</th>
+            <th>Rôle Tunisair</th>
+            <th>Type Personnel</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let i = index">
+            <td class="text-center">{{ i + 1 }}</td>
+            <td>{{ user.username || '—' }}</td>
+            <td>{{ user.nom || '—' }}</td>
+            <td>{{ user.prenom || '—' }}</td>
+            <td>{{ user.email || '—' }}</td>
+            <td>{{ user.telephone || '—' }}</td>
+            <td>{{ user.role || '—' }}</td>
+            <td>{{ user.personneltunisair?.Matricule || '—' }}</td>
+            <td>{{ user.personneltunisair?.roleTunisair || '—' }}</td>
+            <td>{{ user.personneltunisair?.navigant?.TypePersonnel || '—' }}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="supprimer(user._id)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="!loading && users.length === 0" class="alert alert-info text-center">
+      Aucun utilisateur trouvé.
+    </div>
+  </div>
+  

@@ -1,26 +1,63 @@
-<div class="container">
-    <h2>Votre commande</h2>
-    <ul>
-      <li *ngIf="PEntree">Entrée : {{ PEntree }}</li>
-      <li *ngIf="PPrincipal">Plat principal : {{ PPrincipal }}</li>
-      <li *ngIf="PDessert">Dessert : {{ PDessert }}</li>
-      <li *ngIf="PBoisson">Boisson : {{ PBoisson }}</li>
-      <li *ngIf="PDej.length > 0">
-        <ul>
-          Tes plats de petit déjuner : 
-          <li *ngFor="let plat of PDej">{{ plat }}</li>
-        </ul>
-      </li>
-    </ul>
-    <form [formGroup]="commandeFrom" (ngSubmit)="onSubmit()">
-      <div class="form-group"> 
-        <label>Numero de vol </label>
-        <div *ngIf="vols.length === 0">Chargement des vols...</div>
-           <select formControlName="numVol">
-            <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}</option>
-           </select>
+<div class="commander-container">
+  <div class="airline-header">
+    <div class="header-text">
+      <h1>Votre Commande</h1>
+      <p class="subtitle">Récapitulatif de votre sélection</p>
     </div>
-      <button type="submit" class="btn btn-success">Valider la commande</button>
-    </form>
   </div>
-  
+
+  <div class="commander-form">
+    <div class="form-section">
+      <div class="section-title">
+        <div class="title-icon">🧾</div>
+        <h2>Détails des Plats</h2>
+      </div>
+      <ul style="padding-left: 1rem;">
+        <li *ngIf="PEntree">Entrée : {{ PEntree }}</li>
+        <li *ngIf="PPrincipal">Plat principal : {{ PPrincipal }}</li>
+        <li *ngIf="PDessert">Dessert : {{ PDessert }}</li>
+        <li *ngIf="PBoisson">Boisson : {{ PBoisson }}</li>
+        <li *ngIf="PDej.length > 0">
+          <div style="margin-top: 10px; font-weight: 500;">Petit déjeuner :</div>
+          <ul>
+            <li *ngFor="let plat of PDej">{{ plat }}</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-section">
+      <div class="section-title">
+        <div class="title-icon">✈</div>
+        <h2>Sélection du Vol</h2>
+      </div>
+      <div class="form-group">
+        <div *ngIf="vols.length === 0" class="loading-state">
+          <div class="loading-spinner"></div>
+          <span>Chargement des vols en cours...</span>
+        </div>
+        <div class="select-wrapper" *ngIf="vols.length > 0">
+          <select formControlName="numVol">
+            <option value="" disabled selected>Choisir un vol</option>
+            <option *ngFor="let vol of vols" [value]="vol.numVol">
+              {{ vol.numVol }} - {{ vol.dateVolDep | date:'short':'UTC' }}
+            </option>
+          </select>
+          <div class="select-arrow">▼</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-button">
+        <span>Valider la Commande</span>
+        <div class="button-icon">→</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="footer-text">Service Client Tunisair disponible 24h/24</p>
+    <p class="footer-contact">✆ +216 70 100 100</p>
+  </div>
+</div>

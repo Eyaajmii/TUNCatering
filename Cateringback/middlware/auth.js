@@ -1,7 +1,7 @@
 const jwt=require("jsonwebtoken")
 
-function generateAccesToken(username, role, TypePersonnel = null,Matricule = null,roleTunisair = null,email=null) {
-  return jwt.sign({ username, role ,TypePersonnel,Matricule,roleTunisair,email}, process.env.TOKEN_SECRET, {
+function generateAccesToken(username, role, TypePersonnel = null,Matricule = null,roleTunisair = null,email=null,_id) {
+  return jwt.sign({ username, role ,TypePersonnel,Matricule,roleTunisair,email,_id}, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
 }

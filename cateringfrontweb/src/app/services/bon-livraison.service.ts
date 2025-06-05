@@ -20,6 +20,7 @@ export interface BonLivraison {
   qrCodeImage?: string;
   updatedAt?: Date;
   Commantaire:string;
+  Facturé:Boolean
 }
 @Injectable({
   providedIn: 'root'

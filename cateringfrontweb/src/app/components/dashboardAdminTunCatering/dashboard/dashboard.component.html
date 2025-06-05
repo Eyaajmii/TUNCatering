@@ -5,11 +5,78 @@
             <button (click)="NavOpen = !NavOpen" class="toggle-button" [class.sidebar-closed]="!NavOpen" >
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="notification-icon"  [class.sidebar-closed]="!NavOpen" >
+            <div class="notification-iccon"  [class.sidebar-closed]="!NavOpen" >
                 <i class="fa-regular fa-user"></i>
                 <p>{{username}}</p>
-                <i class="fa-regular fa-bell"></i>
+                <div class="notification-container me-3">
+                    <button
+                      class="btn btn-outline-primary position-relative notification-toggle"
+                      (click)="toggleNotifications()"
+                      aria-label="View notifications"
+                    >
+                    <i class="fa-regular fa-bell"></i>
+                      <span
+                        *ngIf="unreadCount > 0"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      >
+                        {{ unreadCount > 99 ? '99+' : unreadCount }}
+                        <span class="visually-hidden">unread notifications</span>
+                      </span>
+                    </button>
+      
+                    <!-- Notifications Dropdown -->
+                    <div
+                      class="notification-dropdown"
+                      [class.show]="showNotifications"
+                      *ngIf="showNotifications"
+                    >
+                      <div class="notification-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Notifications</h6>
+                      </div>
+      
+                      <div class="notification-body">
+                        <div
+                          *ngFor="let notification of notifications; trackBy: trackByNotificationId"
+                          class="notification-item"
+                          [class.unread]="!notification.isRead"
+                          (click)="markAsRead(notification._id)"
+                          role="button"
+                          tabindex="0"
+                        >
+                          <div class="notification-icon">
+                            <i
+                              class="fas"
+                              [ngClass]="{
+                                'fa-check-circle text-success': notification.notificationType === 'success',
+                                'fa-exclamation-triangle text-warning': notification.notificationType === 'warning',
+                                'fa-times-circle text-danger': notification.notificationType === 'error',
+                                'fa-info-circle text-info': notification.notificationType === 'info'
+                              }"
+                            ></i>
+                          </div>
+                          <div class="notification-content">
+                            <p class="notification-message mb-1">{{ notification.message }}</p>
+                            <small class="notification-time text-muted">
+                              {{ notification.createdAt| date: 'short' }}
+                            </small>
+                          </div>
+                        </div>
+      
+                        <div *ngIf="notifications.length === 0" class="empty-notifications text-center py-4">
+                          <i class="fas fa-bell-slash text-muted mb-2"></i>
+                          <p class="text-muted mb-0">No notifications</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 <i class="fa-solid fa-gear"></i>
+                <button
+              class="btn btn-danger logout-btn"
+              (click)="logout()"
+              [disabled]="isLoggingOut"
+              aria-label="Logout"
+            >
+            </button>
             </div>
         </div>
     </nav>
@@ -23,7 +90,7 @@
                 <img src="logotun.png" alt="Logo" class="logo">
             </div>
             <div class="sidebar-header user-info">
-                <h3>Hello, Tunisie Catering</h3>
+                <h3>Bonjour !, {{role}}</h3>
                 <p>{{email}}</p>
             </div>
             <ul class="nav-menu">

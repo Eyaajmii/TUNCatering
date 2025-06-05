@@ -57,6 +57,8 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       broadcastNewOrder({
         ...notifcreer._doc,
         destinataire: "tunisie_catering",
+        type: "Commande",
+        items: [{ newcommande, quantite: 1 }],
       });
 
       res.status(200).json(newcommande);

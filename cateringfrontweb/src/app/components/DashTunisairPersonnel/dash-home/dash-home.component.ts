@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component,OnInit } from '@angular/core';
 import { Router, NavigationEnd, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-dash-home',
@@ -19,7 +20,8 @@ export class DashHomeComponent implements OnInit {
     Prelevement: ['/DashTunisairPersonnel/Prelevement/Ajoutprelevement', '/DashTunisairPersonnel/Prelevement/TousPrelevement'],
     
   };
-  constructor(private router: Router) {}
+  isLoggingOut = false;
+  constructor(private router: Router,private authService:AuthService) {}
   ngOnInit(): void {
     this.checkActiveRoute();
     this.router.events.pipe(
@@ -50,5 +52,7 @@ export class DashHomeComponent implements OnInit {
   selectItem(item: string) {
     this.selectedItem = item;
   }
- 
+  async logout(){
+    this.authService.logout(); 
+ }
 }

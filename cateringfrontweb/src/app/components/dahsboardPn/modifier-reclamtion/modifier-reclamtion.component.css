@@ -1,0 +1,25 @@
+.container {
+    max-width: 700px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .reclamation-form .form-label {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .reclamation-form .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .reclamation-form .btn {
+    min-width: 180px;
+    font-weight: 500;
+  }
+  

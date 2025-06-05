@@ -28,10 +28,6 @@ const volSchema = new mongoose.Schema({
     Escale:{
         type:Boolean,
         defaut:false
-    },
-    Commande:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Commande",
-    }]
+    }
 });
 module.exports = mongoose.model("vol", volSchema);

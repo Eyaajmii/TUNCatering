@@ -25,6 +25,18 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
     if (diffInDays > 5) {
       return res.status(400).json({ message: "La réclamation ne peut pas être soumise après 5 jours de la commande." });
     }
+    const reclamationExistante = await reclamation.findOne({
+      Commande: numeroCommande,
+      MatriculePn: Matricule,
+    });
+
+    if (reclamationExistante) {
+      return res
+        .status(400)
+        .json({
+          message: "Une réclamation a déjà été soumise pour cette commande.",
+        });
+    }
     const newReclamation = await reclamation.create({
       NumeroReclamation,
       Objet,

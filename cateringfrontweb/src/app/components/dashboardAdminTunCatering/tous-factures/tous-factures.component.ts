@@ -1,26 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FactureService } from '../../../services/facture.service';
+import { FactureService,Facture} from '../../../services/facture.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-export interface Facture {
-  _id?: string;
-  numeroFacture: string;
-  dateCreation?: Date;
-  DateFacture: Date;
-  Statut:string;
-  BonsLivraison?: string[];
-  montantTotal: number;
-  montantParVol: {
-    vol: string; 
-    montant: number;
-  }[];
-  montantParPn: {
-    personnel: string; 
-    montant: number;
-  }[];
-}
 
 @Component({
   selector: 'app-tous-factures',
@@ -41,6 +24,8 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
     { value: 'annulé', display: 'Annulé', class: 'annule' },
   ];
   private subscriptions: Subscription = new Subscription(); 
+  selectedFactureId: string | null = null;
+  selectedFactureDetail: any = null;
   constructor(private factureService:FactureService){}
   ngOnInit(): void {
     this.loadFactures();
@@ -127,5 +112,21 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
       return this.factures;
     }
     return this.factures.filter(f => f.Statut === this.selectedStatut);
+  }
+  toggleDetails(factureId: string) {
+    if (this.selectedFactureId === factureId) {
+      this.selectedFactureId = null;
+      this.selectedFactureDetail = null;
+    } else {
+      this.selectedFactureId = factureId;
+      this.factureService.DetailFacture(factureId).subscribe({
+        next: (data) => {
+          this.selectedFactureDetail = data;
+        },
+        error: () => {
+          this.selectedFactureDetail = null;
+        }
+      });
+    }
   }
 }

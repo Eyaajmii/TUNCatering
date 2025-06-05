@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       enum: [
         "Personnel Tunisair",
         "Personnel Tunisie Catering",
-        "Administrateur"
+        "Administrateur",
       ],
       required: true,
     },
@@ -37,6 +37,14 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+userSchema.virtual("personneltunisair", {
+  ref: "PersonnelTunisair",
+  localField: "_id",
+  foreignField: "userId",
+  justOne: true,
+});
 module.exports = mongoose.model('User', userSchema);

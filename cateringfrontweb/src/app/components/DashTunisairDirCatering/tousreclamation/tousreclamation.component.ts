@@ -18,7 +18,7 @@ connectionStatus: boolean = false;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
     { value: 'traité', display: 'traité', class: 'traite' },
-    {value:'annulée',display:'annulee',class:'annulee'}
+    {value:'annulée',display:'annulée',class:'annulee'}
   ];
   private subscriptions: Subscription = new Subscription(); 
   constructor(private reclamationService:ReclamationServiceService){}

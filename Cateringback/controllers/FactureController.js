@@ -131,6 +131,14 @@ class FactureController {
       throw err;
     }
   }
+  static async consulterDetailFacture(id){
+    try {
+      const facture = await Facture.findById(id).populate("BonsLivraison");
+      return facture;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 module.exports = FactureController;

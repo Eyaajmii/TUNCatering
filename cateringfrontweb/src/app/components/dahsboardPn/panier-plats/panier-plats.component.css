@@ -1,41 +1,200 @@
-.container {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  h2 {
-    text-align: center;
-    color: #333;
-  }
-  
-  p {
-    font-size: 18px;
-    margin: 10px 0;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .btn-success {
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .btn-success:hover {
-    background-color: #218838;
-  }
-  
+/* Tunisair Commander Professional Styles */
+.commander-container {
+  width: 480px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  overflow: hidden;
+}
+
+.airline-header {
+  background: linear-gradient(to right, #C60C30, #A00B28);
+  padding: 20px 25px;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.logo-container {
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.airline-logo {
+  width: 80%;
+  height: auto;
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 3px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.commander-form {
+  padding: 25px;
+}
+
+.form-section {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.title-icon {
+  margin-right: 10px;
+  color: #005A9C;
+  font-size: 1.2rem;
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #005A9C;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #005A9C;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  color: #333;
+  border-left: 4px solid #C60C30;
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: #f5f9ff;
+  border-radius: 6px;
+  color: #005A9C;
+}
+
+.loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(0, 90, 156, 0.2);
+  border-top-color: #005A9C;
+  border-radius: 50%;
+  margin-right: 10px;
+  animation: spin 1s linear infinite;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  appearance: none;
+  background-color: white;
+  cursor: pointer;
+  padding-right: 35px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #005A9C;
+  pointer-events: none;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(to right, #C60C30, #A00B28);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submit-button:hover {
+  background: linear-gradient(to right, #A00B28, #C60C30);
+}
+
+.button-icon {
+  margin-left: 8px;
+  font-size: 1.1rem;
+}
+
+.footer {
+  padding: 15px 25px;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.footer-contact {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  color: #005A9C;
+  font-weight: 500;
+}

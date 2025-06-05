@@ -41,7 +41,7 @@ export interface Commande {
   NombreCommande: number;
   Matricule: any;
   menu?: Menu;
-  vol: any;
+  vol: string;
 }
 const commandeURL = "http://localhost:5000/api/commande"; 
 const SOCKET_URL = "http://localhost:5000"; 

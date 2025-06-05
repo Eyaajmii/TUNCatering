@@ -40,6 +40,14 @@ router.get("/tousfactures", authenticateToken, async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+router.get("/factureDetail/:id", async (req, res) => {
+  try {
+    const factures = await facturecontroller.consulterDetailFacture(req.params.id);
+    res.status(200).json(factures);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 router.put("/updateStatusFacture/:id",authenticateToken,async(req,res)=>{
     try{
         const {Statut}=req.body;

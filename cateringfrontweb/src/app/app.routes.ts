@@ -46,6 +46,9 @@ import { EnvoieNotificationComponent } from './components/DashTunisairDirCaterin
 import { DashComponent } from './components/dashboardAdminTunCatering/dash/dash.component';
 import { DashTunisairComponent } from './components/DashTunisairDirCatering/dash-tunisair/dash-tunisair.component';
 import { DashPersonnelComponent } from './components/DashTunisairPersonnel/dash-personnel/dash-personnel.component';
+import { AllUsersComponent } from './components/Administrateur/all-users/all-users.component';
+import { ModifierdataAdminstarteurComponent } from './components/Administrateur/modifierdata-adminstarteur/modifierdata-adminstarteur.component';
+import { PrelevementComponent } from './components/dahsboardPn/prelevement/prelevement.component';
 export const routes: Routes = [
     {path:'login',title:'login',component:LoginComponent},
     //personnels navigant
@@ -63,7 +66,8 @@ export const routes: Routes = [
         {path:'MonCarnet',title:'Carnet de santé',component:CarnetSanteComponent},
         {path:'CarnetSante',title:'Carnet de santé',component:AjoutCarnetComponent},
         {path:'ModifierCarnet',title:'Carnet de santé',component:ModifierCarnetComponent},
-        {path:'ModifierCommande/:id',title:'Modifier une commande',component:UpdateCommandeComponent}
+        {path:'ModifierCommande/:id',title:'Modifier une commande',component:UpdateCommandeComponent},
+        {path:'Prelevement',title:'Consulter les prelevements',component:PrelevementComponent}
     ]},
     //Dashboard admin tunisie catering
     {path:'DashAdmin',title:"Dashboard Admin",component:DashboardComponent,children:[
@@ -119,6 +123,8 @@ export const routes: Routes = [
     //Dashboard adminstarteurr
     {path:'Dashboard',title:'Dashbord',component:HomeAdminComponent,children:[
         {path:'register',title:'Register',component:RegisterComponent},
+        {path:'TousUtilisateur',title:'TousUtilisateur',component:AllUsersComponent},
+        {path:'ModifierProfil',title:'Modifier le profil',component:ModifierdataAdminstarteurComponent},
     ]},
     //dashChef
     {path:'DashboardChefCabine',title:'Dashbord',component:DashChefComponent,children:[

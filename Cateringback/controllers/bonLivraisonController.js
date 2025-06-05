@@ -95,7 +95,7 @@ module.exports = function (
       if (existingBonLivraison) {
         return res.status(400).json({
           success: false,
-          message: "Un bon de livraison actif existe déjà pour ce vol",
+          message: "Un bon de livraison existe déjà pour ce vol",
         });
       }
       const commandesValides = await Promise.all(
@@ -204,9 +204,16 @@ module.exports = function (
   const getBonLivraisonById = async (req, res) => {
     try {
       const { id } = req.params;
-      const bonLivraison = await BonLivraison.findById(id).populate(
-        "vol commandes personnelLivraison"
-      );
+      const bonLivraison = await BonLivraison.findById(id)
+        .populate({
+          path: "commandes.commande",
+          populate: [
+            { path: "menu", model: "Menu" },
+            { path: "plats", model: "Plat" },
+          ],
+        })
+        .populate("vol")
+        .populate("personnelLivraison");
 
       if (!bonLivraison) {
         return res
@@ -341,7 +348,16 @@ module.exports = function (
   const updateBonLivraison = async (req, res) => {
     try {
       const { id } = req.params;
-      const bn = await BonLivraison.findById(id);
+      const bn = await BonLivraison.findById(id)
+        .populate({
+          path: "commandes.commande",
+          populate: [
+            { path: "menu", model: "Menu" },
+            { path: "plats", model: "Plat" },
+          ],
+        })
+        .populate("vol")
+        .populate("personnelLivraison");
       if (!bn) {
         return res
           .status(404)

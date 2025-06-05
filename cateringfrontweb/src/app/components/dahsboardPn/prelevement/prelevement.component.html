@@ -1,0 +1,37 @@
+<div class="prelevement-container">
+    <h2>Mes Prélèvements</h2>
+  
+    <div *ngIf="loading">Chargement...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  
+    <table *ngIf="!loading && prelevements.length > 0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Période</th>
+          <th>Montant</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of prelevements; let i = index" >
+          <td>{{ i + 1 }}</td>
+          <td>{{ p.dateDebut | date:'dd/MM/yyyy' }}-{{ p.dateFin | date:'dd/MM/yyyy' }}</td>
+          <td>{{ p.montantTotal }} TND</td>
+          <td>
+            <span *ngIf="p.annulation; else actif" class="annule">
+              <i class="fas fa-ban"></i> Prélèvement annulé
+            </span>
+            <ng-template #actif>
+              <i class="fas fa-check-circle text-success"></i> Actif
+            </ng-template>
+          </td>          
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="!loading && prelevements.length === 0">
+      Aucun prélèvement trouvé.
+    </div>
+  </div>
+  

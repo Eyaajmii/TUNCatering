@@ -1,12 +1,39 @@
-<h2>Soumettre réclamation</h2>
-<form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
-    <label>Objet:</label>
-    <input type="text" name="Objet" formControlName="Objet" required />
-  
-    <label>Message:</label>
-    <textarea formControlName="MessageEnvoye" name="message" required></textarea>
-    <div class="form-group"> 
-      <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="file_input_help" id="image" type="file" (change)="onFileSelected($event)" >
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Soumettre une réclamation</h2>
+  <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+        <div class="mb-3">
+      <label for="numCommande" class="form-label">Numéro de commande</label>
+      <select id="numCommande" class="form-select" formControlName="Commande" required>
+        <option value="">-- Sélectionner une commande --</option>
+        <option *ngFor="let commande of commandes" [value]="commande.numeroCommande">
+          {{ commande.numeroCommande }}
+        </option>
+      </select>
+      <div *ngIf="isInvalid('Commande')" class="text-danger">
+        Ce champ est requis.
       </div>
-    <button type="submit">Envoyer</button>
+    </div>
+    <div class="mb-3">
+      <label for="Objet" class="form-label">Objet</label>
+      <input type="text" class="form-control" id="Objet" formControlName="Objet" required>
+      <div *ngIf="isInvalid('Objet')" class="text-danger">
+        Ce champ est requis.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="MessageEnvoye" class="form-label">Message</label>
+      <textarea class="form-control" id="MessageEnvoye" formControlName="MessageEnvoye" rows="4" required></textarea>
+      <div *ngIf="isInvalid('MessageEnvoye')" class="text-danger">
+        Ce champ est requis.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="image" class="form-label">Joindre une image</label>
+      <input type="file" class="form-control" id="image" (change)="onFileSelected($event)">
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="reclamationForm.invalid">
+      Envoyer la réclamation
+    </button>
+
   </form>
+</div>

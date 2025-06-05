@@ -1,25 +1,40 @@
 <div class="container">
-    <h5>MODIFIER UN BON DE LIVRAISON</h5>
-    <button class="btn btn-secondary" (click)="retour()">Retour</button>
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  
-    <div *ngIf="bonLivraison">
-      <div class="card my-3">
-        <div class="card-header">
-          <strong>Bon N°:</strong> {{ bonLivraison.numeroBon }} |
-          <strong>Vol:</strong> {{ bonLivraison.vol }}
-        </div>
-        <div class="card-body">
-          <h5>Liste des Commandes :</h5>
-          <ul class="list-group">
-            <li *ngFor="let commande of bonLivraison.commandes; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-              N° commande: {{ commande._id }}
-              <button class="btn btn-danger btn-sm" (click)="supprimerCommande(i)">Supprimer</button>
-            </li>
-          </ul>
-        </div>
+  <h5>MODIFIER UN BON DE LIVRAISON</h5>
+  <button class="btn btn-secondary" (click)="retour()">Retour</button>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+  <div *ngIf="bonLivraison">
+    <div class="card my-3">
+      <div class="card-header">
+        <strong>Bon N°:</strong> {{ bonLivraison.numeroBon }} |
+        <strong>Vol:</strong> {{ bonLivraison.vol }}
+      </div>
+      <div class="card-body">
+        <h5>Liste des Commandes :</h5>
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th>N° Commande</th>
+              <th>Matricule</th>
+              <th>Repas</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of bonLivraison.commandes; let i = index">
+              <td>{{ c.commande.numeroCommande }}</td>
+              <td>{{ c.commande.Matricule }}</td>
+              <td>
+                {{ c.commande.menu ? c.commande.menu.nom : (c.commande.plats ? c.commande.plats.nom : 'N/A') }}
+              </td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="supprimerCommande(i)">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-  
+</div>

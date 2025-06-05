@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommandeServiceService } from '../../../services/commande-service.service';
+import { CommandeServiceService, Vol } from '../../../services/commande-service.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './panier-plats.component.css'
 })
 export class PanierPlatsComponent implements OnInit {
-  vols:any[]=[];
+  vols:Vol[]=[];
   PEntree:string="";
   PPrincipal:string="";
   PDessert:string="";

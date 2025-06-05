@@ -10,6 +10,13 @@
                 <p>{{username}}</p>
                 <i class="fa-regular fa-bell"></i>
                 <i class="fa-solid fa-gear"></i>
+                <button
+              class="btn btn-danger logout-btn"
+              (click)="logout()"
+              [disabled]="isLoggingOut"
+              aria-label="Logout"
+            >
+            </button>
             </div>
         </div>
     </nav>

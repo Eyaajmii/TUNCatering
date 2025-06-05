@@ -22,12 +22,12 @@ export class AuthService {
   getToken():string|null{
     return localStorage.getItem('token');
   }
-  /*logout():void{
+  logout():void{
     localStorage.removeItem('token');
-  }*/
-  logout(token: string): Observable<any> {
-    return this.http.post(`${this.url}/logout`, { token });
   }
+  /*logout(token: string): Observable<any> {
+    return this.http.post(`${this.url}/logout`, { token });
+  }*/
   ModifierUser(data: any): Observable<any> {
     const token = this.getToken();
     const headers = new HttpHeaders({
@@ -50,6 +50,19 @@ export class AuthService {
   getPersonnelTunisairByUsername(username: string) {
     return this.http.get<any>(`http://localhost:5000/api/personnelTunisair/${username}`);
   }
-  
+  TousUtilisateur():Observable<any[]>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.get<any[]>(`${this.url}/AllUser`,{headers});
+  }
+  SupprimerUtilisateur(id:String):Observable<void>{
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+    return this.http.delete<void>(`${this.url}/supprimer/${id}`,{headers});
+  }
 }
 

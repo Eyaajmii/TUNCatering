@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomeAdminComponent } from './home-admin.component';
+import { PrelevementComponent } from './prelevement.component';
 
-describe('HomeAdminComponent', () => {
-  let component: HomeAdminComponent;
-  let fixture: ComponentFixture<HomeAdminComponent>;
+describe('PrelevementComponent', () => {
+  let component: PrelevementComponent;
+  let fixture: ComponentFixture<PrelevementComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeAdminComponent]
+      imports: [PrelevementComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HomeAdminComponent);
+    fixture = TestBed.createComponent(PrelevementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

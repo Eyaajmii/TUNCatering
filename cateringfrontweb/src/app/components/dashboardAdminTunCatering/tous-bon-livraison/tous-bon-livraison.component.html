@@ -36,7 +36,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let bon of bonsLivraisonFiltres" [class.table-secondary]="bon.Statut === 'Annulé'">
+          <ng-container *ngFor="let bon of bonsLivraisonFiltres" >
+          <tr [class.table-secondary]="bon.Statut === 'Annulé'" (click)="toggleDetails(bon._id)"  style="cursor: pointer;">
             <td class="fw-semibold text-primary">{{ bon.numeroBon }}</td>
             <td>{{ bon.vol }}</td>
             <td>{{ bon.commandes.length || 0 }}</td>
@@ -74,6 +75,28 @@
               </button>
             </td>
           </tr>
+          <tr *ngIf="selectedBnId === bon._id && selectedBnDetail">
+            <td colspan="6">
+              <div class="detail-card">
+                <h5>Détails du bon de livraison {{ selectedBnDetail?.numeroBon }}</h5>
+                <p><strong>Date :</strong> {{ selectedBnDetail?.dateCreation | date:'short' }}</p>
+                <p><strong>Statut :</strong> {{ selectedBnDetail?.Statut }}</p>
+                <p><strong>Vol :</strong> {{ selectedBnDetail?.vol }}</p>
+                <p><strong>Facturé :</strong> {{ selectedBnDetail?.['Facturé'] ? 'Oui' : 'Non' }}</p>
+          
+                <h6>Commandes associées :</h6>
+                <ul>
+                  <li *ngFor="let c of selectedBnDetail?.commandes">
+                    <strong>#{{ c.commande?.numeroBon }}</strong> - 
+                    {{ c.commande?.dateCreation | date:'shortDate' }} - 
+                    Statut : {{ c.commande?.Statut }}
+                    <span *ngIf="c.confirme"> (Confirmé)</span>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

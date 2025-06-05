@@ -1,17 +1,19 @@
 <div class="container mt-4">
-  <h2 class="mb-3">Mes Réclamations</h2>
-  <button (click)="Ajouter()">Ajouter </button>
-  <div *ngIf="reclamations.length === 0 ">
-    <p>
-      Aucune réclamation trouvée pour le matricule
-    </p>
+  <h2 class="reclamation-title mb-4">Mes Réclamations</h2>
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-primary" (click)="Ajouter()">➕ Ajouter une réclamation</button>
   </div>
 
-  <div *ngIf="reclamations.length > 0">
-    <table class="table table-bordered table-hover">
-      <thead class="thead-light">
+  <div *ngIf="reclamations.length === 0" class="alert alert-info">
+    Aucune réclamation trouvée pour le matricule.
+  </div>
+
+  <div *ngIf="reclamations.length > 0" class="table-responsive">
+    <table class="table table-bordered table-hover align-middle text-center">
+      <thead class="table-light">
         <tr>
           <th>#</th>
+          <th>N° Réclamation</th>
           <th>Objet</th>
           <th>Message</th>
           <th>Statut</th>
@@ -22,6 +24,7 @@
       <tbody>
         <tr *ngFor="let rec of reclamations; let i = index">
           <td>{{ i + 1 }}</td>
+          <td>{{ rec.NumeroReclamation }}</td>
           <td>{{ rec.Objet }}</td>
           <td>{{ rec.MessageEnvoye }}</td>
           <td>
@@ -35,13 +38,19 @@
               {{ rec.Statut }}
             </span>
           </td>
-          <td>{{ rec.dateSoumission| date: 'short' }}</td>
+          <td>{{ rec.dateSoumission | date: 'short' }}</td>
           <td>
-            <button class="btn btn-info btn-sm" (click)="voirDetails(rec._id)">
-              Détails
-            </button>
-            <button class="btn btn-warning btn-sm" (click)="Modifier(rec._id)">Modifier</button>
-            <button class="btn btn-warning btn-sm" (click)="Annuler(rec._id)">Annuler</button>
+            <div class="btn-group gap-1">
+              <button class="btn btn-info btn-sm" (click)="voirDetails(rec._id)">
+                🔍
+              </button>
+              <button class="btn btn-warning btn-sm" (click)="Modifier(rec._id)">
+                ✏️
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="Annuler(rec._id)">
+                ❌
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

@@ -18,7 +18,8 @@ export class TousBonLivraisonComponent implements OnInit {
   isLoading: boolean = false;
   successMessage: string = '';
   private subscriptions: Subscription = new Subscription(); 
-
+  selectedBnId: string | null = null;
+  selectedBnDetail: any = null;
   constructor(private bonLivraisonService: BonLivraisonService,private router: Router) {}
 
   ngOnInit(): void {
@@ -146,5 +147,21 @@ export class TousBonLivraisonComponent implements OnInit {
       return this.bonsLivraison;
     }
     return this.bonsLivraison.filter(bon => bon.Statut === this.selectedStatut);
+  }
+  toggleDetails(bnId: string) {
+    if (this.selectedBnId === bnId) {
+      this.selectedBnId = null;
+      this.selectedBnDetail = null;
+    } else {
+      this.selectedBnId = bnId;
+      this.bonLivraisonService.getBnById(bnId).subscribe({
+        next: (data) => {
+          this.selectedBnDetail = data;
+        },
+        error: () => {
+          this.selectedBnDetail = null;
+        }
+      });
+    }
   }
 }

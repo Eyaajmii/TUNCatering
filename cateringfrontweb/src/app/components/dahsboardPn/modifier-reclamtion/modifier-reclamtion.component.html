@@ -1,1 +1,50 @@
-<p>modifier-reclamtion works!</p>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Modifier la Réclamation</h2>
+  
+    <form [formGroup]="ReclamtionForm" (ngSubmit)="onSoumettre()" class="reclamation-form">
+      <div class="mb-3">
+        <label for="objet" class="form-label">Objet</label>
+        <input
+          type="text"
+          id="objet"
+          formControlName="Objet"
+          class="form-control"
+          placeholder="Entrez l'objet de la réclamation"
+          required
+        />
+      </div>
+  
+      <div class="mb-3">
+        <label for="message" class="form-label">Message</label>
+        <textarea
+          id="message"
+          formControlName="MessageEnvoye"
+          class="form-control"
+          rows="5"
+          placeholder="Décrivez votre réclamation"
+          required
+        ></textarea>
+      </div>
+  
+      <div class="mb-3">
+        <label for="imageUrl" class="form-label">Image (URL)</label>
+        <input
+          type="text"
+          id="imageUrl"
+          formControlName="imageUrl"
+          class="form-control"
+          placeholder="Lien vers une image (optionnel)"
+        />
+      </div>
+  
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-success" [disabled]="ReclamtionForm.invalid">
+          💾 Enregistrer les modifications
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="retour()">
+          ⬅️ Retour
+        </button>
+      </div>
+    </form>
+  </div>
+  
