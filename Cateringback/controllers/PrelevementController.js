@@ -1,5 +1,6 @@
 const prelevement = require("../models/PrelevementModel");
 const facture = require("../models/FactureModel");
+const Commande = require("../models/Commande");
 
 class PrelevementController {
   static async creerPrelevement(dateDebut, dateFin) {
@@ -87,41 +88,42 @@ class PrelevementController {
       throw err;
     }
   }
-  static async DetailPrelevement(prelevementId) {
+  static async detailPrelevement(prelevementId) {
     try {
-      const preleve = await prelevement.findById(prelevementId);
-      if (!preleve) {
-        throw new Error("Prélevement introuvable.");
-      }
-      const { personnel, dateDebut, dateFin } = preleve;
-      const factures = await facture.find({
-        DateFacture: { $gte: dateDebut, $lte: dateFin },
-        Statut: "confirmé",
-        Preleve: true,
-        "montantParPn.personnel": personnel,
-      });
-      const details = {};
-      for (const f of factures) {
-        const vol = f.NumVol || f.vol || "Vol inconnu"; 
-        const montantPourPn = f.montantParPn.find(
-          (m) => m.personnel.toString() === personnel
-        );
-        if (montantPourPn) {
-          if (!details[vol]) {
-            details[vol] = 0;
-          }
-          details[vol] += montantPourPn.montant;
-        }
+      const pv = await prelevement.findById(prelevementId);
+      if (!pv) {
+        throw new Error("Prélèvement introuvable.");
       }
 
-      return {
-        personnel,
-        dateDebut,
-        dateFin,
-        detailsParVol: details,
-      };
+      const { personnel, dateDebut, dateFin } = pv;
+
+      const commandes = await Commande.find({
+        Matricule: personnel,
+        Statut: "livré",
+        dateCommnade: { $gte: dateDebut, $lte: dateFin },
+      }).populate("vol");
+
+      const montantParVol = new Map();
+
+      for (const commande of commandes) {
+        const volId = commande.vol;
+        const montant = commande.montantsTotal || 0;
+
+        if (volId) {
+          montantParVol.set(volId, (montantParVol.get(volId) || 0) + montant);
+        }
+      }
+      const result = [];
+      for (const [volId, montant] of montantParVol.entries()) {
+        result.push({
+          vol: volId, 
+          montant,
+        });
+      }
+
+      return result;
     } catch (err) {
-      console.error("Erreur dans DetailPrelevement :", err);
+      console.error("Erreur:", err);
       throw err;
     }
   }

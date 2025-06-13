@@ -3,7 +3,7 @@ const Meal = require("../models/Plat");
 
 class menuController {
   //create a menu
-  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Boissons,Disponible,personnelTunisieCatering) {
+  static async createMenu(nom, PlatsPrincipaux, PlatsEntree, PlatsDessert,Boissons,personnelTunisieCatering) {
     try {
       //existance menu
       const exist = await Menu.findOne({ nom: nom });

@@ -50,7 +50,7 @@ router.get("/MesPrelevement",authenticateToken,async(req,res)=>{
 })
 router.get("/detail/:id", authenticateToken, async (req, res) => {
   try {
-    const detail = await prelevementcontroller.DetailPrelevement(req.params.id);
+    const detail = await prelevementcontroller.detailPrelevement(req.params.id);
     res.status(200).json(detail);
   } catch (err) {
     console.error("Erreur dans /detail/:id", err);

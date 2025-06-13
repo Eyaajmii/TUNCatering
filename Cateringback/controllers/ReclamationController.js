@@ -14,16 +14,14 @@ class reclamationController {
   /** F consulte detail reclamation == quand reclamation traité donc consult reponse */
   static async detailReclamation(id) {
     try {
-      const detailReclamation = await reclamation
-        .findById(id)
-        .populate("MessageReponse");
+      const detailReclamation = await reclamation.findById(id);
       return detailReclamation;
     } catch (err) {
       throw new Error("Error retrieving reclamation detail: " + err.message);
     }
   }
   //tunisair
-  static async reponseReclamation(id,newStatut,MessageReponse=null,MatriculeDirTunCater) {
+  static async reponseReclamation(id,MessageReponse=null,MatriculeDirTunCater) {
     try {
       const rec = await reclamation.findById(id);
       const now = new Date();
@@ -33,7 +31,7 @@ class reclamationController {
       }
       const updatedReclamation = await reclamation.findByIdAndUpdate(
         id,
-        { MessageReponse, MatriculeDirTunCater, Statut: newStatut },
+        { MessageReponse, MatriculeDirTunCater, Statut: "traitée" },
         { new: true, runValidators: true }
       );
       return updatedReclamation;
@@ -43,8 +41,8 @@ class reclamationController {
   }
   static async TousReclamations() {
     try {
-      const reclamations = await reclamation.find();
-      return reclamations;
+    const recs = await reclamation.find({ Statut: { $ne: "annulée" } });
+      return recs;
     } catch (err) {
       throw new Error("Error retrieving reclamation count: " + err.message);
     }

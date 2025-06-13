@@ -1162,38 +1162,45 @@
               ]
             },
             {
-              "option": "brick au thon",
+              "option": "brick à l'œuf",
               "texts": [
-                "Brick au thon",
-                "brick au thon"
+                "Brick à l'œuf",
+                "brick à l'œuf"
               ]
             },
             {
-              "option": "couscous tunisien",
+              "option": "couscous au poulet",
               "texts": [
-                "Couscous tunisien",
-                "couscous tunisien"
+                "Couscous au poulet",
+                "couscous au poulet"
               ]
             },
             {
-              "option": "makarouna salsa",
+              "option": "makrouna",
               "texts": [
-                "makarouna salsa",
-                "makarouna salsa"
+                "Makrouna",
+                "makrouna"
               ]
             },
             {
-              "option": "makroudh",
+              "option": "makroudh ",
               "texts": [
-                "Makroudh",
-                "makroudh"
+                "makroudh ",
+                "makroudh "
               ]
             },
             {
-              "option": "creme vanille",
+              "option": "gâteau vanille",
               "texts": [
-                "Creme vanille",
-                "creme vanille"
+                "Gâteau Vanille",
+                "gâteau vanille"
+              ]
+            },
+            {
+              "option": "viennoiseries ",
+              "texts": [
+                "Viennoiseries ",
+                "viennoiseries "
               ]
             },
             {
@@ -1204,10 +1211,10 @@
               ]
             },
             {
-              "option": "cafe au turc",
+              "option": "café turc",
               "texts": [
-                "Cafe au turc",
-                "cafe au turc"
+                "Café turc",
+                "café turc"
               ]
             }
           ]
@@ -1232,6 +1239,15 @@
                 "menu 2",
                 "Menu2",
                 "menu2"
+              ]
+            },
+            {
+              "option": "menu3",
+              "texts": [
+                "Menu 3",
+                "menu 3",
+                "Menu3",
+                "menu3"
               ]
             }
           ]

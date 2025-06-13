@@ -12,7 +12,6 @@ router.post("/add", authenticateToken, async (req, res) => {
       PlatsEntree,
       PlatsDessert,
       Boissons,
-      Disponible,
     } = req.body;
     const personnelTunisieCatering = req.user.username;
     if (
@@ -33,7 +32,6 @@ router.post("/add", authenticateToken, async (req, res) => {
       PlatsEntree,
       PlatsDessert,
       Boissons,
-      Disponible,
       personnelTunisieCatering
     );
     res.status(200).json(nouveauMenu);

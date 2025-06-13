@@ -32,17 +32,16 @@ router.post("/authentification", async(req, res)=>{
       res.status(400).send(err.message);
     }
 });
-router.post("/logout", async (req, res) => {
+router.post("/logout", authenticateToken, async (req, res) => {
   try {
-    const result = authcontroller.logout(req.body.token);
-    res.status(200).json(result);
+    res.status(200).json({ message: "Déconnexion réussie" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Erreur lors de la déconnexion", error: err.message });
   }
 });
 router.put('/update', authenticateToken,async (req, res) => {
     try {
-        const updatedUser = await authcontroller.updateUserInfo(req.user.Matricule, req.body);
+        const updatedUser = await authcontroller.updateUserInfo(req.user._id, req.body);
         res.status(200).json({ message: "Informations mises à jour avec succès", user: updatedUser });
     } catch (err) {
         res.status(400).json({ message: err.message });

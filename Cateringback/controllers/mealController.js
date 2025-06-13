@@ -12,7 +12,6 @@ class mealController {
         nom,
         description,
         typePlat,
-        Disponibilite,
         Categorie,
         quantite,
       } = req.body;
@@ -21,8 +20,7 @@ class mealController {
         !description ||
         !typePlat ||
         !Categorie ||
-        !quantite ||
-        !Disponibilite == undefined
+        !quantite
       ) {
         return res.status(400).json({ message: "Les champs sont obligés." });
       }
@@ -35,7 +33,7 @@ class mealController {
         nom,
         description,
         typePlat,
-        Disponibilite,
+        Disponibilite:true,
         Categorie,
         quantite,
         //adminTn,

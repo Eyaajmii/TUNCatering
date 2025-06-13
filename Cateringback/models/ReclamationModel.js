@@ -23,7 +23,7 @@ const ReclamationSchema = new mongoose.Schema(
     },
     Statut: {
       type: String,
-      enum: ["en attente", "traité", "annulée"],
+      enum: ["en attente", "traitée", "annulée"],
       default: "En attente",
     },
     imageUrl: {
