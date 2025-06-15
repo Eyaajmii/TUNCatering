@@ -69,13 +69,14 @@
                       </div>
                     </div>
                   </div>
-                <i class="fa-solid fa-gear"></i>
+                  <i class="fa-solid fa-gear" style="cursor: pointer;" (click)="gotoupdate()"></i>
                 <button
               class="btn btn-danger logout-btn"
               (click)="logout()"
               [disabled]="isLoggingOut"
               aria-label="Logout"
             >
+            Se déconnecter
             </button>
             </div>
         </div>

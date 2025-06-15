@@ -38,7 +38,7 @@
               <td class="fw-semibold text-primary">
                 {{commande.numeroCommande  }}
               </td>
-              <td>{{ commande.vol?.numVol }}</td>
+              <td>{{ commande.vol.numVol }}</td>
               <td>                
                 <div>{{ commande.Matricule }}</div>
               </td>            
@@ -54,6 +54,9 @@
               <td>{{ commande.NombreCommande }}</td>
               <td [ngClass]="getStatusClass(commande.Statut)">
                 {{commande.Statut}}
+                <span *ngIf="commande.Statut === 'annulé' && commande.motifAnnulation" class="text-danger fst-italic">
+                  Motif : {{ commande.motifAnnulation }}
+                </span>
               </td>
               <td>
                 <button type="submit" (click)="annuler(commande._id)" class="btn btn-sm btn-danger"> Annuler </button>

@@ -12,34 +12,34 @@ import { BonLivraisonService } from '../../../services/bon-livraison.service';
 })
 export class AjoutFactureComponent {
   facture: any = null;
-  selectedMonth: number = new Date().getMonth() + 1;
-  selectedYear: number = new Date().getFullYear();
+  dateDebut: Date | null = null;
+  dateFin: Date | null = null;
+  message: string = "";
   erreur: string = "";
-  bons:any[]=[];
-  constructor(private factureService: FactureService,private bonLivraisonService: BonLivraisonService ) {}
-  /*rechercher(){
-    this.bonLivraisonService.BonsLivraisonNonFacture().subscribe({
-      next: (response) => {
-          this.bons = response;
-      },
-      error: (err) => {
-        console.error("Erreur dans la récupération des bons de livraisons:", err);
-        this.bons = [];
-      }
-    });
-  }*/
-  onSubmit() {
-    this.facture = null;
-    this.erreur = "";
 
-    this.factureService.ajouterFacture(this.selectedMonth,this.selectedYear).subscribe({
+  constructor(private factureService: FactureService) {}
+
+  onSubmit() {
+    if (!this.dateDebut || !this.dateFin) {
+      this.erreur = "Les deux dates sont obligatoires.";
+      this.message = "";
+      this.facture = null;
+      return;
+    }
+
+    this.erreur = "";
+    this.message = "";
+    this.facture = null;
+
+    this.factureService.ajouterFacture(this.dateDebut, this.dateFin).subscribe({
       next: (res) => {
+        this.message = 'Facture créée avec succès !';
         this.facture = res.data;
       },
-      error: (err) => {
-        console.error('Erreur lors de la création de la facture :', err);
-        this.erreur = "Une erreur est survenue lors de la création de la facture.";
-      }
+      error: (error) => {
+        const message = error?.error?.message || "Une erreur s'est produite. Veuillez réessayer.";
+        alert(message);
+      },
     });
   }
 }

@@ -1216,6 +1216,20 @@
                 "Café turc",
                 "café turc"
               ]
+            },
+            {
+              "option": "cc",
+              "texts": [
+                "cc",
+                "cc"
+              ]
+            },
+            {
+              "option": "dd",
+              "texts": [
+                "dd",
+                "dd"
+              ]
             }
           ]
         },

@@ -12,15 +12,18 @@ import { FormsModule } from '@angular/forms';
 export class TousreclamationComponent implements OnInit,OnDestroy{
 reclamations:Reclamation[]=[];
 selectedStatut: string = 'Tous';
+matriculeFilter: string = '';
 connectionStatus: boolean = false;
   loading: boolean = false;
   error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'traité', display: 'traité', class: 'traite' },
-    {value:'annulée',display:'annulée',class:'annulee'}
+    { value: 'traitée', display: 'traitée', class: 'traite' },
   ];
   private subscriptions: Subscription = new Subscription(); 
+  selectedRecId: string | null = null;
+  selectedRecDetail: any = null;
+  message: string = '';
   constructor(private reclamationService:ReclamationServiceService){}
   ngOnInit(): void {
     this.loadReclamation();
@@ -71,33 +74,51 @@ connectionStatus: boolean = false;
       })
     );
   }
-  changer(id: string, nouveauStatut: string,MessageReponse:string){
-    if (!this.availableStatuses.some(s => s.value === nouveauStatut)) {
-      this.error = 'Statut invalide';
+  changer(id: string, MessageReponse: string) {
+    if (!MessageReponse || MessageReponse.trim() === '') {
+      alert('Veuillez saisir la réponse');
       return;
     }
-    this.reclamationService.repondreReclamation(id, nouveauStatut,MessageReponse).subscribe({
+    this.reclamationService.repondreReclamation(id, MessageReponse).subscribe({
       next: (response) => {
-        console.log('Statut mis à jour avec succès:', response);
-        const index = this.reclamations.findIndex(c => c._id === id);
-        if (index !== -1) {
-          this.reclamations[index].Statut = nouveauStatut;
+        const rec = this.ReclamationFiltres.find(r => r._id === id);
+        if (rec) {
+          rec.Statut = 'traitée';
         }
+        this.message="La réclamation a été traitée avec succes ! "
       },
       error: (err) => {
-        console.error('Échec de la mise à jour du statut:', err);
         this.error = 'Échec de la mise à jour du statut';
       }
-    })
+    });
   }
+  
   getStatusClass(status: string): string {
     const found = this.availableStatuses.find(s => s.value === status);
     return found ? 'status-' + found.class : '';
   }
   get ReclamationFiltres(): Reclamation[] {
-    if (this.selectedStatut === 'Tous') {
-      return this.reclamations;
+    return this.reclamations.filter(rec => {
+      const statutMatch = this.selectedStatut === 'Tous' || rec.Statut === this.selectedStatut;
+      const matriculeMatch = !this.matriculeFilter || rec.MatriculePn?.toLowerCase().includes(this.matriculeFilter.toLowerCase());
+      return statutMatch && matriculeMatch;
+    });
+  }
+  
+  toggleDetails(id: string) {
+    if (this.selectedRecId === id) {
+      this.selectedRecId = null;
+      this.selectedRecDetail = null;
+    } else {
+      this.selectedRecId = id;
+      this.reclamationService.getDetailreclamation(id).subscribe({
+        next: (data) => {
+          this.selectedRecDetail = data;
+        },
+        error: () => {
+          this.selectedRecDetail = null;
+        }
+      });
     }
-    return this.reclamations.filter(f => f.Statut === this.selectedStatut);
   }
 }

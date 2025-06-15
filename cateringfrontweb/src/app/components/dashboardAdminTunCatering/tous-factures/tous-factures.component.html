@@ -20,7 +20,6 @@
             <tr>
               <th>N° facture</th>
               <th>Date</th>
-              <th>Nombre des bons </th>
               <th>Montant total</th>
               <th>Statut</th>
               <th>Actions</th>
@@ -32,7 +31,6 @@
             (click)="toggleDetails(f._id)"  style="cursor: pointer;">
               <td class="fw-semibold text-primary">{{ f.numeroFacture }}</td>
               <td>{{ f.DateFacture | date:'shortDate' }}</td>
-              <td>{{ f.BonsLivraison.length || 0 }}</td>
               <td>
                 {{ f.montantTotal | currency:'TND':'symbol':'1.3-3'}}
               </td>
@@ -55,7 +53,8 @@
               <td colspan="6">
                 <div class="detail-card">
                   <h5>Détails de la facture {{ selectedFactureDetail?.numeroFacture }}</h5>
-                  <p><strong>Date :</strong> {{ selectedFactureDetail?.DateFacture | date:'short' }}</p>
+                  <p><strong>Date début :</strong> {{ selectedFactureDetail?.DureeFacture[0]?.dateDebut | date:'short' }}</p>
+                  <p><strong>Date Fin :</strong> {{ selectedFactureDetail?.DureeFacture[0]?.dateFin | date:'short' }}</p>
                   <p><strong>Statut :</strong> {{ selectedFactureDetail?.Statut }}</p>
                   <p><strong>Montant total :</strong> {{ selectedFactureDetail?.montantTotal }} TND</p>
                   <p><strong>Prélevée :</strong> {{ selectedFactureDetail?.Preleve ? 'Oui' : 'Non' }}</p>

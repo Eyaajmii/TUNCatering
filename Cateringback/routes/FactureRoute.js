@@ -7,9 +7,8 @@ const { authenticateToken } = require("../middlware/auth");
 module.exports=function(broadcastNewFacture,broadcastFactureStatusUpdate){
 router.post("/addFacture",authenticateToken,async(req,res)=>{
     try{
-      const month = parseInt(req.query.month);
-      const year = parseInt(req.query.year) || new Date().getFullYear();
-        const facture = await facturecontroller.creerFacture(month, year);
+      const { dateDebut, dateFin } = req.body;
+        const facture = await facturecontroller.creerFacture(dateDebut, dateFin);
         const notifcreer = await notification.create({
           message: `Nouvelle facture créée`,
           emetteur: "tunisie_catering",

@@ -1,11 +1,14 @@
 <div class="container mt-5">
+  <div *ngIf="message" class="message-box">
+    {{ message }}
+  </div> 
   <h2 class="mb-4 text-center">Soumettre une réclamation</h2>
   <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
         <div class="mb-3">
       <label for="numCommande" class="form-label">Numéro de commande</label>
       <select id="numCommande" class="form-select" formControlName="Commande" required>
         <option value="">-- Sélectionner une commande --</option>
-        <option *ngFor="let commande of commandes" [value]="commande.numeroCommande">
+        <option *ngFor="let commande of commandesFiltrees" [value]="commande.numeroCommande">
           {{ commande.numeroCommande }}
         </option>
       </select>

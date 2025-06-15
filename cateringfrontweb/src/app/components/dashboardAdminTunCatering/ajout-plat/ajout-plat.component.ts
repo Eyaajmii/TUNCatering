@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PlatServiceService } from '../../../services/plat-service.service';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-ajout-plat',
   standalone:true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,CommonModule],
   templateUrl: './ajout-plat.component.html',
   styleUrl: './ajout-plat.component.css'
 })
@@ -15,13 +16,13 @@ export class AjoutPlatComponent {
   mealForm: FormGroup;
   selectedFile:File |null=null;
   isSubmit=false;
+  message: string = '';
   constructor(private fb: FormBuilder,private platService:PlatServiceService) {
     this.mealForm = this.fb.group({
       nom: ['', [Validators.required]],
       description: ['', [Validators.required]],
       typePlat: ['', Validators.required],
       Categorie:['',Validators.required],
-      Disponibilite: [false],
       quantite:['',Validators.required]
       //image: ['', [Validators.required, Validators.pattern('(https?:\\/\\/.*\\.(?:png|jpg|jpeg|gif))')]]
     });
@@ -43,23 +44,21 @@ export class AjoutPlatComponent {
       data.append('typePlat',this.mealForm.value.typePlat);
       data.append('Categorie',this.mealForm.value.Categorie);
       data.append('quantite',this.mealForm.value.quantite);
-      data.append('Disponibilite',this.mealForm.value.Disponibilite.toString());
       if(this.selectedFile){
         data.append('image',this.selectedFile);
       }
       this.platService.creerPlat(data).subscribe({
         next: (res) => {
-          console.log('Plat ajouté:', res);
-          alert("Plat ajouté")
+          this.message = 'Plat ajouté !';
           this.mealForm.reset();
           this.selectedFile=null;
         },
         error: (error) => {
-          console.error("Erreur lors de l'ajout du plat:", error);
-          if (error.error.message === "ce plat existe deja.") {
-            alert("Plat déjà existe");
+            const message = error?.error?.message;
+          if (message) {
+            alert(message); 
           } else {
-            alert("Veuillez réessayer");
+            alert("Une erreur s'est produite. Veuillez réessayer.");
           }
         },
         complete: () => {

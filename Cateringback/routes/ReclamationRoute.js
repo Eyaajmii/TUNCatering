@@ -31,10 +31,7 @@ router.post("/creerReclamation", authenticateToken,upload.single("imageUrl"),asy
     });
 
     if (reclamationExistante) {
-      return res
-        .status(400)
-        .json({
-          message: "Une réclamation a déjà été soumise pour cette commande.",
+      return res.status(400).json({message: "Réclamation déjà existante pour cette commande.",
         });
     }
     const newReclamation = await reclamation.create({

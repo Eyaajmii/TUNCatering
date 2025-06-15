@@ -73,22 +73,18 @@ export class HomeAdminComponent implements OnInit {
   gotoupdate(){
     this.router.navigate(['/Dashboard/ModifierProfil']);
   }
-  async logout(): Promise<void> {
-    if (this.isLoggingOut) return;
+  logout(): void {
     this.isLoggingOut = true;
-    const token = this.authService.getToken();
-    try {
-      if (token) {
-        await this.authService.logout(token).toPromise();
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+        this.isLoggingOut = false;
+      },
+      error: err => {
+        console.error("Erreur de déconnexion", err);
+        this.isLoggingOut = false;
       }
-      localStorage.removeItem('token');
-      await this.router.navigate(['/login']);
-    } catch (error) {
-      console.error('Logout error:', error);
-      localStorage.removeItem('token');
-      await this.router.navigate(['/login']);
-    } finally {
-      this.isLoggingOut = false;
-    }
+    });
   }
 }

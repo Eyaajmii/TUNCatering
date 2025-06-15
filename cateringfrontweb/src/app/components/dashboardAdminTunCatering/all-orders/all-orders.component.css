@@ -114,3 +114,27 @@ ul li {
 td select{
   text-align: center;
 }
+.export-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.export-button {
+  background-color: #198754; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-button:hover {
+  background-color: #157347;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}

@@ -17,6 +17,10 @@ export interface MontantParPn {
   personnel: string;
   montant: number;
 }
+export interface DureeFactureTab {
+  dateDebut: Date;
+  dateFin: Date;
+}
 export interface Facture {
   _id: string; 
   numeroFacture: string;
@@ -27,6 +31,7 @@ export interface Facture {
   montantTotal: number;
   montantParVol: MontantParVol[];
   montantParPn: MontantParPn[];
+  DureeFacture:DureeFactureTab[];
 }
 @Injectable({
   providedIn: 'root'
@@ -68,15 +73,12 @@ export class FactureService {
     this.socket.on('factureStatusUpdate', (data: any) => {this.statusUpdates.next(data);this.toastr.info(data.message);});
     //this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
-  ajouterFacture(month: number, year: number = new Date().getFullYear()):Observable<any>{
+  ajouterFacture(dateDebut:Date, dateFin:Date):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
   });
-  const params = new HttpParams()
-      .set('month', month.toString())
-      .set('year', year.toString());
-    return this.http.post<any>(`${FactureURL}/addFacture`,{},{headers,params});
+    return this.http.post<any>(`${FactureURL}/addFacture`,{dateDebut,dateFin},{headers});
   }
   AnnulerFacture(id:string):Observable<Facture>{
     const token = localStorage.getItem('token'); 
@@ -122,6 +124,13 @@ MesPrelevelment():Observable<any>{
     'Authorization': `Bearer ${token}`
   });
   return this.http.get<any>(`${PrelevementURL}/MesPrelevement/`,{headers})
+}
+detailPrelevement(id:string):Observable<any>{
+  const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  return this.http.get<any>(`${PrelevementURL}/detail/${id}`,{headers})
 }
 /**** Observables pour Socket.IO*** */
 onNewFacture(): Observable<Facture> {

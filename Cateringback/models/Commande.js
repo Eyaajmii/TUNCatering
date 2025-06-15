@@ -56,6 +56,9 @@ const commandeSchema = new mongoose.Schema({
       ref: "Plat",
     },
   ],
+  motifAnnulation:{
+    type:String
+  }
 });
 
 commandeSchema.statics.getValidStatuses = function() {

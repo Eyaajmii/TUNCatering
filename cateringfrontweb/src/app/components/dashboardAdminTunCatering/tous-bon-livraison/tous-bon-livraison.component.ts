@@ -42,14 +42,10 @@ export class TousBonLivraisonComponent implements OnInit {
     this.successMessage = '';
     
     this.bonLivraisonService.getAllBonsLivraison().subscribe({
-      next: (response: any) => {
-        if (response && response.success) {
-          this.bonsLivraison = response.data;
-        } else {
-          this.errorMessage = response.message || 'Erreur lors du chargement des bons de livraison';
-        }
+      next: (bons: BonLivraison[]) => {
+        this.bonsLivraison = bons;
         this.isLoading = false;
-      },
+    },
       error: (err) => {
         console.error('Erreur:', err);
         this.errorMessage = 'Erreur serveur lors du chargement des bons de livraison';
@@ -120,11 +116,17 @@ export class TousBonLivraisonComponent implements OnInit {
       }
     }
   }
-  modifierBn(id: string){
-    if (id) {
+  modifierBn(id: string) {
+    const bon = this.bonsLivraison.find(b => b._id === id);
+    if (bon) {
+      if (bon.Statut !== 'En attente') {
+        alert('Modification interdite !');
+        return;
+      }
       this.router.navigate(['/DashAdmin/Livraison/ModifierBonLivraison', id]);
     }
   }
+  
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'En attente': return 'bg-warning';

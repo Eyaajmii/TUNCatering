@@ -14,31 +14,30 @@
         <tr>
           <th>#</th>
           <th>N° Réclamation</th>
+          <th>N° Commande</th>
           <th>Objet</th>
-          <th>Message</th>
           <th>Statut</th>
-          <th>Date de création</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let rec of reclamations; let i = index">
-          <td>{{ i + 1 }}</td>
+        <ng-container  *ngFor="let rec of reclamations; let i = index">
+          <tr (click)="toggleDetails(rec._id)" style="cursor: pointer;">
+            <td>{{ i + 1 }}</td>
           <td>{{ rec.NumeroReclamation }}</td>
+          <td>{{ rec.Commande }}</td>
           <td>{{ rec.Objet }}</td>
-          <td>{{ rec.MessageEnvoye }}</td>
           <td>
             <span
               [ngClass]="{
-                'badge bg-warning text-dark': rec.Statut === 'En attente',
-                'badge bg-success': rec.Statut === 'Traité',
-                'badge bg-danger': rec.Statut === 'Rejeté'
+                'badge bg-warning text-dark': rec.Statut === 'en attente',
+                'badge bg-success': rec.Statut === 'traitée',
+                'badge bg-danger': rec.Statut === 'annulée'
               }"
             >
               {{ rec.Statut }}
             </span>
           </td>
-          <td>{{ rec.dateSoumission | date: 'short' }}</td>
           <td>
             <div class="btn-group gap-1">
               <button class="btn btn-info btn-sm" (click)="voirDetails(rec._id)">
@@ -53,6 +52,29 @@
             </div>
           </td>
         </tr>
+        <tr *ngIf="selectedRecId === rec._id && selectedRecDetail">
+          <td colspan="7">
+            <div class="detail-card p-3 bg-light rounded shadow-sm">
+              <h5 class="mb-3">Détails de réclamation</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <strong>Message envoyé :</strong> {{ selectedRecDetail.MessageEnvoye }}
+                </li>
+                <li class="list-group-item" *ngIf="selectedRecDetail.MessageReponse">
+                  <strong>Réponse :</strong> {{ selectedRecDetail.MessageReponse }}
+                </li>
+                <li class="list-group-item">
+                  <strong>Date de création :</strong> {{ selectedRecDetail.createdAt | date: 'short' }}
+                </li>
+                <li class="list-group-item" *ngIf="selectedRecDetail.imageUrl">
+                  <strong>Image jointe :</strong><br>
+                  <img class="plat-image" [src]="'http://localhost:5000/uploads/' + selectedRecDetail.imageUrl" alt="{{selectedRecDetail.imageUrl}}">
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>        
+        </ng-container>
       </tbody>
     </table>
   </div>

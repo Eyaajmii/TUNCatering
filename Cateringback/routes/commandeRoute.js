@@ -15,10 +15,10 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
       res.status(500).send(err.message);
     }
   });
-  router.get("/vol/:numVol", async (req, res) => {
+  router.get("/vol/:idVol", async (req, res) => {
     try {
-      const { numVol } = req.params;
-      const commandes = await CommandeController.getCommandesByNumVol(numVol);
+      const { idVol } = req.params;
+      const commandes = await CommandeController.getCommandesByNumVol(idVol);
       res.status(200).json({ success: true, data: commandes });
     } catch (error) {
       res.status(400).json({ success: false, message: error.message });
@@ -63,7 +63,7 @@ module.exports = function (broadcastNewOrder, broadcastOrderStatusUpdate) {
 
       res.status(200).json(newcommande);
     } catch (error) {
-      res.status(500).send(error.message);
+      res.status(500).json({ message: error.message });
     }
   });
   router.post("/addCommandePlat", authenticateToken ,async (req, res) => {

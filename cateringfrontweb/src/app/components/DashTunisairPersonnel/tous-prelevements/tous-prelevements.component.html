@@ -16,7 +16,8 @@
             </tr>
           </thead>
           <tbody >
-            <tr *ngFor="let p of prelevements">
+            <ng-container *ngFor="let p of prelevements">
+              <tr (click)="toggleDetails(p._id)" style="cursor: pointer;">
               <td class="fw-semibold text-primary">
                 {{ p.personnel }}
               </td>
@@ -34,6 +35,20 @@
                 </button>
               </td>               
             </tr>
+            <tr *ngIf="selectedPrelevId === p._id && selectedPrelevDetail">
+              <td colspan="6">
+                <div class="detail-card p-3 bg-light rounded shadow-sm">
+                  <h5 class="mb-3">Détails du prélèvement</h5>
+                  <ul class="list-group">
+                    <li *ngFor="let detail of selectedPrelevDetail" class="list-group-item d-flex justify-content-between align-items-center">
+                      <strong>Vol :</strong> <span>{{ detail.vol?.numVol }}</span>
+                      <strong>Montant :</strong> <span>{{ detail.montant | number: '1.2-2' }} TND</span>
+                    </li>                
+                  </ul>
+                </div>
+              </td>
+            </tr>               
+          </ng-container>
           </tbody>
         </table>
       </div>

@@ -4,14 +4,14 @@ import { catchError, Observable, of, Subject } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import {io, Socket } from 'socket.io-client';
 import { isPlatformBrowser } from '@angular/common';  
+import { Commande, Vol } from './commande-service.service';
 const SOCKET_URL = "http://localhost:5000";
 export interface BonLivraison {
   _id: string;
   numeroBon: string;
   dateCreation?: Date;
   Statut:string;
-  vol: string;
-  volInfo?:any; 
+  vol: Vol;
   commandes:any[]; 
   personnelLivraison?: any; 
   signatureResponsable?: string;
@@ -64,17 +64,21 @@ export class BonLivraisonService {
     this.socket.on('BonLivraisonStatusUpdate', (data: any) => this.statusUpdates.next(data));
     this.socket.on('newNotification', (data: any) => {this.notificationSubject.next(data);this.toastr.info(data.message);});
   }
-  getBonByVolId(volId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/vol/${volId}`);
-  }
   getBnById(id:string):Observable<BonLivraison>{
     return this.http.get<BonLivraison>(`${this.apiUrl}/${id}`);
   }
   createBonLivraison(data: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/add`, data);
   }
-  getAllBonsLivraison(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/all`)
+  getAllBonsLivraison(): Observable<BonLivraison[]> {
+    return this.http.get<BonLivraison[]>(`${this.apiUrl}/all`)
+  }
+  tousBonsChef(): Observable<BonLivraison[]> {
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<BonLivraison[]>(`${this.apiUrl}/tousBons`,{headers})
   }
   updateStatutBonLivraison(bonId: string, payload: any): Observable<any> {
     const token = localStorage.getItem('token'); 

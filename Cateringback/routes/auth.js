@@ -29,7 +29,7 @@ router.post("/authentification", async(req, res)=>{
         const user = await authcontroller.login(username,password);
         res.status(200).json(user);
     } catch (err) {
-      res.status(400).send(err.message);
+      res.status(400).json({ message: err.message });
     }
 });
 router.post("/logout", authenticateToken, async (req, res) => {

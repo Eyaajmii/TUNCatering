@@ -36,6 +36,9 @@
         }">
           {{ commande.Statut }}
         </span>
+        <span *ngIf="commande.Statut === 'annulé' && commande.motifAnnulation" class="text-danger fst-italic">
+          Motif : {{ commande.motifAnnulation }}
+        </span>
       </div>
       <div *ngIf="commande.menu">
         <strong>Menu :</strong> {{ commande.menu.nom }}

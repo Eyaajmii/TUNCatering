@@ -1,63 +1,49 @@
-<div class="container ">
-  <h5>CRÉER UN BON DE LIVRAISON</h5>
+<div class="container">
+  <h5>CRÉER UNE FACTURE</h5>
+
   <div class="select-button-group">
     <div class="mb-4">
-      <label class="block mb-1 font-medium">Mois :</label>
-      <select [(ngModel)]="selectedMonth" class="form-control">
-        <option *ngFor="let m of [1,2,3,4,5,6,7,8,9,10,11,12]" [value]="m">{{ m }}</option>
-      </select>
+      <label class="block mb-1 font-medium">Date début <span class="text-danger">*</span></label>
+      <input type="date" [(ngModel)]="dateDebut" name="dateDebut" class="form-control" required />
     </div>
 
     <div class="mb-4">
-      <label class="block mb-1 font-medium">Année :</label>
-      <input [(ngModel)]="selectedYear" type="number" class="form-control" />
+      <label class="block mb-1 font-medium">Date fin <span class="text-danger">*</span></label>
+      <input type="date" [(ngModel)]="dateFin" name="dateFin" class="form-control" required />
     </div>
-  
-    <!--<button class="btn btn-primary" (click)="rechercher()">Rechercher les bons de livraison</button>
-    <div *ngIf="bons.length > 0">
-      <h4>Les bons de livraison non facturés</h4>
-    <table class="table table-bordered mt-2">
-      <thead class="table-light">
-        <tr>
-          <th>N° Bon Livraison</th>
-          <th>Vol</th>
-          <th>Statut</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let bon of bons">
-          <td>{{ bon.numeroBon}}</td>
-          <td>{{ bon.vol }}</td>
-          <td>{{bon.Statut}}</td>
-        </tr>
-      </tbody>
-    </table>-->
-    <button class="btn" (click)="onSubmit()">Créer</button>
+
+    <button class="btn btn-primary" (click)="onSubmit()" [disabled]="!dateDebut || !dateFin">
+      Créer
+    </button>
   </div>
+
+  <div *ngIf="message" class="alert alert-success mt-3">
+    {{ message }}
+  </div>
+
+  <div *ngIf="erreur" class="alert alert-danger mt-3">
+    {{ erreur }}
+  </div>
+
   <div *ngIf="facture" class="facture-container">
-      <h4>Facture Créée</h4>
-      <p><strong>Numéro :</strong> {{ facture.numeroFacture }}</p>
-      <p><strong>Date :</strong> {{ facture.DateFacture | date }}</p>
-      <p><strong>Statut :</strong> {{ facture.Statut }}</p>
-      <p><strong>Montant total :</strong> {{ facture.montantTotal }} TND</p>
-  
-      <h5 class="mt-3">Montants par vol :</h5>
-      <ul>
-        <li *ngFor="let mv of facture.montantParVol">
-          Vol : {{ mv.vol }} | Montant : {{ mv.montant }} TND
-        </li>
-      </ul>
-  
-      <h5 class="mt-3">Montants par personnel :</h5>
-      <ul>
-        <li *ngFor="let mpn of facture.montantParPn">
-          ID Personnel : {{ mpn.personnel }} | Montant : {{ mpn.montant }} TND
-        </li>
-      </ul>
+    <h4>Facture Créée</h4>
+    <p><strong>Numéro :</strong> {{ facture.numeroFacture }}</p>
+    <p><strong>Date :</strong> {{ facture.DateFacture | date }}</p>
+    <p><strong>Statut :</strong> {{ facture.Statut }}</p>
+    <p><strong>Montant total :</strong> {{ facture.montantTotal }} TND</p>
+
+    <h5 class="mt-3">Montants par vol :</h5>
+    <ul>
+      <li *ngFor="let mv of facture.montantParVol">
+        Vol : {{ mv.vol }} | Montant : {{ mv.montant }} TND
+      </li>
+    </ul>
+
+    <h5 class="mt-3">Montants par personnel :</h5>
+    <ul>
+      <li *ngFor="let mpn of facture.montantParPn">
+        ID Personnel : {{ mpn.personnel }} | Montant : {{ mpn.montant }} TND
+      </li>
+    </ul>
   </div>
-  
-    <div *ngIf="erreur" class="alert alert-danger mt-3">
-      {{ erreur }}
-    </div>
 </div>
-  

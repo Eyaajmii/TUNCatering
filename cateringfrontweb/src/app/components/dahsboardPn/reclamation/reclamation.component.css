@@ -14,3 +14,13 @@ h2 {
   margin-bottom: 1.5rem;   
   letter-spacing: 1px;     
 }
+.message-box {
+  margin-top: 10px;
+  margin-bottom: 5%;
+  padding: 10px;
+  background-color: #e0f7e9;
+  color: #276749;
+  border: 1px solid #a5d6a7;
+  border-radius: 5px;
+  font-weight: bold;
+}

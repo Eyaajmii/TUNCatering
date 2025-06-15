@@ -51,9 +51,16 @@ const FactureSchema = new mongoose.Schema(
         montant: Number,
       },
     ],
-    DureeFacture: {
-      type: Date,
-    },
+    DureeFacture: [
+      {
+        dateDebut: {
+          type: Date,
+        },
+        dateFin: {
+          type: Date,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

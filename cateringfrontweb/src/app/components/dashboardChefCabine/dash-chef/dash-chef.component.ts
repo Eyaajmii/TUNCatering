@@ -100,7 +100,21 @@ export class DashChefComponent implements OnInit {
   private updateUnreadCount(): void {
     this.unreadCount = this.notifications.filter(n => !n.isRead).length;
   }
-  async logout(){
-    this.authService.logout(); 
- }
+  logout(): void {
+    this.isLoggingOut = true;
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+        this.isLoggingOut = false;
+      },
+      error: err => {
+        console.error("Erreur de déconnexion", err);
+        this.isLoggingOut = false;
+      }
+    });
+  }
+  gotoupdate(){
+    this.router.navigate(['/DashboardChefCabine/modifierProfil']);
+  }
 }

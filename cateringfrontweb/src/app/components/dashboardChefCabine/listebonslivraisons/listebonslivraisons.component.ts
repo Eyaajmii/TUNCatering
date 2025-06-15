@@ -41,14 +41,10 @@ export class ListebonslivraisonsComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     
-    this.bonLivraisonService.getAllBonsLivraison().subscribe({
-      next: (response: any) => {
-        if (response && response.success) {
-          this.bonsLivraison = response.data;
-        } else {
-          this.errorMessage = response.message || 'Erreur lors du chargement des bons de livraison';
-        }
-        this.isLoading = false;
+    this.bonLivraisonService.tousBonsChef().subscribe({
+      next: (bons: BonLivraison[]) => {
+          this.bonsLivraison = bons;
+          this.isLoading = false;
       },
       error: (err) => {
         console.error('Erreur:', err);

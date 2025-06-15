@@ -85,3 +85,12 @@ h5::after {
 .card-body .btn{
   margin-left: 300px;
 }
+.message-box {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #e0f7e9;
+  color: #276749;
+  border: 1px solid #a5d6a7;
+  border-radius: 5px;
+  font-weight: bold;
+}

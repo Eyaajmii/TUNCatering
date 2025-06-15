@@ -22,12 +22,13 @@ export class AuthService {
   getToken():string|null{
     return localStorage.getItem('token');
   }
-  logout():void{
-    localStorage.removeItem('token');
+  logout(): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.post(`${this.url}/logout`, {},{headers});
   }
-  /*logout(token: string): Observable<any> {
-    return this.http.post(`${this.url}/logout`, { token });
-  }*/
   ModifierUser(data: any): Observable<any> {
     const token = this.getToken();
     const headers = new HttpHeaders({

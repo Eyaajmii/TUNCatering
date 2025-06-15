@@ -39,7 +39,7 @@
           <ng-container *ngFor="let bon of bonsLivraisonFiltres" >
           <tr [class.table-secondary]="bon.Statut === 'Annulé'" (click)="toggleDetails(bon._id)"  style="cursor: pointer;">
             <td class="fw-semibold text-primary">{{ bon.numeroBon }}</td>
-            <td>{{ bon.vol }}</td>
+            <td>{{ bon.vol.numVol}}</td>
             <td>{{ bon.commandes.length || 0 }}</td>
             <td>
               {{ bon.personnelLivraison|| 'Non assigné' }}
@@ -61,18 +61,8 @@
                 [disabled]="isLoading">
                 <i class="bi bi-download"></i> PDF
               </button>
-              <button 
-                (click)="modifierBn(bon._id)" 
-                class="btn btn-sm btn-warning"
-                [disabled]="bon.Statut !== 'En attente'">
-                <i class="bi bi-trash"></i> Modifier
-              </button>
-              <button 
-                (click)="annulerBonLivraison(bon._id)" 
-                class="btn btn-sm btn-danger"
-                [disabled]="bon.Statut !== 'En attente'">
-                <i class="bi bi-trash"></i> Supprimer
-              </button>
+              <button (click)="modifierBn(bon._id)" class="btn btn-sm btn-warning"><i class="bi bi-trash"></i> Modifier</button>
+              <button (click)="annulerBonLivraison(bon._id)" class="btn btn-sm btn-danger" [disabled]="bon.Statut !== 'En attente'"><i class="bi bi-trash"></i> Supprimer</button>
             </td>
           </tr>
           <tr *ngIf="selectedBnId === bon._id && selectedBnDetail">
@@ -81,14 +71,14 @@
                 <h5>Détails du bon de livraison {{ selectedBnDetail?.numeroBon }}</h5>
                 <p><strong>Date :</strong> {{ selectedBnDetail?.dateCreation | date:'short' }}</p>
                 <p><strong>Statut :</strong> {{ selectedBnDetail?.Statut }}</p>
-                <p><strong>Vol :</strong> {{ selectedBnDetail?.vol }}</p>
+                <p><strong>Vol :</strong> {{ selectedBnDetail?.vol.numVol }}</p>
                 <p><strong>Facturé :</strong> {{ selectedBnDetail?.['Facturé'] ? 'Oui' : 'Non' }}</p>
           
                 <h6>Commandes associées :</h6>
                 <ul>
                   <li *ngFor="let c of selectedBnDetail?.commandes">
-                    <strong>#{{ c.commande?.numeroBon }}</strong> - 
-                    {{ c.commande?.dateCreation | date:'shortDate' }} - 
+                    <strong>#{{ c.commande.numeroCommande }}</strong> - 
+                    {{ c.commande?.dateCommnade  | date:'shortDate' }} - 
                     Statut : {{ c.commande?.Statut }}
                     <span *ngIf="c.confirme"> (Confirmé)</span>
                   </li>

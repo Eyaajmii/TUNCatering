@@ -24,7 +24,6 @@ export class AjoutMenuComponent implements OnInit {
     PlatsEntree:'',
     PlatsDessert:'',
     Boissons:'',
-    Disponible:false
   };
   constructor(private menuService:MenuServiceService){}
   ngOnInit(): void {
@@ -43,7 +42,6 @@ export class AjoutMenuComponent implements OnInit {
       PlatsEntree:[this.selectedMenu.PlatsEntree],
       PlatsDessert:[this.selectedMenu.PlatsDessert],
       Boissons:[this.selectedMenu.Boissons],
-      Disponible:[this.selectedMenu.Disponible]
     };
     this.menuService.creerMenu(menudata).subscribe({
       next:(res)=>{

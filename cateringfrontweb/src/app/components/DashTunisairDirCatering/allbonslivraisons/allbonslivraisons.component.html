@@ -39,7 +39,7 @@
         <tbody>
           <tr *ngFor="let bon of bonsLivraisonFiltres" [class.table-secondary]="bon.Statut === 'Annulé'">
             <td class="fw-semibold text-primary">{{ bon.numeroBon }}</td>
-            <td>{{ bon.vol }}</td>
+            <td>{{ bon.vol.numVol}}</td>
             <td>{{ bon.commandes.length || 0 }}</td>
             <td>
               {{ bon.personnelLivraison?.nom || 'Non assigné' }}

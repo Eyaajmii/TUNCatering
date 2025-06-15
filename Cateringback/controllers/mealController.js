@@ -22,12 +22,12 @@ class mealController {
         !Categorie ||
         !quantite
       ) {
-        return res.status(400).json({ message: "Les champs sont obligés." });
+        return res.status(400).json({ message: "Veuillez remplir tous les champs" });
       }
       //existance
       const existe = await plat.findOne({ nom });
       if (existe) {
-        return res.status(400).json({ message: "ce plat existe deja." });
+        return res.status(400).json({ message: "Plat existe déjà" });
       }
       const newmeal = await plat.create({
         nom,

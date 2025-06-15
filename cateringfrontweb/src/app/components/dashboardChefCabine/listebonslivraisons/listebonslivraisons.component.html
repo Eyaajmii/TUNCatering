@@ -39,7 +39,7 @@
           <ng-container *ngFor="let bon of bonsLivraisonFiltres" >
           <tr [class.table-secondary]="bon.Statut === 'Annulé'" (click)="toggleDetails(bon._id)"  style="cursor: pointer;">
             <td class="fw-semibold text-primary">{{ bon.numeroBon }}</td>
-            <td>{{ bon.vol }}</td>
+            <td>{{bon.vol.numVol}}</td>
             <td>{{ bon.commandes.length || 0 }}</td>
             <td>
               {{ bon.personnelLivraison|| 'Non assigné' }}
@@ -73,7 +73,7 @@
                 <h5>Détails du bon de livraison {{ selectedBnDetail?.numeroBon }}</h5>
                 <p><strong>Date :</strong> {{ selectedBnDetail?.dateCreation | date:'short' }}</p>
                 <p><strong>Statut :</strong> {{ selectedBnDetail?.Statut }}</p>
-                <p><strong>Vol :</strong> {{ selectedBnDetail?.vol }}</p>
+                <p><strong>Vol :</strong> {{ selectedBnDetail?.vol.numVol }}</p>
                 <p><strong>Facturé :</strong> {{ selectedBnDetail?.['Facturé'] ? 'Oui' : 'Non' }}</p>
           
                 <h6>Commandes associées :</h6>

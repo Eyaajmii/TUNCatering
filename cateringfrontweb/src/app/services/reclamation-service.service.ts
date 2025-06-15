@@ -17,6 +17,7 @@ export interface Reclamation {
   MatriculePn?: string;
   MatriculeDirTunCater?: string;
   updatedAt?: Date;
+  Commande:string
 }
 @Injectable({
   providedIn: 'root'
@@ -82,12 +83,12 @@ export class ReclamationServiceService {
     return this.http.get<any>(`${this.reclamationURL}/reclamation/detail/${id}`);
   }
 
-  repondreReclamation(id:string,newStatut:string,MessageReponse:string):Observable<any>{
+  repondreReclamation(id:string,MessageReponse:string):Observable<any>{
     const token = localStorage.getItem('token'); 
     const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`
     });
-    return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{newStatut:newStatut,MessageReponse:MessageReponse},{headers})
+    return this.http.put<any>(`${this.reclamationURL}/repondre/${id}`,{MessageReponse},{headers})
   }
   getTousReclamations():Observable<any>{
     if (!this.isBrowser) {

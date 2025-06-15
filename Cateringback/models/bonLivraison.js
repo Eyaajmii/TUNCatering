@@ -17,13 +17,8 @@ const bonLivraisonSchema = new mongoose.Schema(
       default: "En attente",
     },
     vol: {
-      type: String,
-      required: true,
-    },
-    volInfo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "vol",
-      required: false,
     },
     commandes: [
       {
@@ -61,9 +56,9 @@ const bonLivraisonSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    Commantaire:{
-      type:String
-    }
+    Commantaire: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -2,34 +2,16 @@ const express = require("express");
 const router = express.Router();
 const BonLivraison = require("../models/bonLivraison");
 const { authenticateToken } = require("../middlware/auth");
-module.exports = function (
-  broadcastNewBonLivraison,
-  broadcastBonLivraisonStatusUpdate
-) {
-  const bonLivraisonController =
-    require("../controllers/bonLivraisonController")(
-      broadcastNewBonLivraison,
-      broadcastBonLivraisonStatusUpdate
-    );
+module.exports = function (broadcastNewBonLivraison,broadcastBonLivraisonStatusUpdate) {
+  const bonLivraisonController =require("../controllers/bonLivraisonController")(broadcastNewBonLivraison,broadcastBonLivraisonStatusUpdate);
   router.post("/add", bonLivraisonController.createBonLivraison); //pour tunisie catering
   router.get("/all", bonLivraisonController.getAllBonsLivraisons); //pour tunisie catering et tunisair
-  
+  router.get('/tousBons',authenticateToken,bonLivraisonController.consulterBonsParChef);
   router.get("/:id", bonLivraisonController.getBonLivraisonById);
-  router.get("/vol/:volId", bonLivraisonController.getBonByVolId);
   router.put("/:id/statut",authenticateToken,bonLivraisonController.updateStatutBonLivraison); //pour chef de cabine
-  router.put(
-    "/modifier/:id",
-    bonLivraisonController.updateBonLivraison
-  ); /*Ceci pour tunisie catering*/
-  router.put(
-    "/annule/:id",
-    bonLivraisonController.AnnulerBn
-  ); /*Ceci pour tunisie catering*/
-  router.put(
-    "/scan/:id",
-    authenticateToken,
-    bonLivraisonController.scanBonLivraison
-  ); //pour chef de cabine
+  router.put("/modifier/:id",bonLivraisonController.updateBonLivraison); /*Ceci pour tunisie catering*/
+  router.put("/annule/:id",bonLivraisonController.AnnulerBn); /*Ceci pour tunisie catering*/
+  router.put("/scan/:id",authenticateToken,bonLivraisonController.scanBonLivraison); //pour chef de cabine
   router.get("/pdf/:numeroBon", async (req, res) => {
     /*Ceci pour tunisie catering*/
     try {

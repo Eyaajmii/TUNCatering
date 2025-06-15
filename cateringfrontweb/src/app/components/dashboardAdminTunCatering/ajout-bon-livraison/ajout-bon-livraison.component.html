@@ -6,7 +6,7 @@
       <div *ngIf="vols.length === 0">Chargement des vols...</div>
       <div class="select-button-group">
         <select class="form-control" formControlName="numVol">
-          <option *ngFor="let vol of vols" [value]="vol.numVol">{{ vol.numVol }}-{{ vol.dateVolDep | date:'short':'UTC' }}
+          <option *ngFor="let vol of vols" [value]="vol._id">{{ vol.numVol }}-{{ vol.dateVolDep | date:'short':'UTC' }}
           </option>
         </select>
         <button (click)="searchCommandes()" type="button" class="btn">Rechercher</button>
@@ -44,6 +44,9 @@
         </tbody>
       </table>
       <button (click)="createBonLivraison()" class="btn">Créer Bon de Livraison</button>
+      <div *ngIf="message" class="message-box">
+        {{ message }}
+      </div> 
     </div>
   </div>
   </div>

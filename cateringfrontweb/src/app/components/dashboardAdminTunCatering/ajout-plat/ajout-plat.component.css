@@ -7,6 +7,18 @@
     margin-left:50%;
     width: 250%;
 }
+.message-box {
+    margin-left:50%;
+    width: 250%;
+    margin-top: 10px;
+    margin-bottom: 15%;
+    padding: 10px;
+    background-color: #e0f7e9;
+    color: #276749;
+    border: 1px solid #a5d6a7;
+    border-radius: 5px;
+    font-weight: bold;
+}
 .form{
     display: grid;
     grid-template-columns: 1fr 1fr;

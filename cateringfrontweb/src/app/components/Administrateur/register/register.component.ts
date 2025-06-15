@@ -86,7 +86,7 @@ export class RegisterComponent {
       this.registerService.register(this.registerForm.value).subscribe({
         next: () => {
           alert('Utilisateur enregistré avec succès');
-          this.router.navigate(['/Dashboard']);
+          this.registerForm.reset();
         },
         error: err => {
           alert('Erreur : ' + err.error);

@@ -123,7 +123,18 @@ export class AcceuilInterfaceComponent implements OnInit, OnDestroy {
     return Math.random().toString(36).slice(2, 11);
   }
 
-  async logout(){
-    this.authService.logout(); 
- }
+  logout(): void {
+    this.isLoggingOut = true;
+    this.authService.logout().subscribe({
+      next: () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+        this.isLoggingOut = false;
+      },
+      error: err => {
+        console.error("Erreur de déconnexion", err);
+        this.isLoggingOut = false;
+      }
+    });
+  }
 }

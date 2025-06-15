@@ -14,11 +14,12 @@ export class ReclamationComponent implements OnInit {
   reclamationForm: FormGroup;
   selectedFile:File |null=null;
   commandes:any[]=[];
+  message: string = '';
   constructor(private ReclamationService:ReclamationServiceService,private fb:FormBuilder,private cmdService:CommandeServiceService){
     this.reclamationForm=this.fb.group({
-      'Objet':[''],
-      'MessageEnvoye':[''],
-      'Commande':['']
+      Objet:[''],
+      MessageEnvoye:[''],
+      Commande:['']
     })
   }
   ngOnInit(): void {
@@ -29,6 +30,20 @@ export class ReclamationComponent implements OnInit {
       }))
     })
   }
+  get commandesFiltrees() {
+    const now = new Date();
+    return this.commandes.filter(c => {
+      const statutValide = c.Statut !== 'en attente' && c.Statut !== 'prêt';
+      if (!c.dateCommnade){
+        return false;
+      }
+      const dateCommande = new Date(c.dateCommnade);
+      const diffMs = now.getTime() - dateCommande.getTime();
+      const diffJours = diffMs / (1000 * 60 * 60 * 24);
+      return statutValide && diffJours <= 5;
+    });
+  }
+  
   
   isInvalid(controlName: string): boolean {
     const control = this.reclamationForm.get(controlName);
@@ -51,25 +66,16 @@ export class ReclamationComponent implements OnInit {
   
       this.ReclamationService.AjouterReclamation(data).subscribe({
         next: res => {
-          console.log("réclamation effectuée avec succès", res);
-          alert("Réclamation effectuée avec succès !");
+          this.message=("Réclamation bien enregistrée");
         },
-        error: err => {
-          console.log("Erreur de réclamation", err);
-  
-          let errorMsg = "Erreur lors de la réclamation. Veuillez réessayer.";
-          
-          if (err.error) {
-            if (typeof err.error === 'object' && err.error.message) {
-              errorMsg = err.error.message;
-            } 
-            else if (typeof err.error === 'string') {
-              errorMsg = err.error;
-            }
-          }
-          
-          alert(errorMsg);
+        error: (error) => {
+          const msg = error?.error?.message;
+        if (msg) {
+          alert(msg); 
+        } else {
+          alert("Une erreur s'est produite. Veuillez réessayer.");
         }
+        },
       });
     } else {
       alert("Veuillez remplir tous les champs correctement.");

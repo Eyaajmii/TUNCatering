@@ -12,6 +12,8 @@ export class PrelevementComponent implements OnInit {
   prelevements: any[] = [];
   loading: boolean = true;
   error: string = '';
+  selectedPrelevId: string | null = null;
+  selectedPrelevDetail: any = null;
 constructor(private prelevementservice:FactureService){}
   ngOnInit(): void {
     this.prelevementservice.MesPrelevelment().subscribe({
@@ -24,5 +26,21 @@ constructor(private prelevementservice:FactureService){}
         this.loading = false;
       }
     })
+  }
+  toggleDetails(id: string) {
+    if (this.selectedPrelevId === id) {
+      this.selectedPrelevId = null;
+      this.selectedPrelevDetail = null;
+    } else {
+      this.selectedPrelevId = id;
+      this.prelevementservice.detailPrelevement(id).subscribe({
+        next: (data) => {
+          this.selectedPrelevDetail = data;
+        },
+        error: () => {
+          this.selectedPrelevDetail = null;
+        }
+      });
+    }
   }
 }

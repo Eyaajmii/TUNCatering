@@ -76,13 +76,16 @@ class AuthController {
   }
   static async login(username, password) {
     try {
+      if (!username || !password) {
+        throw new Error('Champs requis.')
+      }
       const Finduser = await user.findOne({ username });
       if (!Finduser) {
-        throw new Error("Utilisateur non trouvé");
+        throw new Error("nom d'utilisateur ou mot de passe incorrecte.");
       }
       const isValidPassword = await bcrypt.compare(password, Finduser.password);
       if (!isValidPassword) {
-        throw new Error("Mot de passe incorrect");
+        throw new Error("nom d'utilisateur ou mot de passe incorrecte.");
       }
       let TypePersonnel = null;
       let Matricule = null;

@@ -41,7 +41,8 @@ export interface Commande {
   NombreCommande: number;
   Matricule: any;
   menu?: Menu;
-  vol: string;
+  vol: Vol;
+  motifAnnulation:string
 }
 const commandeURL = "http://localhost:5000/api/commande"; 
 const SOCKET_URL = "http://localhost:5000"; 
@@ -119,8 +120,8 @@ export class CommandeServiceService {
     return this.http.post<any>(`${commandeURL}/addCommandePlat`,data,{headers});
   } 
   //commandebynumVol
-  getCommandesByVol(numVol: string): Observable<any> {
-    return this.http.get<any>(`${commandeURL}/vol/${numVol}`).pipe(
+  getCommandesByVol(id: string): Observable<any> {
+    return this.http.get<any>(`${commandeURL}/vol/${id}`).pipe(
       catchError(error => {
         console.error('Error fetching commandes by vol:', error);
         return of([]);

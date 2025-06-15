@@ -16,6 +16,8 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
   reclamations:Reclamation[]=[];
   MatriculePn:string='';
   private subscriptions: Subscription = new Subscription(); 
+  selectedRecId: string | null = null;
+  selectedRecDetail: any = null;
   constructor(private reclamationservice:ReclamationServiceService,private route:ActivatedRoute,private router:Router) { }
   ngOnInit(): void {
     this.loadReclamation();
@@ -69,6 +71,7 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
       this.reclamationservice.annulerReclamation(id).subscribe({
         next: () => {
           alert('Réeclamtion annulée avec succès.');
+          this.loadReclamation();
         },
         error: (err) => {
           console.error('Erreur de suppression :', err);
@@ -81,5 +84,21 @@ export class ConsulterReclamationComponent implements OnInit,OnDestroy{
   }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+  toggleDetails(id: string) {
+    if (this.selectedRecId === id) {
+      this.selectedRecId = null;
+      this.selectedRecDetail = null;
+    } else {
+      this.selectedRecId = id;
+      this.reclamationservice.getDetailreclamation(id).subscribe({
+        next: (data) => {
+          this.selectedRecDetail = data;
+        },
+        error: () => {
+          this.selectedRecDetail = null;
+        }
+      });
+    }
   }
 }

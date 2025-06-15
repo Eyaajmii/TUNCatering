@@ -15,6 +15,7 @@ export class AjoutBonLivraisonComponent implements OnInit {
   vols:any[]=[];
   commandes: Commande[] = [];
   errorMessage: string = '';
+  message: string = '';
   selectedCommandes: string[] = [];
   personnelLivraisonId: string = ''; 
   BnFrom:FormGroup;
@@ -40,18 +41,16 @@ export class AjoutBonLivraisonComponent implements OnInit {
   searchCommandes(): void {
     this.commandeService.getCommandesByVol(this.BnFrom.value.numVol).subscribe({
       next: (response) => {
-        console.log("Response from API:", response);
         if (response && response.success) {
           this.commandes = response.data;
           this.selectedCommandes = this.commandes.map(commande => commande._id);
           this.errorMessage = '';
         } else {
-          this.errorMessage = `Aucune commande trouvée pour le vol ${this.BnFrom.value.numVol}`;
+          alert(`Aucune commande existante`);
           this.commandes = [];
         }
       },
       error: (err) => {
-        console.error("Erreur dans la récupération des commandes:", err);
         this.errorMessage = "Erreur lors de la récupération des commandes.";
         this.commandes = [];
       }
@@ -63,9 +62,7 @@ export class AjoutBonLivraisonComponent implements OnInit {
       this.errorMessage = 'Veuillez sélectionner au moins une commande.';
       return;
     }
-
     const bonLivraisonData: any = {
-      numeroBon: `BL-${new Date().getFullYear()}-${(Math.random() * 10000).toFixed(0)}`, 
       volId: this.BnFrom.value.numVol,
       commandes: this.selectedCommandes,
     };
@@ -77,19 +74,17 @@ export class AjoutBonLivraisonComponent implements OnInit {
     // Créer le bon de livraison
     this.bonLivraisonService.createBonLivraison(bonLivraisonData).subscribe({
       next: (response) => {
-        if (response.success) {
-          alert('Bon de Livraison créé avec succès!');
-          
-          // Télécharger le PDF après la création du bon de livraison
+          this.message='Bon de Livraison créé avec succès !';
           this.downloadPdf(response.data.numeroBon);
-        } else {
-          this.errorMessage = 'Erreur lors de la création du Bon de Livraison.';
-        }
       },
-      error: (err) => {
-        console.error('Erreur:', err);
-        this.errorMessage = 'Erreur serveur';
+      error: (error) => {
+        const message = error?.error?.message;
+      if (message) {
+        alert(message); 
+      } else {
+        alert("Une erreur s'est produite. Veuillez réessayer.");
       }
+    },
     });
   }
 

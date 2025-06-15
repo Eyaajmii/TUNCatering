@@ -29,14 +29,10 @@ export class AllbonslivraisonsComponent implements OnInit {
     this.successMessage = '';
     
     this.bonLivraisonService.getAllBonsLivraison().subscribe({
-      next: (response: any) => {
-        if (response && response.success) {
-          this.bonsLivraison = response.data;
-        } else {
-          this.errorMessage = response.message || 'Erreur lors du chargement des bons de livraison';
-        }
+      next: (bons: BonLivraison[]) => {
+        this.bonsLivraison = bons;
         this.isLoading = false;
-      },
+    },
       error: (err) => {
         console.error('Erreur:', err);
         this.errorMessage = 'Erreur serveur lors du chargement des bons de livraison';

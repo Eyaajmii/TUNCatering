@@ -21,7 +21,8 @@ export class PanierPlatsComponent implements OnInit {
   commandeFrom:FormGroup;
   constructor(private fb:FormBuilder,private CmdService:CommandeServiceService,private route:ActivatedRoute){
     this.commandeFrom=this.fb.group({
-      'numVol':[''],
+      numVol: ['', Validators.required],
+
     })
   }
   ngOnInit(): void {
@@ -47,7 +48,7 @@ export class PanierPlatsComponent implements OnInit {
         nomPlatPrincipal:this.PPrincipal,
         nomDessert:this.PDessert,
         nomBoissons:this.PBoisson,
-        numVol:this.commandeFrom.value.numVol
+        numVol: this.commandeFrom.value.numVol.trim(),
       }
       if (this.PDej && this.PDej.length > 0) {
         data.nomsPetitdejuner = this.PDej;

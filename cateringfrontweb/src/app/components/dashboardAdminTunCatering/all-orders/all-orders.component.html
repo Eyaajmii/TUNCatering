@@ -5,7 +5,11 @@
     <div *ngIf="loading" class="loading-indicator">
       Chargement des commandes...
     </div>
-
+    <div class="export-container">
+      <button (click)="exportToExcel()" class="export-button">
+        <i class="bi bi-file-earmark-excel-fill me-1"></i> Exporter en Excel
+      </button>
+    </div>
     <div class="filters mb-3">
       <select [(ngModel)]="filtres.statut" class="form-control">
         <option value="tous">Toutes les commandes</option>
@@ -69,6 +73,9 @@
                   {{ getStatusDisplayText(commande.Statut) }}
                 </span>
               </ng-template>
+              <span *ngIf="commande.Statut === 'annulé' && commande.motifAnnulation" class="text-danger fst-italic">
+                Motif : {{ commande.motifAnnulation }}
+              </span>
             </td>                                
           </tr>
         </tbody>

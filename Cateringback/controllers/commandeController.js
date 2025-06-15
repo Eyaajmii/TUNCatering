@@ -24,12 +24,12 @@ class CommandeController {
     }
   }
   //return orders by numvol
-  static async getCommandesByNumVol(numVol) {
+  static async getCommandesByNumVol(idVol) {
     try {
-      const vol = await Vol.findOne({ numVol });
+      const vol = await Vol.findOne({ _id: idVol });
 
       if (!vol) {
-        throw new Error(`Aucun vol trouvé avec le numéro ${numVol}`);
+        throw new Error(`Aucun vol trouvé avec le numéro ${idVol}`);
       }
       const commandes = await commande
         .find({ vol: vol._id })
@@ -38,7 +38,7 @@ class CommandeController {
         .populate({ path: "Matricule", select: "nom prenom Matricule" });
 
       if (commandes.length === 0) {
-        throw new Error(`Aucune commande trouvée pour le vol ${numVol}`);
+        throw new Error(`Aucune commande trouvée pour le vol ${idVol}`);
       }
       return commandes;
     } catch (error) {
@@ -106,10 +106,10 @@ class CommandeController {
 
       // Validate meal limits based on flight duration
       if (dureeVol > 6 && cmdExist >= 2) {
-        throw new Error("Only 2 meals are allowed per PN for flights > 6h");
+        throw new Error("Ce vol ne permet que deux commandes.");
       }
       if (dureeVol <= 6 && cmdExist >= 1) {
-        throw new Error("Un seul repas est autorisé pour les vols de ≤6h.");
+        throw new Error("Ce vol ne permet qu'une seule commande.");
       }
 
       const menu = await Menu.findOne({ nom: nom });
@@ -145,6 +145,30 @@ class CommandeController {
           }
         }
       }
+      if (personnel && personnel.TypePersonnel === "Chef de cabine") {
+        const existingCabineCommand = await commande
+          .findOne({
+            vol: volId,
+            Matricule: { $ne: Matricule },/*exlure le chef de cabine qui veut commander*/ 
+          })
+          .populate({
+            path: "Matricule", 
+          });
+
+        if (existingCabineCommand) {
+          const existingPersonnel = await PersonnelTunisair.findOne({
+            Matricule: existingCabineCommand.Matricule,
+          });
+          const existingPN = await pn.findOne({
+            PersonnelTunisiarId: existingPersonnel._id,
+          });
+
+          if (existingPN && existingPN.TypePersonnel === "Chef de cabine") {
+            throw new Error("Un autre chef de cabine a déjà passé une commande pour ce vol.");
+          }
+        }
+      }
+
       // Vérification des délais de commande
       const now = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000);
       const dateVol = new Date(vol.dateVolDep);
@@ -179,7 +203,7 @@ class CommandeController {
       await menucontroller.miseajourmenuCommande(nom);
       return newCmd;
     } catch (err) {
-      throw new Error("Error creating command: " + err.message);
+      throw err;
     }
   }
 
@@ -310,6 +334,37 @@ class CommandeController {
         ...(Dessert ? [Dessert._id] : []),
         ...(Boissons ? [Boissons._id] : []),
       ];
+      const persTunisair = await PersonnelTunisair.findOne({ Matricule });
+      if (!persTunisair) throw new Error("Matricule invalide");
+      const personnel = await pn.findOne({
+        PersonnelTunisiarId: persTunisair._id,
+      });
+      console.log("Personnel courant :", personnel);
+      if (personnel && personnel.TypePersonnel === "Chef de cabine") {
+        const existingCabineCommand = await commande
+          .findOne({
+            vol: volId,
+            Matricule: { $ne: Matricule }, 
+          })
+          .populate({
+            path: "Matricule", 
+          });
+
+        if (existingCabineCommand) {
+          const existingPersonnel = await PersonnelTunisair.findOne({
+            Matricule: existingCabineCommand.Matricule,
+          });
+          const existingPN = await pn.findOne({
+            PersonnelTunisiarId: existingPersonnel._id,
+          });
+
+          if (existingPN && existingPN.TypePersonnel === "Chef de cabine") {
+            throw new Error(
+              "Un autre chef de cabine a déjà passé une commande pour ce vol."
+            );
+          }
+        }
+      }
       const newCmd = await commande.create({
         numeroCommande,
         vol: volId,
@@ -391,6 +446,7 @@ class CommandeController {
         throw new Error("Command request not found");
       }
       cmd.Statut="annulé";
+      cmd.motifAnnulation = "Vol annulé";
       await cmd.save();
       return cmd;
     }catch(err){
@@ -421,6 +477,7 @@ class CommandeController {
         throw new Error(`Les commandes pour les vols au départ de ${ vol.Depart } doivent être annulées  plus de ${heuresLimite} heures à l'avance.`);
       }
       cmd.Statut = "annulé";
+      cmd.motifAnnulation = "Annulation PN";
       await cmd.save();
     } catch (err) {
       throw err;

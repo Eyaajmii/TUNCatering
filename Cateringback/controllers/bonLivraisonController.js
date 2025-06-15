@@ -71,66 +71,56 @@ module.exports = function (
   }
   const createBonLivraison = async (req, res) => {
     try {
-      console.log("Requête reçue :", req.body);
-
-      const { numeroBon, volId, commandes, conformite } = req.body;
-
-      if (!numeroBon || !volId || !commandes || commandes.length === 0) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Données manquantes ou invalides" });
+      const {volId, commandes } = req.body;
+      if (!volId || !commandes || commandes.length === 0) {
+        return res.status(400).json({message: "Données manquantes ou invalides" });
       }
-
-      const vol = await Vol.findOne({ numVol: volId });
+      const randomPart = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+      const numeroBon = `BL-${randomPart}`;
+      const vol = await Vol.findById(volId);
       if (!vol) {
-        return res.status(404).json({
-          success: false,
-          message: `Aucun vol trouvé avec le numéro ${volId}`,
-        });
+        return res.status(404).json({ message: "Vol introuvable" });
       }
       const existingBonLivraison = await BonLivraison.findOne({
         vol: volId,
         Statut: { $ne: "Annulé" },
       });
       if (existingBonLivraison) {
-        return res.status(400).json({
-          success: false,
-          message: "Un bon de livraison existe déjà pour ce vol",
-        });
+        return res.status(400).json({message: "Un bon de livraison existant !",});
       }
       const commandesValides = await Promise.all(
         commandes.map((commandeId) => Commande.findById(commandeId))
       );
 
       if (commandesValides.some((c) => !c)) {
-        return res.status(404).json({
-          success: false,
-          message: "Une ou plusieurs commandes sont introuvables",
-        });
+        return res.status(404).json({message: "Aucune commande existante",});
       }
       const hasEnAttenteOuRetard = commandesValides.some(
         (c) => c.Statut === "en attente" || c.Statut === "en retard"
       );
       if (hasEnAttenteOuRetard) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Impossible de créer le bon de livraison : au moins une commande est en statut 'En attente' ou 'En retard'",
-        });
+        return res.status(400).json({message:"Impossible de créer le bon de livraison : au moins une commande est en statut 'En attente' ou 'En retard'",});
       }
-      const commandesFiltrees = commandesValides
-        .filter((c) => c.Statut !== "annulé")
-        .map((c) => c._id);
+      const commandesFiltrees = commandesValides.filter((c) => c.Statut !== "annulé").map((c) => c._id);
       const cmds = commandesFiltrees.map((id) => ({
         commande: id,
       }));
+      const commandesDuVol = await Commande.find({ vol: vol._id });
+      const matriculesCommandes = commandesDuVol.map((cmd) => cmd.Matricule);
+      const personnelTunisairList = await personnelTunisair.find({
+        Matricule: { $in: matriculesCommandes },
+      });
+      const personnelTunisairIds = personnelTunisairList.map((p) => p._id);
+      const chefCabine = await PersonnelNavigant.findOne({PersonnelTunisiarId: { $in: personnelTunisairIds },TypePersonnel: "Chef de cabine",}).populate("PersonnelTunisiarId");
+
+      const matriculeChef = chefCabine?.PersonnelTunisiarId?.Matricule || null;
       const newBonLivraison = new BonLivraison({
-        numeroBon,
-        vol: volId.toString(),
+        numeroBon: numeroBon,
+        vol: volId,
         commandes: cmds,
-        personnelLivraison: null,
+        personnelLivraison: matriculeChef,
         Statut: "En attente",
-        conformite: conformite || "Non vérifié",
+        conformite: "Non vérifié",
       });
       const qrData = `Bon de Livraison: ${numeroBon}`;
       const qrCodeImage = await QRCode.toDataURL(qrData);
@@ -144,60 +134,21 @@ module.exports = function (
       const notifcreer = await notification.create({
         message: `Nouvelle bon de livraison créé`,
         emetteur: "tunisie_catering",
-        destinataire: "chef_cabine",
+        destinataire: matriculeChef,
         notificationType: "new_bonLivraison",
       });
-      global.io.to("chef_cabine").emit("newNotification", {
+      global.io.to(matriculeChef).emit("newNotification", {
         ...notifcreer._doc,
-        destinataire: "chef_cabine",
+        destinataire: matriculeChef,
       });
       broadcastNewBonLivraison({
         ...newBonLivraison._doc,
         type: "BonLivraison ",
         items: [{ newBonLivraison, quantite: 1 }],
-        //...notifcreer._doc,
-        //destinataire: "chef_cabine",
       });
-      res.status(201).json({
-        success: true,
-        message: "Bon de livraison créé avec succès",
-        data: newBonLivraison,
-      });
+      res.status(201).json({message: "Bon de livraison créé avec succès !", data: newBonLivraison,});
     } catch (error) {
-      console.error("Erreur lors de la création du bon de livraison :", error);
-      res.status(500).json({
-        success: false,
-        message: "Erreur serveur",
-        error: error.message,
-      });
-    }
-  };
-
-  const getBonByVolId = async (req, res) => {
-    try {
-      const { volId } = req.params;
-      const bonLivraison = await BonLivraison.findOne({ vol: volId }).populate(
-        "commandes personnelLivraison"
-      );
-
-      if (!bonLivraison) {
-        return res.status(404).json({
-          success: false,
-          message: "Aucun bon de livraison trouvé pour ce vol",
-        });
-      }
-      const vol = await Vol.findOne({ numVol: volId });
-
-      res.status(200).json({
-        success: true,
-        data: {
-          ...bonLivraison.toObject(),
-          volInfo: vol,
-        },
-      });
-    } catch (error) {
-      console.error("Erreur:", error);
-      res.status(500).json({ success: false, message: "Erreur serveur" });
+      res.status(500).json({message: error.message,});
     }
   };
 
@@ -266,12 +217,7 @@ module.exports = function (
     try {
       const { id } = req.params;
       const { confirmerConformite, commandesConfirmées,Commantaire } = req.body;
-      const username = req.user.username;
-      const User = await user.findOne({ username });
-      const pn = await personnelTunisair.findOne({ userId: User._id });
-      if (!pn) return res.status(404).json({ message: "Matricule non trouvé" });
-      const personnelLivraison = pn.Matricule;
-      const bn = await BonLivraison.findById(id).populate("commandes.commande");
+      const bn = await BonLivraison.findById(id).populate("commandes.commande").populate('vol');
       if (!bn)
         return res
           .status(404)
@@ -298,7 +244,6 @@ module.exports = function (
         bn.conformite = "Confirmé";
         bn.Statut = "Validé";
       }
-      bn.personnelLivraison = personnelLivraison;
       if (Commantaire) {
         bn.Commantaire = Commantaire;
       }
@@ -344,7 +289,6 @@ module.exports = function (
   };
 
   //par tunisie catering
-
   const updateBonLivraison = async (req, res) => {
     try {
       const { id } = req.params;
@@ -359,38 +303,21 @@ module.exports = function (
         .populate("vol")
         .populate("personnelLivraison");
       if (!bn) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Bon de livraison non trouvé" });
+        return res.status(404).json({message: "Bon de livraison non trouvé" });
       }
       if (bn.Statut !== "En attente") {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message:
-              "Le bon de livraison ne peut être modifié que s'il est en attente",
-          });
+        return res.status(400).json({message:"Modification interdit ! ",});
       }
       await BonLivraison.findByIdAndUpdate(id, req.body, { new: true });
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "Bon de livraison mis à jour avec succès",
-        });
+      res.status(200).json({message: "Bon de livraison mis à jour avec succès"});
     } catch (err) {
-      res.status(500).json({ success: false, message: "Erreur" });
+      res.status(500).json({ message: "Erreur" });
     }
   };
   const getAllBonsLivraisons = async (req, res) => {
     try {
-      const bnlivs = await BonLivraison.find();
-      res.status(200).json({
-        success: true,
-        message: "Statut mis à jour",
-        data: bnlivs,
-      });
+      const bnlivs = await BonLivraison.find().populate('vol');
+      res.status(200).json(bnlivs);
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut :", error);
       res.status(500).json({ success: false, message: "Erreur serveur" });
@@ -429,27 +356,24 @@ module.exports = function (
       res.status(500).send("Erreur interne du serveur.");
     }
   };
-  /*const getBonsNonFacture = async (req, res) => {
-    try {
-      const bns = await BonLivraison.find({ Facturé: false });
-      if (!bns) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Aucun Bon de livraison trouvé" });
-      }
-      res.status(200).json(bns);
-    } catch (err) {
-      res.status(500);
-    }
-  };*/
+const consulterBonsParChef = async (req, res) => {
+  try {
+    const Matricule = req.user.Matricule;
+    const bons = await BonLivraison.find({ personnelLivraison:Matricule}).populate('vol');
+    res.status(200).json(bons);
+  } catch (error) {
+    console.error("Erreur dans la consultation pour chef de cabine :", error);
+    res.status(500).json({success: false,message: "Erreur serveur",error: error.message});
+  }
+};
   return {
     createBonLivraison,
-    getBonByVolId,
     getBonLivraisonById,
     scanBonLivraison,
     updateStatutBonLivraison,
     updateBonLivraison,
     getAllBonsLivraisons,
     AnnulerBn,
+    consulterBonsParChef,
   };
 };

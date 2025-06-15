@@ -66,9 +66,14 @@ export class LoginComponent {
           this.router.navigate(['/']);
         }
       },
-      error: (err) => {
-        this.error = err.error?.message || 'Erreur de connexion';
+      error: (error) => {
+        const message = error?.error?.message;
+      if (message) {
+        alert(message); 
+      } else {
+        alert("Probleme de connextion");
       }
+    },
     });
   }  
 }

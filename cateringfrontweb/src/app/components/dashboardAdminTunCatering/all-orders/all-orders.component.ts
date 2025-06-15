@@ -3,8 +3,8 @@ import { Commande, CommandeServiceService, Menu, Plat} from '../../../services/c
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-
-
+import * as XLSX from 'xlsx';  
+import { saveAs } from 'file-saver'; 
 
 @Component({
   selector: 'app-all-orders',
@@ -25,6 +25,7 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
     { value: 'livré', display: 'Livré', class: 'livre' },
   ];
   private subscriptions: Subscription = new Subscription();
+  EXCEL_TYPE: string = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';  
   constructor(private commandeService: CommandeServiceService) {}
 
   ngOnInit(): void {
@@ -68,21 +69,6 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
       })
     );
   }
-  /*loadOrders(): void {
-    this.loading = true;
-    this.commandeService.getInitialOrders().subscribe({
-      next: (orders) => {
-        this.commandes = orders.map(order => this.transformCommande(order));
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error loading orders:', err);
-        this.error = 'Échec du chargement des commandes';
-        this.loading = false;
-      }
-    });
-  }*/
-
   private transformCommande(commande: any): Commande {
     return {
       ...commande,
@@ -167,4 +153,33 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+  exportToExcel(): void {
+    const formatReference = (ref: any) => {
+      return ref ? (ref._id ? this.formatId(ref._id) : 'N/A') : 'N/A';
+    };
+  
+    const formattedCommands = this.commandes.map(commande => ({
+      'ID': this.formatId(commande._id),
+      'Nombre de Commandes': commande.NombreCommande,
+      'Statut': this.getStatusDisplayText(commande.Statut), 
+      'Date de Commande': this.formatDateTime(commande.dateCommnade),
+      'Matricule': formatReference(commande.Matricule),
+      'Vol ID': formatReference(commande.vol),
+      'Menu ID': formatReference(commande.menu),
+      'Plats IDs': commande.plats?.length 
+        ? commande.plats.map(plat => formatReference(plat)).join(', ') 
+        : 'Aucun'
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedCommands);
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Commandes');
+  
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: this.EXCEL_TYPE });
+    saveAs(data, 'commandes_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  }
+  formatId(id: string): string {  
+    return id.substring(0, 8).toUpperCase();  
+} 
 }

@@ -198,3 +198,13 @@
   color: #005A9C;
   font-weight: 500;
 }
+.error-message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 4px;
+}
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

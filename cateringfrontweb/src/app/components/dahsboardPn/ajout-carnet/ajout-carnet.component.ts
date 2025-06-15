@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CarnetSanteService } from '../../../services/carnet-sante.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ajout-carnet',
@@ -10,7 +11,7 @@ import { CarnetSanteService } from '../../../services/carnet-sante.service';
 })
 export class AjoutCarnetComponent {
   carnetForm:FormGroup;
-  constructor(private fb: FormBuilder,private CarnetService:CarnetSanteService) { 
+  constructor(private fb: FormBuilder,private CarnetService:CarnetSanteService,private router: Router) { 
     this.carnetForm = this.fb.group({
       'Allergies':[''] ,
       'Maladie': [''],
@@ -27,8 +28,7 @@ export class AjoutCarnetComponent {
     };
     this.CarnetService.AjouterCarnetSante(data).subscribe({
       next:res=>{
-        console.log("carnet de santé effectuée avec succès", res);
-        alert("carnet de santé effectuée avec succès");
+        this.router.navigate(["/AccueilPersonnel/Profil/MonCarnet"]);
       },
       error:err=>{
         console.log("Erreur de carnet de santé", err);

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FactureService } from '../../../services/facture.service';
 export interface Prelevement {
-  _id?: string;
+  _id: string;
   personnel:string;
   montantTotal:number;
   dateDebut:Date;
@@ -17,6 +17,8 @@ export interface Prelevement {
 })
 export class TousPrelevementsComponent implements OnInit{
   prelevements:Prelevement[]=[];
+  selectedPrelevId: string | null = null;
+  selectedPrelevDetail: any = null;
   constructor(private prelevementService:FactureService){}
   ngOnInit(): void {
     this.laodPrelevement();
@@ -52,6 +54,22 @@ export class TousPrelevementsComponent implements OnInit{
           }
         });
       }
+    }
+  }
+  toggleDetails(id: string) {
+    if (this.selectedPrelevId === id) {
+      this.selectedPrelevId = null;
+      this.selectedPrelevDetail = null;
+    } else {
+      this.selectedPrelevId = id;
+      this.prelevementService.detailPrelevement(id).subscribe({
+        next: (data) => {
+          this.selectedPrelevDetail = data;
+        },
+        error: () => {
+          this.selectedPrelevDetail = null;
+        }
+      });
     }
   }
 }
