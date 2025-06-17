@@ -114,7 +114,7 @@ export class DashChefComponent implements OnInit {
       }
     });
   }
-  gotoupdate(){
-    this.router.navigate(['/DashboardChefCabine/modifierProfil']);
+  gotoHome(){
+    this.router.navigate(['/AccueilPersonnel']);
   }
 }

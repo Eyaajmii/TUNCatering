@@ -20,8 +20,8 @@ export class TousFacturesComponent implements OnInit, OnDestroy{
   connectionStatus: boolean = false;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'confirmé', display: 'Confirmé', class: 'confirmé' },
-    { value: 'annulé', display: 'Annulé', class: 'annule' },
+    { value: 'confirmé', display: 'Confirmée', class: 'confirmé' },
+    { value: 'annulé', display: 'Annulée', class: 'annule' },
   ];
   private subscriptions: Subscription = new Subscription(); 
   selectedFactureId: string | null = null;

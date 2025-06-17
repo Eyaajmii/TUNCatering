@@ -64,15 +64,7 @@ setupWebSocketListeners() {
         }
       })
     );
-    /*this.subscriptions.add(
-      this.commandeService.onOrderStatusUpdate().subscribe(update => {
-        const index = this.commandes.findIndex(c => c._id === update._id);
-        if (index !== -1) {
-          this.commandes[index].Statut = update.Statut;
-          this.commandes[index].updatedAt = update.updatedAt;
-        }
-      })
-    );*/
+    
   }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

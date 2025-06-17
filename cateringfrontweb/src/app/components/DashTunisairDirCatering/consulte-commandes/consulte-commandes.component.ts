@@ -24,10 +24,10 @@ export class ConsulteCommandesComponent implements OnInit , OnDestroy{
 
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'prêt', display: 'Prêt', class: 'pret' },
-    { value: 'annulé', display: 'Annulé', class: 'annule' },
+    { value: 'prêt', display: 'Prête', class: 'pret' },
+    { value: 'annulé', display: 'Annulée', class: 'annule' },
     { value: 'en retard', display: 'En retard', class: 'en-retard' },
-    { value: 'livré', display: 'Livré', class: 'livre' },
+    { value: 'livré', display: 'Livrée', class: 'livre' },
   ];
 
   constructor(private commandeService: CommandeServiceService) {}  

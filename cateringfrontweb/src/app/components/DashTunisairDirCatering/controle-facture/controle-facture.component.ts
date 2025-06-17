@@ -34,8 +34,8 @@ export class ControleFactureComponent implements OnInit, OnDestroy {
   error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'confirmé', display: 'confirmé', class: 'confirmé' },
-    { value: 'annulé', display: 'annulé', class: 'annule' },
+    { value: 'confirmé', display: 'Confirmée', class: 'confirmé' },
+    { value: 'annulé', display: 'Annulée', class: 'annule' },
   ];
   
   private subscriptions: Subscription = new Subscription(); 

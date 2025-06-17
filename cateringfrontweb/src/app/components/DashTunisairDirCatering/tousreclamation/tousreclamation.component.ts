@@ -18,7 +18,7 @@ connectionStatus: boolean = false;
   error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'traitée', display: 'traitée', class: 'traite' },
+    { value: 'traitée', display: 'Traitée', class: 'traite' },
   ];
   private subscriptions: Subscription = new Subscription(); 
   selectedRecId: string | null = null;

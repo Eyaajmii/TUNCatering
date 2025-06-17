@@ -19,10 +19,10 @@ export class AllOrdersComponent implements OnInit,OnDestroy {
   error: string | null = null;
   readonly availableStatuses = [
     { value: 'en attente', display: 'En attente', class: 'en-attente' },
-    { value: 'prêt', display: 'Prêt', class: 'pret' },
-    { value: 'annulé', display: 'Annulé', class: 'annule' },
+    { value: 'prêt', display: 'Prête', class: 'pret' },
+    { value: 'annulé', display: 'Annulée', class: 'annule' },
     { value: 'en retard', display: 'En retard', class: 'en-retard' },
-    { value: 'livré', display: 'Livré', class: 'livre' },
+    { value: 'livré', display: 'Livrée', class: 'livre' },
   ];
   private subscriptions: Subscription = new Subscription();
   EXCEL_TYPE: string = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';  

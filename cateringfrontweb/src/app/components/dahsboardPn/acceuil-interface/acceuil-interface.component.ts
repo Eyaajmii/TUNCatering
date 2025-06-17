@@ -17,7 +17,10 @@ export class AcceuilInterfaceComponent implements OnInit, OnDestroy {
   isLoggingOut = false;
   showNotifications = false;
   unreadCount = 0;
-
+  role = '';
+  roleTunisair = '';
+  TypePersonnel = '';
+  isChefDeCabine = false;
   private subscriptions = new Subscription();
 
   constructor(
@@ -28,6 +31,10 @@ export class AcceuilInterfaceComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.role = localStorage.getItem('role') || '';
+    this.roleTunisair = localStorage.getItem('RoleTunisair') || '';
+    this.TypePersonnel = localStorage.getItem('TypePersonnel') || '';
+    this.isChefDeCabine =this.role === 'Personnel Tunisair' &&this.roleTunisair === 'Personnel navigant' &&this.TypePersonnel=== 'Chef de cabine';
     this.loadNotifications();
     this.initializeNotifications();
   }

@@ -36,11 +36,7 @@ export class LoginComponent {
               const roleTunisair = data.roleTunisair;  
               switch (roleTunisair) {
                 case "Personnel navigant":
-                  if (typePersonnel === "Chef de cabine") {
-                    this.router.navigate(['/DashboardChefCabine']);
-                  } else {
                     this.router.navigate(['/AccueilPersonnel']);
-                  }
                   break;
                 case "Personnel de Direction du Catering Tunisiar":
                   this.router.navigate(['/TunisairCatering']);
